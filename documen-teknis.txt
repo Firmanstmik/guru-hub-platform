@@ -1,0 +1,35 @@
+1. Tabel Utama (Autentikasi & Profil Kategori)
+    a. users
+    b. categories
+        Tabel ini digunakan untuk menampung fokus utama: Bahasa Jepang, Matematika, Mengaji, dll. agar pengelolaan di dashboard admin menjadi dinamis.
+    c. teacher_profiles
+        Profil lengkap guru beserta status verifikasi oleh Admin, serta penampung akumulasi rating untuk memudahkan fitur Cari Guru.
+
+2. Tabel Manajemen Kelas & Konten (Role Guru & Kategori)
+    a. courses
+        Setiap kelas wajib terikat pada satu kategori fokus.
+    b. course_materials
+        Tempat penyimpanan materi belajar (Modul PDF, Lembar Kerja, PPT).
+    c. course_videos
+        Mencakup dua kebutuhan sekaligus: Video Pembelajaran yang diupload guru, dan Rekaman Kelas pasca Live Class selesai.
+
+3. Tabel Jadwal, Akses & Booking (Integrasi Zoom/GMeet)
+    a. class_schedules
+        Digunakan oleh Guru untuk membuat jadwal sesi live tatap muka online.
+    b. course_student (Tabel Hak Akses)
+        Tabel pivot penanda bahwa murid ini memiliki hak akses penuh ke dalam suatu kelas (setelah pembayaran divalidasi admin).
+    c. bookings
+        Ketika murid mengklaim/memesan slot pada suatu jadwal sesi di kelas yang sudah dia beli.
+
+4. Tabel Transaksi Keuangan & Sertifikat
+    a. payments (Pembayaran Manual)
+        Siswa mengunggah bukti transfer, Admin melakukan monitoring di dashboard untuk mengubah status ke approved.
+    b. teacher_earnings
+        Mencatat otomatis bagi hasil/pendapatan Guru sesaat setelah Admin mengubah status pembayaran murid menjadi approved.
+    c. certificates
+        Tabel penampung sertifikat kelulusan siswa yang diterbitkan otomatis atau dipicu oleh guru.
+5. Tabel Review & Rating (Ulasan Murid)
+    a. reviews
+    
+6. Strategi Seeding Awal (Database Seeder)
+    Untuk mempermudah pengisian data awal saat pengembangan, Anda bisa membuat CategorySeeder untuk menginput fokus utama Anda langsung ke database:
