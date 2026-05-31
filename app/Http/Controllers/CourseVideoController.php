@@ -6,26 +6,47 @@ use App\Http\Controllers\Controller;
 use App\Models\CourseVideo;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CourseVideoController extends Controller
 {
-    public function index(Request $request)
+public function index(Request $request)
     {
+        $user = Auth::user();
+
         // Eager loading kelas dan pengajarnya
-        $query = CourseVideo::with('course.teacher');
+        $query = CourseVideo::with(['course.teacher']);
+
+        // PERBAIKAN UTAMA: Saring video berdasarkan peran (Role) Akun Guru yang masuk
+        if (!$user->hasRole('admin')) {
+            // Hanya ambil video yang kelasnya dimiliki oleh Guru yang sedang aktif login
+            $query->whereHas('course', function ($q) use ($user) {
+                $q->where('teacher_id', $user->id);
+            });
+        }
 
         // Filter berdasarkan kelas tertentu
         if ($request->has('course_id') && $request->course_id != '') {
             $query->where('course_id', $request->course_id);
         }
 
-        // Filter berdasarkan tipe video (youtube, vimeo, dll)
+        // Filter berdasarkan tipe video (material atau recording)
         if ($request->has('video_type') && $request->video_type != '') {
             $query->where('video_type', $request->video_type);
         }
 
         $videos = $query->latest()->paginate(10)->withQueryString();
-        $courses = Course::where('status', 'published')->orderBy('title')->get();
+        
+        // PERBAIKAN DROPDOWN MODAL TAMBAH:
+        // Guru hanya diperbolehkan menyematkan video ke kelas asuhannya sendiri.
+        if ($user->hasRole('admin')) {
+            $courses = Course::where('status', 'published')->orderBy('title')->get();
+        } else {
+            $courses = Course::where('status', 'published')
+                             ->where('teacher_id', $user->id)
+                             ->orderBy('title')
+                             ->get();
+        }
 
         return view('admin.course-video', compact('videos', 'courses'));
     }
@@ -35,7 +56,7 @@ class CourseVideoController extends Controller
         $validated = $request->validate([
             'course_id'  => 'required|exists:courses,id',
             'title'      => 'required|string|max:255',
-            'video_type' => 'required|in:youtube,vimeo,google_drive',
+            'video_type' => 'required|in:material,recording', // SINKRONISASI: Mengikuti enum DB
             'video_url'  => 'required|url',
         ]);
 
@@ -49,7 +70,7 @@ class CourseVideoController extends Controller
         $validated = $request->validate([
             'course_id'  => 'required|exists:courses,id',
             'title'      => 'required|string|max:255',
-            'video_type' => 'required|in:youtube,vimeo,google_drive',
+            'video_type' => 'required|in:material,recording', // SINKRONISASI: Mengikuti enum DB
             'video_url'  => 'required|url',
         ]);
 

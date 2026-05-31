@@ -5,14 +5,25 @@ use App\Http\Controllers\Controller;
 use App\Models\CourseMaterial;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class CourseMaterialController extends Controller
 {
     public function index(Request $request)
     {
+        $user = Auth::user(); 
+
         // Eager loading data kelas/kursus terkait beserta gurunya
-        $query = CourseMaterial::with('course.teacher');
+        $query = CourseMaterial::with(['course.teacher']);
+
+        // PERBAIKAN UTAMA: Saring materi berdasarkan Hak Akses Akun Guru
+        if (!$user->hasRole('admin')) {
+            // Hanya ambil materi yang kelasnya dibuat oleh Guru yang sedang login
+            $query->whereHas('course', function ($q) use ($user) {
+                $q->where('teacher_id', $user->id);
+            });
+        }
 
         // Filter berdasarkan kelas/kursus tertentu
         if ($request->has('course_id') && $request->course_id != '') {
@@ -26,8 +37,16 @@ class CourseMaterialController extends Controller
 
         $materials = $query->latest()->paginate(10)->withQueryString();
         
-        // Data pendukung untuk dropdown pilihan kelas di dalam modal formulir
-        $courses = Course::where('status', 'published')->orderBy('title')->get();
+        // PERBAIKAN DROPDOWN MODAL TAMBAH: 
+        // Guru tidak boleh memasukkan materi ke kelas milik Guru lain.
+        if ($user->hasRole('admin')) {
+            $courses = Course::where('status', 'published')->orderBy('title')->get();
+        } else {
+            $courses = Course::where('status', 'published')
+                             ->where('teacher_id', $user->id)
+                             ->orderBy('title')
+                             ->get();
+        }
 
         return view('admin.course-materials', compact('materials', 'courses'));
     }

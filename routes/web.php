@@ -148,4 +148,3 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::get('/login', [AuthController::class, 'viewLogin']);
 Route::post('/login', [AuthController::class, 'Login'])->name('login');
 Route::get('/logout', [AuthController::class, 'Logout'])->middleware('auth')->name('logout');
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->middleware('auth');

@@ -35,6 +35,14 @@
             <nav class="px-4 py-6 space-y-1 flex-1">
                 
                 <span class="block px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Utama</span>
+                
+                <!-- 1. Kategori -->
+                <a href="/categories" class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm font-medium transition group {{ request()->is('categories*') ? 'bg-indigo-600 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
+                    <svg class="w-5 h-5 flex-shrink-0 {{ request()->is('categories*') ? 'text-white' : 'text-gray-400 group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                    Kelas Kursus
+                </a>
 
                 <!-- 1. Kursus -->
                 <a href="/courses" class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm font-medium transition group {{ request()->is('courses*') ? 'bg-indigo-600 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
@@ -42,14 +50,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                     Kelola Kelas
-                </a>
-
-                <!-- 2. Kategori -->
-                <a href="/categories" class="flex items-center gap-3 px-3 py-1.5 rounded-lg text-sm font-medium transition group {{ request()->is('categories*') ? 'bg-indigo-600 text-white' : 'hover:bg-gray-800 hover:text-white' }}">
-                    <svg class="w-5 h-5 flex-shrink-0 {{ request()->is('categories*') ? 'text-white' : 'text-gray-400 group-hover:text-gray-300' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-                    </svg>
-                    Kategori Kursus
                 </a>
 
                 <!-- 3. Users -->
@@ -178,14 +178,13 @@
             <div class="flex items-center gap-2 max-w-[150px] truncate">
                 <div class="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center font-bold text-sm text-indigo-400">A</div>
                 <div class="truncate">
-                    <p class="text-xs font-semibold text-white truncate">{{ auth()->user()->name ?? 'Administrator' }}</p>
+                    <p class="text-xs font-semibold text-white truncate">{{ auth()->user()->name ?? '403' }}</p>
                     <p class="text-[10px] text-gray-500 truncate">Sistem Kontrol</p>
                 </div>
             </div>
             <a href="{{ url('/logout') }}" class="p-1.5 rounded-md hover:bg-gray-800 text-gray-500 hover:text-rose-400 transition" title="Keluar">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
             </a>
-            {{-- <form id="logout-form" action="/logout" method="POST" class="hidden">@csrf</form> --}}
         </div>
 
     </aside>

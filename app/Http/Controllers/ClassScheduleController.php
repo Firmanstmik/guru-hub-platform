@@ -5,13 +5,24 @@ use App\Http\Controllers\Controller;
 use App\Models\ClassSchedule;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClassScheduleController extends Controller
 {
     public function index(Request $request)
     {
+        $user = Auth::user();
+
         // Eager loading data kursus dan guru pengajarnya
         $query = ClassSchedule::with(['course.teacher']);
+
+        // PERBAIKAN UTAMA: Saring jadwal berdasarkan peran (Role) Akun Guru yang masuk
+        if (!$user->hasRole('admin')) {
+            // Hanya ambil jadwal yang kelasnya milik Guru yang sedang login
+            $query->whereHas('course', function ($q) use ($user) {
+                $q->where('teacher_id', $user->id);
+            });
+        }
 
         // Filter berdasarkan Platform (Zoom / Google Meet)
         if ($request->has('platform') && $request->platform != '') {
@@ -27,10 +38,19 @@ class ClassScheduleController extends Controller
             }
         }
 
+        // Jadwal terdekat tampil paling atas
         $schedules = $query->orderBy('start_time', 'asc')->paginate(10)->withQueryString();
         
-        // Data pendukung untuk kebutuhan form tambah/edit modal jika admin membuatkan jadwal
-        $courses = Course::where('status', 'published')->orderBy('title')->get();
+        // PERBAIKAN DROPDOWN MODAL TAMBAH:
+        // Saat menambah jadwal baru, Guru hanya boleh memilih kelas miliknya sendiri.
+        if ($user->hasRole('admin')) {
+            $courses = Course::where('status', 'published')->orderBy('title')->get();
+        } else {
+            $courses = Course::where('status', 'published')
+                             ->where('teacher_id', $user->id)
+                             ->orderBy('title')
+                             ->get();
+        }
 
         return view('admin.schedules', compact('schedules', 'courses'));
     }

@@ -10,9 +10,12 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->string('transaction_code')->unique();
             $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('schedule_id')->constrained('class_schedules')->cascadeOnDelete();
-            $table->enum('status', ['booked', 'attended', 'absent', 'cancelled'])->default('booked'); // Untuk monitoring admin & absensi murid
+            $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete(); // Cukup ini saja
+            $table->unsignedInteger('total_amount')->default(0);
+            $table->text('note')->nullable();
+            $table->enum('status', ['pending', 'success', 'failed', 'expired', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

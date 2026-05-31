@@ -16,8 +16,9 @@
 <body class="bg-gray-50 antialiased font-sans">
 
     <div class="min-h-screen flex flex-col md:flex-row">
-        
-        @include('layout.sidebar')
+        @if(auth()->user()->name === 'admin')
+            @include('layout.admin-sidebar')
+        @endif
 
         <main class="flex-1 w-full min-w-0 overflow-x-hidden">
             <div class="p-4 sm:p-6 md:p-8">
