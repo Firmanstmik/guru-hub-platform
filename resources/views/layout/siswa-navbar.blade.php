@@ -3,7 +3,7 @@
         <div class="flex justify-between h-16">
             
             <div class="flex items-center space-x-8">
-                <a href="/dashboard" class="flex items-center space-x-3 flex-shrink-0">
+                <a href="/siswa-dashboard" class="flex items-center space-x-3 flex-shrink-0">
                     <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
                         G
                     </div>
@@ -13,7 +13,7 @@
                 </a>
 
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="/dashboard" 
+                    <a href="/siswa-dashboard" 
                        class="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-all {{ request()->is('dashboard-siswa*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -94,7 +94,7 @@
          class="md:hidden border-t border-gray-100 bg-white">
         
         <div class="pt-2 pb-3 space-y-1 px-4">
-            <a href="/dashboard" 
+            <a href="/siswa-dashboard" 
                class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('dashboard-siswa*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />

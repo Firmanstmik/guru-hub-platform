@@ -38,4 +38,10 @@ class Booking extends Model
     {
         return $this->belongsTo(ClassSchedule::class, 'schedule_id');
     }
+    
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'course_id', 'course_id')
+            ->latestOfMany();
+    }
 }

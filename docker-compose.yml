@@ -6,6 +6,8 @@ services:
     container_name: guru_hub_app
     volumes:
       - .:/var/www
+      #tambahan untuk batas upload file
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - db_network
 

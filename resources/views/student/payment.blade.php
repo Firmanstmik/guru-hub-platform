@@ -2,7 +2,7 @@
 @section('content')
     <div class="p-6 max-w-4xl mx-auto space-y-6">
 
-        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-3xs">
             <div class="flex gap-3 items-center">
                 <div class="p-3 bg-amber-500 text-white rounded-xl shrink-0 animate-pulse">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,6 +20,7 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+            
             <div class="md:col-span-3 space-y-6">
                 <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-2xs space-y-5">
                     <h2 class="text-sm font-bold text-gray-900 tracking-wide uppercase border-b border-gray-50 pb-3">Metode Transfer Bank Manual</h2>
@@ -100,10 +101,58 @@
                 </div>
             </div>
         </div>
+
+        <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-2xs">
+            <h2 class="text-sm font-bold text-gray-900 tracking-wide uppercase border-b border-gray-50 pb-3 mb-4">Formulir Upload Bukti Transfer</h2>
+            
+            <form action="/payments-class/{{ $booking->transaction_code }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+                @csrf
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kelas Yang Diikuti</label>
+                        <div class="w-full bg-gray-50 border border-gray-200 text-gray-700 rounded-xl p-3 text-sm font-bold flex items-center gap-2">
+                            <span>📖</span> <span class="truncate">{{ $booking->course->title }}</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Tagihan Pembayaran</label>
+                        <div class="w-full bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-xl p-3 text-sm font-mono font-extrabold">
+                            Rp {{ number_format($booking->total_amount, 0, ',', '.') }}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Unggah Gambar Bukti Struk</label>
+                    <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-indigo-500 transition relative bg-gray-50/50 group">
+                        <input type="file" name="payment_proof_path" id="proof_input" accept="image/*" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewImage(this)">
+                        
+                        <div id="upload_placeholder" class="space-y-2 py-4">
+                            <div class="text-3xl group-hover:scale-110 transition duration-150">📸</div>
+                            <p class="text-xs font-semibold text-gray-700">Klik atau seret file gambar struk ke sini</p>
+                            <p class="text-[10px] text-gray-400">Mendukung file JPEG, JPG, atau PNG (Maksimal 2MB)</p>
+                        </div>
+                        
+                        <div id="preview_container" class="hidden space-y-2">
+                            <img id="image_preview" class="max-h-48 mx-auto rounded-lg shadow-md border border-gray-200 object-contain">
+                            <p class="text-[11px] text-indigo-600 font-medium">Klik atau seret kembali untuk mengganti gambar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-2 border-t border-gray-50">
+                    <button type="submit" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-xs">
+                        Kirim Konfirmasi Pembayaran
+                    </button>
+                </div>
+            </form>
+        </div>
+
     </div>
 
     <script>
-        // 1. Salin Berdasarkan ID Elemen HTML
+        // Fungsionalitas Salin Clipboard
         function copyToClipboard(elementId, buttonElement) {
             const textToCopy = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -118,16 +167,33 @@
             });
         }
 
-        // 2. Salin Nilai Angka Murni (Khusus Nominal Angka tanpa 'Rp')
         function copyToClipboardValue(rawValue, buttonElement) {
             navigator.clipboard.writeText(rawValue).then(() => {
                 const originalText = buttonElement.innerText;
                 buttonElement.innerText = 'Tersalin!';
-                
-                setTimeout(() => {
-                    buttonElement.innerText = originalText;
-                }, 2000);
+                setTimeout(() => { buttonElement.innerText = originalText; }, 2000);
             });
+        }
+
+        // Fungsionalitas Live Preview Gambar Struk
+        function previewImage(input) {
+            const preview = document.getElementById('image_preview');
+            const container = document.getElementById('preview_container');
+            const placeholder = document.getElementById('upload_placeholder');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    container.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = "";
+                container.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
         }
     </script>
 @endsection

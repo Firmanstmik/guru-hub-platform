@@ -48,24 +48,24 @@
                             x-transition:leave-end="opacity-0 transform scale-95"
                             class="absolute left-0 mt-2 w-48 rounded-2xl bg-white border border-gray-100 shadow-xl p-2 space-y-0.5 z-50">
 
-                            <a href="/guru/materi"
+                            <a href="materials"
                                 class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Materi</a>
 
-                            <a href="/guru/video"
+                            <a href="videos"
                                 class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Video
                                 Pembelajaran</a>
 
-                            <a href="/guru/jadwal"
+                            <a href="schedules"
                                 class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Jadwal
                                 Kelas</a>
 
-                            <a href="/guru/pendapatan"
+                            <a href="earnings"
                                 class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900 flex justify-between items-center">
                                 <span>Pendapatan</span>
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                             </a>
 
-                            <a href="/guru/sertifikat"
+                            <a href="certificates"
                                 class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Sertifikat</a>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
             </div>
 
             <div class="hidden md:flex items-center space-x-4">
-                <a href="/guru/profil" class="flex items-center space-x-3 border-r border-gray-100 pr-4 group"
+                <a href="/teachers" class="flex items-center space-x-3 border-r border-gray-100 pr-4 group"
                     title="9. Profil Pengajar">
                     <div class="overflow-hidden leading-tight text-right">
                         <h4

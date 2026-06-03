@@ -104,122 +104,150 @@
             </div>
 
             <!-- PANEL KANAN (1/3): Daftar Silabus Materi & Video -->
-            <div class="bg-white border border-gray-100 rounded-2xl p-5 space-y-5 shadow-2xs">
-                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest border-b border-gray-50 pb-3">Silabus
-                    & Modul Belajar</h3>
+            <div class="space-y-5 lg:col-span-1">
 
-                <div class="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+                @if ($isCompleted && $cert)
+                    <div
+                        class="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-5 text-white shadow-xs border border-emerald-500/20 space-y-4">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 bg-white/10 rounded-xl shrink-0 text-emerald-200">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                </svg>
+                            </div>
+                            <div class="space-y-0.5">
+                                <h3 class="text-sm font-black tracking-wide">Selamat, Anda Lulus!</h3>
+                                <p class="text-xs text-emerald-100/90 leading-tight">Anda telah menyelesaikan seluruh
+                                    rangkaian program kelas pelatihan premium ini.</p>
+                            </div>
+                        </div>
 
-                    <!-- Kategori Kelompok: Sesi Video Streaming -->
-                    <div class="space-y-2">
-                        <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block">Video Kuliah
-                            ({{ $course->videos->count() }})</span>
-                        <div class="space-y-1.5">
-                            @forelse($course->videos as $index => $video)
-                                @php $isCurrentVideo = ($activeType === 'video' && $activeItem && $activeItem->id === $video->id); @endphp
-                                <a href="?type=video&id={{ $video->id }}"
-                                    class="flex items-start gap-3 p-3 rounded-xl text-xs transition border {{ $isCurrentVideo ? 'bg-indigo-50/70 border-indigo-200 text-indigo-700 font-bold' : 'bg-gray-50/50 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                                    <span
-                                        class="w-5 h-5 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0 {{ $isCurrentVideo ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500' }}">
-                                        {{ $index + 1 }}
-                                    </span>
-                                    <div class="space-y-0.5 min-w-0">
-                                        <p class="truncate leading-tight">{{ $video->title }}</p>
-                                        {{-- Sebelum: {{ uppercase($video->video_type ?? 'Streaming') }} --}}
-                                        {{-- Perbaikan Menggunakan Helper Laravel Str: --}}
+                        <a href="{{ asset('storage/' . $cert->file_path) }}" target="_blank"
+                            class="w-full py-2.5 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-black rounded-xl text-center transition block shadow-md">
+                            🎓 Unduh Sertifikat Resmi
+                        </a>
+                    </div>
+                @endif
+
+                <div class="bg-white border border-gray-100 rounded-2xl p-5 space-y-5 shadow-2xs">
+                    <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest border-b border-gray-50 pb-3">
+                        Silabus & Modul Belajar</h3>
+
+                    <div class="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+
+                        <div class="space-y-2">
+                            <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block">Video
+                                Kuliah ({{ $course->videos->count() }})</span>
+                            <div class="space-y-1.5">
+                                @forelse($course->videos as $index => $video)
+                                    @php $isCurrentVideo = ($activeType === 'video' && $activeItem && $activeItem->id === $video->id); @endphp
+                                    <a href="?type=video&id={{ $video->id }}"
+                                        class="flex items-start gap-3 p-3 rounded-xl text-xs transition border {{ $isCurrentVideo ? 'bg-indigo-50/70 border-indigo-200 text-indigo-700 font-bold' : 'bg-gray-50/50 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                                         <span
-                                            class="text-[10px] text-gray-400 block font-normal">{{ \Illuminate\Support\Str::upper($video->video_type ?? 'Streaming') }}</span>
-                                    </div>
-                                </a>
-                            @empty
-                                <p class="text-[11px] text-gray-400 italic pl-1">Belum ada rekaman video.</p>
-                            @endforelse
-                        </div>
-                    </div>
-
-                    <!-- Kategori Kelompok: File Ringkasan Materi -->
-                    <div class="space-y-2 pt-2 border-t border-gray-50">
-                        <span class="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider block">Dokumen &
-                            Handout ({{ $course->materials->count() }})</span>
-                        <div class="space-y-1.5">
-                            @forelse($course->materials as $index => $material)
-                                @php $isCurrentMaterial = ($activeType === 'material' && $activeItem && $activeItem->id === $material->id); @endphp
-                                <a href="?type=material&id={{ $material->id }}"
-                                    class="flex items-start gap-3 p-3 rounded-xl text-xs transition border {{ $isCurrentMaterial ? 'bg-emerald-50/70 border-emerald-200 text-emerald-700 font-bold' : 'bg-gray-50/50 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                                    <!-- Icon Dokumen PDF -->
-                                    <svg class="w-4 h-4 shrink-0 mt-0.5 {{ $isCurrentMaterial ? 'text-emerald-600' : 'text-gray-400' }}"
-                                        fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                    </svg>
-                                    <div class="space-y-0.5 min-w-0 flex-1">
-                                        <p class="truncate leading-tight">{{ $material->title }}</p>
-                                        <div class="flex items-center gap-2 text-[10px] text-gray-400 font-normal">
-                                            <span>Baca Online</span>
-                                            <span>•</span>
-                                            <a href="{{ asset('storage/' . $material->file_path) }}" download
-                                                class="text-indigo-600 hover:underline font-medium">Download</a>
+                                            class="w-5 h-5 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0 {{ $isCurrentVideo ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500' }}">
+                                            {{ $index + 1 }}
+                                        </span>
+                                        <div class="space-y-0.5 min-w-0">
+                                            <p class="truncate leading-tight">{{ $video->title }}</p>
+                                            <span
+                                                class="text-[10px] text-gray-400 block font-normal">{{ \Illuminate\Support\Str::upper($video->video_type ?? 'Streaming') }}</span>
                                         </div>
-                                    </div>
-                                </a>
-                            @empty
-                                <p class="text-[11px] text-gray-400 italic pl-1">Belum ada modul PDF.</p>
-                            @endforelse
+                                    </a>
+                                @empty
+                                    <p class="text-[11px] text-gray-400 italic pl-1">Belum ada rekaman video.</p>
+                                @endforelse
+                            </div>
                         </div>
-                    </div>
-                    <div class="space-y-2 pt-2 border-t border-gray-50">
-                        <span class="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider block">Jadwal Live
-                            Class ({{ $course->schedules->count() }})</span>
-                        <div class="space-y-1.5">
-                            @forelse($course->schedules as $schedule)
-                                @php
-                                    $isPassed = $schedule->start_time->isPast();
-                                    $isToday = $schedule->start_time->isToday();
-                                @endphp
-                                <div
-                                    class="p-3 rounded-xl border bg-gray-50/50 {{ $isToday ? 'border-amber-200 bg-amber-50/30' : 'border-transparent' }} space-y-2">
-                                    <div class="flex items-start justify-between gap-2">
-                                        <div class="space-y-0.5">
-                                            <p class="text-xs font-bold text-gray-800 leading-tight">{{ $schedule->name }}
-                                            </p>
-                                            <div class="flex items-center gap-2 text-[10px] text-gray-400">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
-                                                <span>{{ $schedule->start_time->translatedFormat('d M Y, H:i') }} WIB</span>
+
+                        <div class="space-y-2 pt-2 border-t border-gray-50">
+                            <span class="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider block">Dokumen
+                                & Handout ({{ $course->materials->count() }})</span>
+                            <div class="space-y-1.5">
+                                @forelse($course->materials as $index => $material)
+                                    @php $isCurrentMaterial = ($activeType === 'material' && $activeItem && $activeItem->id === $material->id); @endphp
+                                    <div
+                                        class="flex items-start gap-3 p-3 rounded-xl text-xs transition border {{ $isCurrentMaterial ? 'bg-emerald-50/70 border-emerald-200 text-emerald-700 font-bold' : 'bg-gray-50/50 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                        <svg class="w-4 h-4 shrink-0 mt-0.5 {{ $isCurrentMaterial ? 'text-emerald-600' : 'text-gray-400' }}"
+                                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                        </svg>
+                                        <div class="space-y-0.5 min-w-0 flex-1">
+                                            <a href="?type=material&id={{ $material->id }}"
+                                                class="truncate leading-tight block hover:underline">{{ $material->title }}</a>
+                                            <div class="flex items-center gap-2 text-[10px] text-gray-400 font-normal">
+                                                <a href="?type=material&id={{ $material->id }}"
+                                                    class="hover:text-indigo-600">Baca Online</a>
+                                                <span>•</span>
+                                                <a href="{{ asset('storage/' . $material->file_path) }}" download
+                                                    class="text-indigo-600 hover:underline font-medium">Download</a>
                                             </div>
                                         </div>
-                                        @if ($isToday && !$isPassed)
-                                            <span class="flex h-2 w-2">
-                                                <span
-                                                    class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-rose-400 opacity-75"></span>
-                                                <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                                            </span>
+                                    </div>
+                                @empty
+                                    <p class="text-[11px] text-gray-400 italic pl-1">Belum ada modul PDF.</p>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 pt-2 border-t border-gray-50">
+                            <span class="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider block">Jadwal
+                                Live Class ({{ $course->schedules->count() }})</span>
+                            <div class="space-y-1.5">
+                                @forelse($course->schedules as $schedule)
+                                    @php
+                                        $isPassed = $schedule->start_time->isPast();
+                                        $isToday = $schedule->start_time->isToday();
+                                    @endphp
+                                    <div
+                                        class="p-3 rounded-xl border bg-gray-50/50 {{ $isToday ? 'border-amber-200 bg-amber-50/30' : 'border-transparent' }} space-y-2">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <div class="space-y-0.5">
+                                                <p class="text-xs font-bold text-gray-800 leading-tight">
+                                                    {{ $schedule->name }}</p>
+                                                <div class="flex items-center gap-2 text-[10px] text-gray-400">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <span>{{ $schedule->start_time->translatedFormat('d M Y, H:i') }}
+                                                        WIB</span>
+                                                </div>
+                                            </div>
+                                            @if ($isToday && !$isPassed)
+                                                <span class="flex h-2 w-2 relative">
+                                                    <span
+                                                        class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-rose-400 opacity-75"></span>
+                                                    <span
+                                                        class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        @if ($schedule->meeting_link)
+                                            @if ($isPassed)
+                                                <button disabled
+                                                    class="w-full py-1.5 bg-gray-100 text-gray-400 text-[10px] font-bold rounded-lg cursor-not-allowed">Sesi
+                                                    Berakhir</button>
+                                            @else
+                                                <a href="{{ $schedule->meeting_link }}" target="_blank"
+                                                    class="w-full py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold rounded-lg text-center transition block shadow-sm">Gabung
+                                                    Zoom / Meet</a>
+                                            @endif
+                                        @else
+                                            <span class="text-[9px] text-gray-400 italic block">Link belum tersedia</span>
                                         @endif
                                     </div>
-
-                                    @if ($schedule->meeting_link)
-                                        @if ($isPassed)
-                                            <button disabled
-                                                class="w-full py-1.5 bg-gray-100 text-gray-400 text-[10px] font-bold rounded-lg cursor-not-allowed">
-                                                Sesi Berakhir
-                                            </button>
-                                        @else
-                                            <a href="{{ $schedule->meeting_link }}" target="_blank"
-                                                class="w-full py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold rounded-lg text-center transition block shadow-sm">
-                                                Gabung Zoom / Meet
-                                            </a>
-                                        @endif
-                                    @else
-                                        <span class="text-[9px] text-gray-400 italic block">Link belum tersedia</span>
-                                    @endif
-                                </div>
-                            @empty
-                                <p class="text-[11px] text-gray-400 italic pl-1">Belum ada jadwal live.</p>
-                            @endforelse
+                                @empty
+                                    <p class="text-[11px] text-gray-400 italic pl-1">Belum ada jadwal live.</p>
+                                @endforelse
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>

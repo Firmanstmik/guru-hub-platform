@@ -1,54 +1,69 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Controllers\Controller;
 use App\Models\CourseMaterial;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CourseMaterialController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user(); 
+        try {
+            $user = Auth::user();
 
-        // Eager loading data kelas/kursus terkait beserta gurunya
-        $query = CourseMaterial::with(['course.teacher']);
+            // Eager loading data kelas/kursus terkait beserta gurunya
+            $query = CourseMaterial::with(['course.teacher']);
 
-        // PERBAIKAN UTAMA: Saring materi berdasarkan Hak Akses Akun Guru
-        if (!$user->hasRole('admin')) {
-            // Hanya ambil materi yang kelasnya dibuat oleh Guru yang sedang login
-            $query->whereHas('course', function ($q) use ($user) {
-                $q->where('teacher_id', $user->id);
-            });
+            // Saring materi berdasarkan Hak Akses Akun Guru (Menggunakan Spatie)
+            if (!$user->hasRole('admin')) {
+                // Hanya ambil materi yang kelasnya dibuat oleh Guru yang sedang login
+                $query->whereHas('course', function ($q) use ($user) {
+                    $q->where('teacher_id', $user->id);
+                });
+            }
+
+            // Filter berdasarkan kelas/kursus tertentu
+            if ($request->has('course_id') && $request->course_id != '') {
+                $query->where('course_id', $request->course_id);
+            }
+
+            // Fitur Pencarian berdasarkan judul modul/materi
+            if ($request->has('search') && $request->search != '') {
+                $query->where('title', 'like', "%{$request->search}%");
+            }
+
+            $materials = $query->latest()->paginate(10)->withQueryString();
+
+            // Mengambil daftar kelas untuk dropdown filter/modal berdasarkan Role Spatie
+            if ($user->hasRole('admin')) {
+                $courses = Course::where('status', 'published')->orderBy('title')->get();
+            } else {
+                $courses = Course::where('status', 'published')
+                    ->where('teacher_id', $user->id)
+                    ->orderBy('title')
+                    ->get();
+            }
+
+            // Return view sesuai role user
+            if ($user->hasRole('admin')) {
+                return view('admin.course-materials', compact('materials', 'courses'));
+            } elseif ($user->hasRole('guru')) {
+                return view('guru.materials', compact('materials', 'courses'));
+            }
+
+            abort(403, 'Anda tidak memiliki hak akses untuk halaman ini.');
+        } catch (Exception $e) {
+            // Mencatat log error internal untuk kebutuhan debugging sistem
+            Log::error('Gagal memuat halaman materi: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat data materi.');
         }
-
-        // Filter berdasarkan kelas/kursus tertentu
-        if ($request->has('course_id') && $request->course_id != '') {
-            $query->where('course_id', $request->course_id);
-        }
-
-        // Fitur Pencarian berdasarkan judul modul/materi
-        if ($request->has('search') && $request->search != '') {
-            $query->where('title', 'like', "%{$request->search}%");
-        }
-
-        $materials = $query->latest()->paginate(10)->withQueryString();
-        
-        // PERBAIKAN DROPDOWN MODAL TAMBAH: 
-        // Guru tidak boleh memasukkan materi ke kelas milik Guru lain.
-        if ($user->hasRole('admin')) {
-            $courses = Course::where('status', 'published')->orderBy('title')->get();
-        } else {
-            $courses = Course::where('status', 'published')
-                             ->where('teacher_id', $user->id)
-                             ->orderBy('title')
-                             ->get();
-        }
-
-        return view('admin.course-materials', compact('materials', 'courses'));
     }
 
     public function store(Request $request)
@@ -56,18 +71,30 @@ class CourseMaterialController extends Controller
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
             'title'     => 'required|string|max:255',
-            'file'      => 'required|mimes:pdf,doc,docx,ppt,pptx,zip|max:5120', // Maksimal berkas 5MB
+            'file'      => 'required|mimes:pdf,doc,docx,ppt,pptx,zip|max:5120', // Batas 5MB
+        ], [
+            'file.required' => 'Berkas materi wajib diunggah.',
+            'file.mimes'    => 'Format berkas harus berupa pdf, doc, docx, ppt, pptx, atau zip.',
+            'file.max'      => 'Ukuran berkas terlalu besar! Maksimal ukuran yang diperbolehkan adalah 5 MB.',
+            'course_id.required' => 'Kelas/Kursus wajib dipilih.'
         ]);
 
-        if ($request->hasFile('file')) {
-            // Berkas diunggah ke folder penyimpanan private/public terproteksi
-            $path = $request->file('file')->store('courses/materials', 'public');
-            $validated['file_path'] = $path;
+        $uploadedPath = null;
+        try {
+            if ($request->hasFile('file')) {
+                $uploadedPath = $request->file('file')->store('courses/materials', 'public');
+                $validated['file_path'] = $uploadedPath;
+            }
+
+            CourseMaterial::create($validated);
+            return redirect()->back()->with('success', 'Materi pembelajaran baru berhasil diunggah!');
+        } catch (Exception $e) {
+            if ($uploadedPath && Storage::disk('public')->exists($uploadedPath)) {
+                Storage::disk('public')->delete($uploadedPath);
+            }
+            Log::error('Gagal mengunggah materi baru: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mengunggah materi pembelajaran karena masalah sistem.');
         }
-
-        CourseMaterial::create($validated);
-
-        return redirect()->back()->with('success', 'Materi pembelajaran baru berhasil diunggah!');
     }
 
     public function update(Request $request, CourseMaterial $material)
@@ -75,31 +102,61 @@ class CourseMaterialController extends Controller
         $validated = $request->validate([
             'course_id' => 'required|exists:courses,id',
             'title'     => 'required|string|max:255',
+            // PERBAIKAN: Naikkan batasan berkas menjadi 5MB (5120) demi kelancaran update file besar
             'file'      => 'nullable|mimes:pdf,doc,docx,ppt,pptx,zip|max:5120',
+        ], [
+            'file.mimes'    => 'Format dokumen baru tidak didukung. Gunakan format pdf, doc, docx, ppt, pptx, atau zip.',
+            'file.max'      => 'Gagal memperbarui! Ukuran dokumen baru terlalu besar (Maksimal 5 MB).',
+            'title.required' => 'Judul materi tidak boleh dikosongkan.',
+            'course_id.required' => 'Asosiasi kelas/kursus wajib ditentukan.'
         ]);
 
-        if ($request->hasFile('file')) {
-            // Hapus dokumen lama dari storage server jika diganti berkas baru
-            if ($material->file_path && Storage::disk('public')->exists($material->file_path)) {
-                Storage::disk('public')->delete($material->file_path);
+        $newUploadedPath = null;
+        $oldFilePath = $material->file_path;
+
+        try {
+            if ($request->hasFile('file')) {
+                // Upload berkas baru terlebih dahulu
+                $newUploadedPath = $request->file('file')->store('courses/materials', 'public');
+                $validated['file_path'] = $newUploadedPath;
             }
-            $validated['file_path'] = $request->file('file')->store('courses/materials', 'public');
+
+            $material->update($validated);
+
+            // Jika update database sukses dan ada berkas baru, barulah hapus berkas lama dari server
+            if ($request->hasFile('file') && $oldFilePath && Storage::disk('public')->exists($oldFilePath)) {
+                Storage::disk('public')->delete($oldFilePath);
+            }
+
+            return redirect()->back()->with('success', 'Data materi belajar berhasil diperbarui!');
+        } catch (Exception $e) {
+            // Rollback: Hapus berkas baru jika kueri database gagal dieksekusi
+            if ($newUploadedPath && Storage::disk('public')->exists($newUploadedPath)) {
+                Storage::disk('public')->delete($newUploadedPath);
+            }
+
+            Log::error('Gagal memperbarui materi ID ' . $material->id . ': ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui data materi pembelajaran karena kendala sistem.');
         }
-
-        $material->update($validated);
-
-        return redirect()->back()->with('success', 'Data materi belajar berhasil diperbarui!');
     }
 
     public function destroy(CourseMaterial $material)
     {
-        // Hapus berkas fisik dari storage sebelum menghapus baris rekam database
-        if ($material->file_path && Storage::disk('public')->exists($material->file_path)) {
-            Storage::disk('public')->delete($material->file_path);
+        try {
+            $filePath = $material->file_path;
+
+            // Hapus rekam data di database terlebih dahulu
+            $material->delete();
+
+            // Jika hapus data sukses, barulah hapus fisik berkas dari storage server
+            if ($filePath && Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+
+            return redirect()->back()->with('with', 'Berkas materi berhasil dihapus dari sistem!');
+        } catch (Exception $e) {
+            Log::error('Gagal menghapus materi ID ' . $material->id . ': ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus berkas materi dari sistem.');
         }
-
-        $material->delete();
-
-        return redirect()->back()->with('success', 'Berkas materi berhasil dihapus dari sistem!');
     }
 }

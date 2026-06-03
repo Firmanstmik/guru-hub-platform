@@ -3,17 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class StudentCourseController extends Controller
 {
+    /**
+     * KATALOG KELAS (Siswa)
+     */
     public function index(Request $request)
     {
-        // 1. Eager loading data guru pengajar dan kategori, serta menghitung jumlah siswa dan materi untuk setiap kelas
-        {
+        try {
+            // 1. Eager loading data guru pengajar dan kategori, serta menghitung jumlah siswa dan materi
             $query = Course::with(['teacher', 'category'])
                 ->withCount(['students', 'materials'])
                 ->where('status', 'published');
@@ -23,9 +30,7 @@ class StudentCourseController extends Controller
                 $search = $request->search;
 
                 $query->where(function ($q) use ($search) {
-                    // Cari berdasarkan judul kelas
                     $q->where('title', 'like', "%{$search}%")
-                        // ATAU cari berdasarkan nama guru pengajarnya
                         ->orWhereHas('teacher', function ($teacherQuery) use ($search) {
                             $teacherQuery->where('name', 'like', "%{$search}%");
                         });
@@ -40,108 +45,111 @@ class StudentCourseController extends Controller
             // 4. Eksekusi query dengan pagination agar halaman tidak berat
             $courses = $query->latest()->paginate(9)->withQueryString();
 
-            // 5. Data pendukung untuk mengisi opsi list dropdown filter Guru
+            // 5. Data pendukung untuk mengisi opsi list dropdown filter Guru (Spatie Peran)
             $teachers = User::role('guru')->where('is_active', true)->orderBy('name')->get();
 
             return view('student.catalog', compact('courses', 'teachers'));
+
+        } catch (Exception $e) {
+            Log::error('Gagal memuat katalog kelas siswa: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat katalog kelas.');
         }
     }
 
+    /**
+     * KELASKU / KELAS SAYA (Siswa)
+     */
     public function myCourse()
     {
-        $student = Auth::user();
+        try {
+            $student = Auth::user();
 
-        // 1. Ambil Kelas yang sedang AKTIF (Sudah dibayar dan siap dipelajari)
-        $activeCourses = Booking::with(['course.teacher', 'course.category'])
-            ->where('student_id', $student->id)
-            ->where('status', 'success') // Menandakan pembayaran valid & kelas aktif
-            ->latest()
-            ->get();
+            // 1. Ambil Kelas yang sedang AKTIF (Sudah dibayar dan siap dipelajari)
+            $activeCourses = Booking::with(['course.teacher', 'course.category'])
+                ->where('student_id', $student->id)
+                ->where('status', 'success')
+                ->latest()
+                ->get();
 
-        $completedCourses = Booking::with(['course.teacher', 'course.category'])
-            ->where('student_id', $student->id)
-            ->where('status', 'completed') // Misal: Status dirubah admin menjadi completed jika siswa lulus
-            ->latest()
-            ->get();
+            // 2. Ambil Kelas yang sudah selesai / lulus
+            $completedCourses = Booking::with(['course.teacher', 'course.category'])
+                ->where('student_id', $student->id)
+                ->where('status', 'completed')
+                ->latest()
+                ->get();
 
-        return view('student.my-courses', compact('activeCourses', 'completedCourses'));
+            return view('student.my-courses', compact('activeCourses', 'completedCourses'));
+
+        } catch (Exception $e) {
+            Log::error('Gagal memuat kelas saya (myCourse): ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat daftar kelas Anda.');
+        }
     }
-
-    // public function roomLearn(Request $request, $course_id)
-    // {
-    //     $userId = Auth::id();
-
-    //     // 1. GATEKEEPER: Pastikan siswa terdaftar secara sah dan status pembelian sudah aktif
-    //     $hasAccess = Booking::where('student_id', $userId)
-    //         ->where('course_id', $course_id)
-    //         ->whereIn('status', ['success', 'completed'])
-    //         ->exists();
-
-    //     if (!$hasAccess) {
-    //         return redirect()->route('student.courses')
-    //             ->with('error', 'Akses ditolak. Anda belum terdaftar di kelas premium ini.');
-    //     }
-
-    //     // 2. Ambil data Course beserta semua Video dan Materi pendukungnya
-    //     $course = Course::with(['videos', 'materials'])->findOrFail($course_id);
-
-    //     // 3. Logika penentuan item aktif yang sedang diputar/dilihat oleh siswa
-    //     $activeType = $request->query('type', 'video'); // default: video
-    //     $activeId = $request->query('id');
-
-    //     $activeItem = null;
-
-    //     if ($activeType === 'material') {
-    //         // Jika memilih materi PDF
-    //         $activeItem = $course->materials->firstWhere('id', $activeId) ?? $course->materials->first();
-    //     } else {
-    //         // Jika memilih video (atau default saat pertama kali buka halaman)
-    //         $activeItem = $course->videos->firstWhere('id', $activeId) ?? $course->videos->first();
-    //         $activeType = 'video'; // Sinkronisasi tipe jika fallback ke video pertama
-    //     }
-
-    //     return view('student.room-learn', compact('course', 'activeItem', 'activeType'));
-    // }
-
+    
+    /**
+     * RUANG BELAJAR (Siswa)
+     */
     public function roomLearn(Request $request, $course_id)
     {
-        $userId = Auth::id();
+        try {
+            $userId = Auth::id();
 
-        // 1. GATEKEEPER: Pastikan siswa terdaftar secara sah
-        $hasAccess = Booking::where('student_id', $userId)
-            ->where('course_id', $course_id)
-            ->whereIn('status', ['success', 'completed'])
-            ->exists();
+            // 1. GATEKEEPER: Pastikan siswa terdaftar secara sah
+            $hasAccess = Booking::where('student_id', $userId)
+                ->where('course_id', $course_id)
+                ->whereIn('status', ['success', 'completed'])
+                ->exists();
 
-        if (!$hasAccess) {
-            return redirect()->route('student.courses')
-                ->with('error', 'Akses ditolak. Anda belum terdaftar di kelas premium ini.');
+            if (!$hasAccess) {
+                return redirect()->route('student.courses') // Menyesuaikan nama rute katalog Anda
+                    ->with('error', 'Akses ditolak. Anda belum terdaftar atau belum menyelesaikan pembayaran di kelas premium ini.');
+            }
+
+            // --- LOGIKA: Cek Status Kelulusan Murid dari tabel course_students ---
+            $studentCourse = DB::table('course_students')
+                ->where('student_id', $userId)
+                ->where('course_id', $course_id)
+                ->first();
+
+            // Nilai boolean true jika baris data ditemukan dan status bernilai 'completed'
+            $isCompleted = $studentCourse && $studentCourse->status === 'completed';
+
+            // --- AMBIL DATA SERTIFIKAT: Diambil jika siswa sudah lulus ---
+            $cert = null;
+            if ($isCompleted) {
+                $cert = Certificate::where('student_id', $userId)
+                    ->where('course_id', $course_id)
+                    ->first();
+            }
+
+            // 2. Ambil data Course beserta Video, Materi, DAN Jadwal Meeting (schedules)
+            $course = Course::with(['videos', 'materials', 'schedules' => function ($query) {
+                $query->orderBy('start_time', 'asc');
+            }])->findOrFail($course_id);
+
+            // 3. Ambil data booking siswa untuk melihat jika ada schedule_id spesifik
+            $userBooking = Booking::with('schedule')
+                ->where('student_id', $userId)
+                ->where('course_id', $course_id)
+                ->first();
+
+            // 4. Logika penentuan item aktif (Video / Materi)
+            $activeType = $request->query('type', 'video');
+            $activeId = $request->query('id');
+            $activeItem = null;
+
+            if ($activeType === 'material') {
+                $activeItem = $course->materials->firstWhere('id', $activeId) ?? $course->materials->first();
+            } else {
+                $activeItem = $course->videos->firstWhere('id', $activeId) ?? $course->videos->first();
+                $activeType = 'video';
+            }
+
+            return view('student.room-learn', compact('course', 'activeItem', 'activeType', 'userBooking', 'isCompleted', 'cert'));
+
+        } catch (Exception $e) {
+            Log::error('Gagal mengakses ruang belajar kelas ID ' . $course_id . ': ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memuat ruang belajar karena terjadi kendala internal pada sistem.');
         }
-
-        // 2. Ambil data Course beserta Video, Materi, DAN Jadwal Meeting (schedules)
-        // Pastikan model Course memiliki relasi 'schedules'
-        $course = Course::with(['videos', 'materials', 'schedules' => function ($query) {
-            $query->orderBy('start_time', 'asc');
-        }])->findOrFail($course_id);
-
-        // 3. Ambil data booking siswa untuk melihat jika ada schedule_id spesifik (opsional)
-        $userBooking = Booking::with('schedule')
-            ->where('student_id', $userId)
-            ->where('course_id', $course_id)
-            ->first();
-
-        // 4. Logika penentuan item aktif
-        $activeType = $request->query('type', 'video');
-        $activeId = $request->query('id');
-        $activeItem = null;
-
-        if ($activeType === 'material') {
-            $activeItem = $course->materials->firstWhere('id', $activeId) ?? $course->materials->first();
-        } else {
-            $activeItem = $course->videos->firstWhere('id', $activeId) ?? $course->videos->first();
-            $activeType = 'video';
-        }
-
-        return view('student.room-learn', compact('course', 'activeItem', 'activeType', 'userBooking'));
     }
 }

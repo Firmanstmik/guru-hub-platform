@@ -8,68 +8,111 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Exception;
 
 class BookingController extends Controller
 {
+    /**
+     * INDEX (Admin)
+     */
     public function index(Request $request)
     {
-        // Query dasar dengan Eager Loading bertingkat agar hemat database query
-        $query = Booking::with([
-            'student',
-            'schedule.course.teacher'
-        ]);
+        try {
+            // Query dasar dengan Eager Loading bertingkat agar hemat database query
+            $query = Booking::with([
+                'student',
+                'schedule.course.teacher'
+            ]);
 
-        // Fitur Filter Status (Jika admin ingin menyaring data tertentu)
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+            // Fitur Filter Status (Jika admin ingin menyaring data tertentu)
+            if ($request->has('status') && $request->status != '') {
+                $query->where('status', $request->status);
+            }
+
+            $bookings = $query->latest()->paginate(10)->withQueryString();
+
+            return view('admin.bookings', compact('bookings'));
+
+        } catch (Exception $e) {
+            Log::error('Gagal memuat halaman index booking: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat data booking.');
         }
-
-        $bookings = $query->latest()->paginate(10)->withQueryString();
-
-        return view('admin.bookings', compact('bookings'));
     }
 
+    /**
+     * UPDATE STATUS (Admin)
+     */
     public function update(Request $request, Booking $booking)
     {
+        // Validasi dengan custom pesan Bahasa Indonesia
         $validated = $request->validate([
-            'status' => 'required|in:booked,attended,absent,cancelled',
+            'status' => 'required|in:pending,success,failed,expired,cancelled',
+        ], [
+            'status.required' => 'Status booking wajib ditentukan.',
+            'status.in'       => 'Pilihan status booking tidak sesuai dengan ketentuan sistem.'
         ]);
 
-        $booking->update($validated);
+        try {
+            $booking->update($validated);
 
-        // Opsional: Integrasi notifikasi WhatsApp ke Siswa/Guru bisa dipicu di sini
+            // Opsional: Integrasi notifikasi WhatsApp ke Siswa/Guru bisa dipicu di sini
 
-        return redirect()->back()->with('success', 'Status booking berhasil diperbarui!');
+            return redirect()->back()->with('success', 'Status booking berhasil diperbarui!');
+
+        } catch (Exception $e) {
+            Log::error('Gagal memperbarui status booking ID ' . $booking->id . ': ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui status booking karena kendala sistem.');
+        }
     }
 
+    /**
+     * DESTROY (Admin)
+     */
     public function destroy(Booking $booking)
     {
-        $booking->delete();
-        return redirect()->back()->with('success', 'Data booking berhasil dihapus dari sistem!');
+        try {
+            $booking->delete();
+            return redirect()->back()->with('success', 'Data booking berhasil dihapus dari sistem!');
+
+        } catch (Exception $e) {
+            Log::error('Gagal menghapus data booking ID ' . $booking->id . ': ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus data booking karena kendala database.');
+        }
     }
 
-    // untuk siswa
+    /**
+     * CREATE FORM (Siswa)
+     */
     public function create(Request $request)
     {
-        // Ambil data siswa yang sedang login
-        $student = Auth::user();
+        try {
+            // Ambil data siswa yang sedang login
+            $student = Auth::user();
 
-        // Ambil semua daftar kelas aktif untuk opsi dropdown manual
-        $courses = Course::with('teacher')
-            ->where('status', 'published')
-            ->orderBy('title')
-            ->get();
+            // Ambil semua daftar kelas aktif untuk opsi dropdown manual
+            $courses = Course::with('teacher')
+                ->where('status', 'published')
+                ->orderBy('title')
+                ->get();
 
-        return view('student.booking-form', compact('courses', 'student'));
+            return view('student.booking-form', compact('courses', 'student'));
+
+        } catch (Exception $e) {
+            Log::error('Gagal memuat formulir booking siswa: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat menyiapkan formulir pendaftaran.');
+        }
     }
 
+    /**
+     * STORE TRANSAKSI (Siswa)
+     */
     public function store(Request $request)
     {
-        /** @var \App\Models\User $student */
         $student = Auth::user();
 
-        // 1. Validasi input dari formulir
+        // 1. Validasi input dari formulir dengan custom pesan Bahasa Indonesia
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'note'      => 'nullable|string|max:500',
@@ -79,31 +122,32 @@ class BookingController extends Controller
             'note.max'           => 'Catatan tambahan tidak boleh lebih dari 500 karakter.',
         ]);
 
-        // 2. Ambil data kelas
-        $course = Course::findOrFail($request->course_id);
-
-        // 3. PROTEKSI: Cek tagihan tertunda
-        $isAlreadyBooked = Booking::where('student_id', $student->id)
-            ->where('course_id', $course->id)
-            ->where('status', 'pending')
-            ->exists();
-
-        if ($isAlreadyBooked) {
-            return back()->withInput()->with('error', 'Anda memiliki tagihan aktif untuk kelas ini yang belum dibayar. Silakan cek riwayat transaksi Anda.');
-        }
-
-        // 4. GENERATE NOMOR TRANSAKSI UNIK
-        $transactionCode = 'BKG-' . date('Ymd') . '-' . strtoupper(Str::random(5));
-
-        // 5. Simpan ke Database dengan Database Transaction
-        DB::beginTransaction();
         try {
-            $booking = Booking::create([
+            // 2. Ambil data kelas
+            $course = Course::findOrFail($request->course_id);
+
+            // 3. PROTEKSI: Cek tagihan tertunda
+            $isAlreadyBooked = Booking::where('student_id', $student->id)
+                ->where('course_id', $course->id)
+                ->where('status', 'pending')
+                ->exists();
+
+            if ($isAlreadyBooked) {
+                return back()->withInput()->with('error', 'Anda memiliki tagihan aktif untuk kelas ini yang belum dibayar. Silakan cek riwayat transaksi Anda.');
+            }
+
+            // 4. GENERATE NOMOR TRANSAKSI UNIK
+            $transactionCode = 'BKG-' . date('Ymd') . '-' . strtoupper(Str::random(5));
+
+            // 5. Simpan ke Database dengan Database Transaction
+            DB::beginTransaction();
+
+            Booking::create([
                 'transaction_code' => $transactionCode,
                 'student_id'       => $student->id,
                 'course_id'        => $course->id,
                 'total_amount'     => $course->price,
-                'status'           => 'pending', 
+                'status'           => 'pending',
                 'note'             => $request->note,
             ]);
 
@@ -112,24 +156,34 @@ class BookingController extends Controller
             // 6. REDIRECT: Menuju halaman daftar riwayat pesanan siswa
             return redirect()->intended('/history-bookings')
                 ->with('success', 'Booking berhasil dibuat dengan kode ' . $transactionCode . '. Silakan cek detail atau konfirmasi pembayaran Anda.');
-                
-        } catch (\Exception $e) {
+
+        } catch (Exception $e) {
             DB::rollBack();
+
+            // Amankan dari Information Disclosure dengan mencatat pesan error SQL ke log internal
+            Log::error('Gagal memproses pendaftaran kelas oleh siswa: ' . $e->getMessage());
             
-            // Mengembalikan pesan error database asli (SQL Error) jika penyimpanan gagal agar mudah di-debug
-            return back()->withInput()->with('error', 'Gagal memproses transaksi: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal memproses pendaftaran kelas karena terjadi kendala internal pada sistem.');
         }
     }
+
+    /**
+     * RIWAYAT BOOKING (Siswa)
+     */
     public function showHistory()
     {
-        $student = Auth::user();
+        try {
+            // Mengambil semua data transaksi booking beserta data pembayaran manualnya
+            $bookings = Booking::with(['course.category', 'course.teacher', 'payment'])
+                ->where('student_id', Auth::id())
+                ->latest()
+                ->paginate(10);
 
-        // Ambil riwayat transaksi milik siswa yang sedang login beserta relasi data kelas & metornya
-        $bookings = Booking::with(['course.teacher', 'course.category'])
-            ->where('student_id', $student->id)
-            ->latest() // Mengurutkan dari transaksi terbaru (created_at)
-            ->paginate(10); // Menggunakan pagination jika data sudah banyak
+            return view('student.history-bookings', compact('bookings'));
 
-        return view('student.history-bookings', compact('bookings'));
+        } catch (Exception $e) {
+            Log::error('Gagal memuat riwayat booking siswa: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat halaman riwayat pendaftaran.');
+        }
     }
 }
