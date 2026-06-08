@@ -34,32 +34,63 @@
             <!-- PANEL KIRI (2/3): Player Video atau Preview Dokumen -->
             <div class="lg:col-span-2 space-y-4">
                 @if ($activeItem)
-                    <!-- Frame Konten Utama -->
                     <div
                         class="bg-black rounded-2xl overflow-hidden shadow-sm border border-gray-100 aspect-video relative">
                         @if ($activeType === 'video')
-                            {{-- Deteksi otomatis jika menggunakan Youtube embed --}}
-                            @if (str_contains($activeItem->video_url, 'youtube.com') || str_contains($activeItem->video_url, 'youtu.be'))
+                            @php
+                                $url = $activeItem->video_url;
+                                $isYoutube = str_contains($url, 'youtube.com') || str_contains($url, 'youtu.be');
+
+                                // Deteksi ekstensi video murni untuk file lokal storage atau direct URL
+                                $isDirectVideo = false;
+                                foreach (['.mp4', '.webm', '.mov', '.avi'] as $ext) {
+                                    if (str_contains(strtolower($url), $ext)) {
+                                        $isDirectVideo = true;
+                                        break;
+                                    }
+                                }
+
+                                // Tentukan path asset: jika berupa URL penuh (http) pakai langsung, jika path lokal arahkan ke storage
+                                $videoSource =
+                                    str_starts_with($url, 'http://') || str_starts_with($url, 'https://')
+                                        ? $url
+                                        : asset('storage/' . $url);
+                            @endphp
+
+                            {{-- 1. Kondisi Pemutar YouTube Embed --}}
+                            @if ($isYoutube)
                                 @php
-                                    // Ekstraksi ID video youtube sederhana
-                                    preg_match(
-                                        '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|[^/]+\?v=)|youtu\.be/)([^"&?/\s]{11})%i',
-                                        $activeItem->video_url,
-                                        $match,
-                                    );
-                                    $youtubeId = $match[1] ?? '';
+                                    $youtubeId = '';
+                                    if (str_contains($url, 'youtu.be/')) {
+                                        $parts = explode('youtu.be/', $url);
+                                        $youtubeId = explode('?', explode('#', $parts[1])[0])[0];
+                                    } elseif (str_contains($url, 'v=')) {
+                                        $parts = explode('v=', $url);
+                                        $youtubeId = explode('&', $parts[1])[0];
+                                    } elseif (str_contains($url, 'embed/')) {
+                                        $parts = explode('embed/', $url);
+                                        $youtubeId = explode('?', explode('#', $parts[1])[0])[0];
+                                    }
                                 @endphp
                                 <iframe class="w-full h-full"
                                     src="https://www.youtube.com/embed/{{ $youtubeId }}?rel=0&autoplay=1"
                                     title="{{ $activeItem->title }}" frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen></iframe>
-                            @else
-                                {{-- Fallback untuk file video langsung (HTML5 Video Player) --}}
-                                <video class="w-full h-full" controls autoplay controlsList="nodownload">
-                                    <source src="{{ asset('storage/' . $activeItem->video_url) }}" type="video/mp4">
+
+                                {{-- 2. Kondisi Pemutar Video Fisik (HTML5 Player) Baik dari Storage Lokal maupun CDN Eksternal --}}
+                            @elseif ($isDirectVideo)
+                                <video class="w-full h-full object-contain focus:outline-none" controls autoplay
+                                    controlsList="nodownload">
+                                    <source src="{{ $videoSource }}" type="video/mp4">
+                                    <source src="{{ $videoSource }}" type="video/webm">
                                     Browser Anda tidak mendukung pemutar video HTML5.
                                 </video>
+
+                                {{-- 3. Kondisi Fallback: Tautan Iframe Alternatif (Misal: Google Drive Embed atau Link Streaming Lain) --}}
+                            @else
+                                <iframe class="w-full h-full" src="{{ $url }}" frameborder="0" allow="autoplay"
+                                    allowfullscreen></iframe>
                             @endif
                         @elseif($activeType === 'material')
                             {{-- Viewer PDF Menggunakan Embed Canvas Browser --}}
@@ -69,7 +100,6 @@
                         @endif
                     </div>
 
-                    <!-- Detail Deskripsi Item yang Sedang Aktif -->
                     <div class="bg-white border border-gray-100 rounded-2xl p-5 space-y-2">
                         <div class="flex items-center gap-2">
                             <span
@@ -85,7 +115,6 @@
                         </p>
                     </div>
                 @else
-                    <!-- State Jika Kelas Belum Memiliki Konten Apapun -->
                     <div class="bg-white border border-gray-100 rounded-2xl p-12 text-center space-y-3">
                         <div
                             class="w-12 h-12 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto">

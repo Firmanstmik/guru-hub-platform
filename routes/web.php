@@ -13,8 +13,10 @@ use App\Http\Controllers\CourseVideoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StudentBiodataController;
 use App\Http\Controllers\TeacherEarningController;
 use App\Http\Controllers\TeacherProfileController;
 use App\Http\Controllers\UserController;
@@ -22,9 +24,22 @@ use App\Http\Controllers\UserManajemenController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 
+// PUBLIC ROUTES
 Route::get('/', function () {
-    return view('welcome');
+    return view('landingpage.home');
 });
+Route::get('/login', [AuthController::class, 'viewLogin']);
+Route::post('/login', [AuthController::class, 'Login'])->name('login');
+Route::get('/logout', [AuthController::class, 'Logout'])->middleware('auth')->name('logout');
+
+Route::prefix('register')->group(function () {
+    Route::get('/student', [RegisterController::class, 'siswaRegister']);
+    Route::post('/student', [RegisterController::class, 'storeSiswaRegister']);
+    Route::get('/teacher', [RegisterController::class, 'guruRegister']);
+    Route::post('/teacher', [RegisterController::class, 'storeGuruRegister']);
+});
+
+// PRIVATE ROUTES FOR ADMIN
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Role
     Route::resource('roles', RoleController::class);
@@ -47,6 +62,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/akses', [AksesController::class, 'index'])->name('akses.index');
 });
 
+Route::get('/biodata', [StudentBiodataController::class, 'siswaForm']);
 
 // ==========================================
 // 1. Courses (Index, Store, Update, Destroy)
@@ -143,8 +159,3 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // Route::get('earnings', [TeacherEarningController::class, 'index']);
 // Route::patch('earnings/{earning}/status', [TeacherEarningController::class, 'updateStatus']);
 
-
-
-Route::get('/login', [AuthController::class, 'viewLogin']);
-Route::post('/login', [AuthController::class, 'Login'])->name('login');
-Route::get('/logout', [AuthController::class, 'Logout'])->middleware('auth')->name('logout');

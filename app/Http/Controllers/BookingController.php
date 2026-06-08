@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\CompanyAccount;
 use App\Models\Course;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +36,6 @@ class BookingController extends Controller
             $bookings = $query->latest()->paginate(10)->withQueryString();
 
             return view('admin.bookings', compact('bookings'));
-
         } catch (Exception $e) {
             Log::error('Gagal memuat halaman index booking: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat data booking.');
@@ -60,7 +61,6 @@ class BookingController extends Controller
             // Opsional: Integrasi notifikasi WhatsApp ke Siswa/Guru bisa dipicu di sini
 
             return redirect()->back()->with('success', 'Status booking berhasil diperbarui!');
-
         } catch (Exception $e) {
             Log::error('Gagal memperbarui status booking ID ' . $booking->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal memperbarui status booking karena kendala sistem.');
@@ -75,7 +75,6 @@ class BookingController extends Controller
         try {
             $booking->delete();
             return redirect()->back()->with('success', 'Data booking berhasil dihapus dari sistem!');
-
         } catch (Exception $e) {
             Log::error('Gagal menghapus data booking ID ' . $booking->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus data booking karena kendala database.');
@@ -96,9 +95,9 @@ class BookingController extends Controller
                 ->where('status', 'published')
                 ->orderBy('title')
                 ->get();
+            $banks = CompanyAccount::where('is_active', true)->get();
 
-            return view('student.booking-form', compact('courses', 'student'));
-
+            return view('student.booking-form', compact('courses', 'student', 'banks'));
         } catch (Exception $e) {
             Log::error('Gagal memuat formulir booking siswa: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat menyiapkan formulir pendaftaran.');
@@ -156,13 +155,12 @@ class BookingController extends Controller
             // 6. REDIRECT: Menuju halaman daftar riwayat pesanan siswa
             return redirect()->intended('/history-bookings')
                 ->with('success', 'Booking berhasil dibuat dengan kode ' . $transactionCode . '. Silakan cek detail atau konfirmasi pembayaran Anda.');
-
         } catch (Exception $e) {
             DB::rollBack();
 
             // Amankan dari Information Disclosure dengan mencatat pesan error SQL ke log internal
             Log::error('Gagal memproses pendaftaran kelas oleh siswa: ' . $e->getMessage());
-            
+
             return back()->withInput()->with('error', 'Gagal memproses pendaftaran kelas karena terjadi kendala internal pada sistem.');
         }
     }
@@ -173,14 +171,18 @@ class BookingController extends Controller
     public function showHistory()
     {
         try {
-            // Mengambil semua data transaksi booking beserta data pembayaran manualnya
-            $bookings = Booking::with(['course.category', 'course.teacher', 'payment'])
+            $bookings = Booking::with([
+                'course.category',
+                'course.teacher',
+                'payment' => function ($query) {
+                    $query->where('student_id', Auth::id());
+                }
+            ])
                 ->where('student_id', Auth::id())
                 ->latest()
-                ->paginate(10);
-
-            return view('student.history-bookings', compact('bookings'));
-
+                ->paginate(10); // jika data sudah banyak
+            // dd($bookings);
+            return view('student.history-bookings', compact('bookings')); // Variabel $payments sudah tidak diperlukan lagi
         } catch (Exception $e) {
             Log::error('Gagal memuat riwayat booking siswa: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat halaman riwayat pendaftaran.');

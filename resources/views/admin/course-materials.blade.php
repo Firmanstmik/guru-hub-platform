@@ -33,72 +33,71 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden border border-gray-100">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-left">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Judul Materi / Modul</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Terikat di Kelas</th>
-                            {{-- Sembunyikan kolom Guru Pengajar jika yang login adalah Guru --}}
-                            @role('admin')
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Guru Pengajar</th>
-                            @endrole
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Dokumen File</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100 text-sm">
-                        @forelse($materials as $mat)
-                            <tr class="hover:bg-gray-50 transition duration-150">
-                                <td class="px-6 py-4 font-semibold text-gray-900">
-                                    {{ $mat->title }}
-                                </td>
-                                <td class="px-6 py-4 text-gray-700 font-medium">
-                                    {{ $mat->course->title ?? 'Kelas Tidak Ditemukan' }}
-                                </td>
-                                @role('admin')
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-                                        {{ $mat->course->teacher->name ?? 'Tidak Ada Guru' }}
-                                    </td>
-                                @endrole
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ asset('storage/' . $mat->file_path) }}" target="_blank"
-                                        class="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md hover:bg-indigo-100 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5l4 4v13a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Lihat / Unduh Dokumen
-                                    </a>
-                                </td>
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-right font-medium flex justify-end gap-3 mt-0.5">
-                                    {{-- PERBAIKAN SINTAKS JS: Menggunakan JSON safe attribute --}}
-                                    <button data-material='@json($mat)' onclick="handleOpenEditModal(this)"
-                                        class="text-amber-600 hover:text-amber-900">Edit</button>
 
-                                    <form action="/materials/{{ $mat->id }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus permanen berkas materi belajar ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-rose-600 hover:text-rose-900">Hapus</button>
-                                    </form>
+        <div class="w-full overflow-x-auto rounded-2xl border border-slate-200 shadow-xs bg-white">
+            <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Judul Materi / Modul</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Terikat di Kelas</th>
+                        {{-- Sembunyikan kolom Guru Pengajar jika yang login adalah Guru --}}
+                        @role('admin')
+                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Guru Pengajar</th>
+                        @endrole
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Dokumen File</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100 text-sm">
+                    @forelse($materials as $mat)
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4 font-semibold text-gray-900">
+                                {{ $mat->title }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-700 font-medium">
+                                {{ $mat->course->title ?? 'Kelas Tidak Ditemukan' }}
+                            </td>
+                            @role('admin')
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                                    {{ $mat->course->teacher->name ?? 'Tidak Ada Guru' }}
                                 </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ auth()->user()->hasRole('admin') ? '5' : '4' }}"
-                                    class="px-6 py-12 text-center text-gray-500">Tidak ada berkas materi pembelajaran
-                                    ditemukan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                {{ $materials->links() }}
-            </div>
+                            @endrole
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <button type="button"
+                                    onclick="openDocumentModal('{{ asset('storage/' . $mat->file_path) }}', '{{ $mat->title ?? 'Dokumen Materi' }}')"
+                                    class="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md hover:bg-indigo-100 transition focus:outline-none">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5l4 4v13a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Lihat Dokumen
+                                </button>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right font-medium flex justify-end gap-3 mt-0.5">
+                                {{-- PERBAIKAN SINTAKS JS: Menggunakan JSON safe attribute --}}
+                                <button data-material='@json($mat)' onclick="handleOpenEditModal(this)"
+                                    class="text-amber-600 hover:text-amber-900">Edit</button>
+
+                                <form action="/materials/{{ $mat->id }}" method="POST"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus permanen berkas materi belajar ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-rose-600 hover:text-rose-900">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="{{ auth()->user()->hasRole('admin') ? '5' : '4' }}"
+                                class="px-6 py-12 text-center text-gray-500">Tidak ada berkas materi pembelajaran
+                                ditemukan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+            {{ $materials->links() }}
         </div>
     </div>
 
@@ -202,6 +201,53 @@
         </div>
     </div>
 
+    <div id="documentPreviewModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="fixed inset-0 transition-opacity" onclick="closeDocumentModal()">
+            <div class="absolute inset-0 bg-gray-600 opacity-75 backdrop-blur-sm"></div>
+        </div>
+
+        <div class="flex items-center justify-center min-h-screen p-4 sm:p-6">
+            <div
+                class="relative bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all max-w-5xl w-full border border-gray-200 flex flex-col h-[85vh]">
+
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l4 4v13a2 2 0 01-2 2z" />
+                        </svg>
+                        <h3 id="documentModalTitle"
+                            class="text-sm font-semibold text-gray-900 truncate max-w-md sm:max-w-xl">Memuat Dokumen...
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a id="documentDownloadBtn" href="#" target="_blank" download
+                            class="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-md hover:bg-emerald-100 transition">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Unduh File
+                        </a>
+                        <button type="button" onclick="closeDocumentModal()"
+                            class="text-gray-400 hover:text-gray-600 transition focus:outline-none">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grow w-full bg-gray-100 relative">
+                    <div id="documentContainer" class="w-full h-full">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script>
         function toggleModal(modalId) {
             document.getElementById(modalId).classList.toggle('hidden');
@@ -222,5 +268,74 @@
 
             toggleModal('editMaterialModal');
         }
+
+        function openDocumentModal(fileUrl, title) {
+            const modal = document.getElementById('documentPreviewModal');
+            const modalTitle = document.getElementById('documentModalTitle');
+            const container = document.getElementById('documentContainer');
+            const downloadBtn = document.getElementById('documentDownloadBtn');
+
+            // Set Judul & Link Download Asli
+            modalTitle.textContent = title;
+            downloadBtn.href = fileUrl;
+
+            // Kosongkan kontainer lama
+            container.innerHTML = '';
+
+            // Ambil ekstensi berkas secara lowercase
+            const extension = fileUrl.split('.').pop().toLowerCase();
+
+            let htmlContent = '';
+
+            // Kasus 1: Berkas PDF (Dapat ditampilkan secara native di browser modern)
+            if (extension === 'pdf') {
+                htmlContent =
+                    `<iframe src="${fileUrl}#toolbar=0" class="w-full h-full border-0" allow="autoplay"></iframe>`;
+            }
+            // Kasus 2: Gambar/Foto Materi (PNG, JPG, JPEG, WEBP, GIF)
+            else if (['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(extension)) {
+                htmlContent = `
+            <div class="w-full h-full flex items-center justify-center p-4 overflow-auto">
+                <img src="${fileUrl}" alt="${title}" class="max-w-full max-h-full object-contain rounded shadow-md bg-white">
+            </div>
+        `;
+            }
+            // Kasus 3: File dokumen kantor (Docx, Xlsx, Pptx) yang membutuhkan Google Docs Viewer agar tidak terunduh paksa
+            else if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(extension)) {
+                // Menggunakan Google Docs Embedded Viewer
+                const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                htmlContent = `<iframe src="${googleViewerUrl}" class="w-full h-full border-0"></iframe>`;
+            }
+            // Kasus Alternatif lainnya
+            else {
+                htmlContent = `<iframe src="${fileUrl}" class="w-full h-full border-0"></iframe>`;
+            }
+
+            // Suntikkan komponen render ke kontainer modal
+            container.innerHTML = htmlContent;
+
+            // Tampilkan modal ke view browser
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Kunci scroll halaman utama
+        }
+
+        function closeDocumentModal() {
+            const modal = document.getElementById('documentPreviewModal');
+            const container = document.getElementById('documentContainer');
+
+            // Sembunyikan Modal
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Aktifkan kembali scroll halaman utama
+
+            // Hancurkan iframe/content di dalam agar memory clear dan proses network berhenti
+            container.innerHTML = '';
+        }
+
+        // Menutup modal otomatis jika menekan tombol 'Esc' di keyboard
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDocumentModal();
+            }
+        });
     </script>
 @endsection

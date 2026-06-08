@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\CompanyAccount;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -31,9 +33,8 @@ class PaymentController extends Controller
                 ->where('student_id', Auth::id())
                 ->latest()
                 ->get();
-
-            return view('student.payment', compact('booking', 'studentPayments'));
-
+            $banks = CompanyAccount::where('is_active', true)->get();
+            return view('student.payment', compact('booking', 'studentPayments', 'banks'));
         } catch (Exception $e) {
             Log::error('Gagal memuat halaman form pembayaran: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Data transaksi tidak ditemukan atau Anda tidak memiliki akses.');
@@ -60,38 +61,64 @@ class PaymentController extends Controller
             'payment_proof_path.max'      => 'Gagal mengunggah! Ukuran gambar bukti pembayaran terlalu besar (Maksimal 5 MB).'
         ]);
 
-        $path = null;
+        $newPath = null;
+        $oldPath = null;
 
+        DB::beginTransaction();
         try {
-            // Pembuatan Nomor Invoice Otomatis
-            $invoiceNumber = 'INV-' . date('Ym') . '-' . strtoupper(Str::random(5));
+            // 1. Cek apakah record payment untuk student dan kelas ini sudah pernah dibuat sebelumnya
+            $existingPayment = Payment::where('student_id', Auth::id())
+                ->where('course_id', $booking->course_id)
+                ->first();
 
-            // Upload berkas fisik ke disk public
+            // 2. Upload berkas fisik baru ke disk public jika ada
             if ($request->hasFile('payment_proof_path')) {
                 $file = $request->file('payment_proof_path');
-                $path = $file->store('payment_proofs', 'public');
+                $newPath = $file->store('payment_proofs', 'public');
+
+                // Jika data sudah ada sebelumnya, catat path file lamanya untuk dihapus nanti
+                if ($existingPayment && $existingPayment->payment_proof_path) {
+                    $oldPath = $existingPayment->payment_proof_path;
+                }
             }
 
-            // Simpan log ke tabel payments
-            Payment::create([
-                'student_id'         => Auth::id(),
-                'course_id'          => $booking->course_id,
-                'invoice_number'     => $invoiceNumber,
-                'amount'             => $booking->total_amount,
-                'payment_proof_path' => $path,
-                'status'             => 'pending',
-            ]);
+            // 3. Gunakan nomor invoice lama jika update, buat baru jika data belum ada
+            $invoiceNumber = $existingPayment ? $existingPayment->invoice_number : 'INV-' . date('Ym') . '-' . strtoupper(Str::random(5));
+
+            // 4. Eksekusi Jaring Pengaman Otomatis: Update jika ada, Create jika kosong
+            Payment::updateOrCreate(
+                [
+                    // Kondisi pencarian data unik
+                    'student_id' => Auth::id(),
+                    'course_id'  => $booking->course_id,
+                ],
+                [
+                    // Data yang akan di-insert atau di-update
+                    'invoice_number'     => $invoiceNumber,
+                    'amount'             => $booking->total_amount,
+                    'payment_proof_path' => $newPath ?? ($existingPayment ? $existingPayment->payment_proof_path : null),
+                    'status'             => 'pending', // Set kembali ke pending agar divalidasi ulang oleh admin
+                ]
+            );
+
+            DB::commit();
+
+            // PEMBERSIHAN SUKSES: Jika ini proses update berkas, hapus fisik foto lama dari server
+            if ($oldPath && Storage::disk('public')->exists($oldPath)) {
+                Storage::disk('public')->delete($oldPath);
+            }
 
             return redirect('/history-bookings')->with('success', 'Bukti pembayaran berhasil dikirim! Mohon tunggu konfirmasi admin.');
-
         } catch (Exception $e) {
-            // Rollback bukti pembayaran jika gagal simpan database
-            if ($path && Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            DB::rollBack();
+
+            // PEMBERSIHAN GAGAL: Hapus file baru yang gagal tercatat di DB agar tidak jadi sampah
+            if ($newPath && Storage::disk('public')->exists($newPath)) {
+                Storage::disk('public')->delete($newPath);
             }
 
-            Log::error('Gagal menyimpan bukti pembayaran siswa: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal mengirimkan bukti pembayaran karena kendala internal sistem.');
+            Log::error('Gagal menyimpan/memperbarui bukti pembayaran siswa: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal memproses bukti pembayaran karena kendala internal sistem.');
         }
     }
 
@@ -120,7 +147,6 @@ class PaymentController extends Controller
             $payments = $query->latest()->paginate(10)->withQueryString();
 
             return view('admin.payment', compact('payments'));
-
         } catch (Exception $e) {
             Log::error('Gagal memuat index pembayaran: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat data riwayat transaksi.');
@@ -136,6 +162,8 @@ class PaymentController extends Controller
             return redirect()->back()->with('error', 'Transaksi ini sudah diproses sebelumnya.');
         }
 
+        // Mulai jaring pengaman Database Transaction
+        DB::beginTransaction();
         try {
             // 1. Update status di tabel payments menjadi 'approved'
             $payment->update([
@@ -145,10 +173,9 @@ class PaymentController extends Controller
                 'rejection_reason' => null
             ]);
 
-            // 2. SINKRONISASI: Update status di tabel bookings menjadi 'success'
             Booking::where('student_id', $payment->student_id)
                 ->where('course_id', $payment->course_id)
-                ->where('status', 'pending')
+                ->whereIn('status', ['pending', 'failed'])
                 ->update([
                     'status' => 'success'
                 ]);
@@ -160,11 +187,16 @@ class PaymentController extends Controller
                 ]);
             }
 
-            return redirect()->back()->with('success', "Pembayaran invoice {$payment->invoice_number} berhasil disetujui!");
+            // Jika semua operasi di atas sukses tanpa error, komit data ke database
+            DB::commit();
 
+            return redirect()->back()->with('success', "Pembayaran invoice {$payment->invoice_number} berhasil disetujui!");
         } catch (Exception $e) {
+            // 🚨 GAGAL TOTAL: Jika salah satu proses di atas crash, batalkan semua perubahan!
+            DB::rollBack();
+
             Log::error('Gagal menyetujui pembayaran ID ' . $payment->id . ': ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal memproses persetujuan pembayaran karena kendala database.');
+            return redirect()->back()->with('error', 'Gagal memproses persetujuan pembayaran karena kendala internal sistem.');
         }
     }
 
@@ -185,6 +217,8 @@ class PaymentController extends Controller
             'rejection_reason.max'      => 'Alasan penolakan terlalu panjang, maksimal 255 karakter.'
         ]);
 
+        // Mulai transaksi database
+        DB::beginTransaction();
         try {
             // 1. Update status di tabel payments menjadi 'rejected'
             $payment->update([
@@ -202,11 +236,16 @@ class PaymentController extends Controller
                     'status' => 'failed'
                 ]);
 
-            return redirect()->back()->with('success', "Pembayaran invoice {$payment->invoice_number} telah ditolak.");
+            // Jika kedua proses di atas sukses, simpan permanen ke database
+            DB::commit();
 
+            return redirect()->back()->with('success', "Pembayaran invoice {$payment->invoice_number} telah ditolak.");
         } catch (Exception $e) {
+            // 🚨 GAGAL: Batalkan semua perubahan jika salah satu query bermasalah
+            DB::rollBack();
+
             Log::error('Gagal menolak pembayaran ID ' . $payment->id . ': ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal memproses penolakan pembayaran karena kendala sistem.');
+            return redirect()->back()->with('error', 'Gagal memproses penolakan pembayaran karena kendala internal sistem.');
         }
     }
 
@@ -227,7 +266,6 @@ class PaymentController extends Controller
             }
 
             return redirect()->back()->with('success', 'Data log transaksi pembayaran berhasil dibersihkan dari sistem!');
-
         } catch (Exception $e) {
             Log::error('Gagal menghapus log pembayaran ID ' . $payment->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal membersihkan data transaksi dari sistem.');

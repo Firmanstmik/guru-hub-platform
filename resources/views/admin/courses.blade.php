@@ -38,93 +38,91 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden border border-gray-100">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-left">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Cover & Judul Kelas</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Kategori</th>
-                            @role('admin')
-                                <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Guru Pengajar</th>
-                            @endrole
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Harga Paket</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Murid</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100 text-sm">
-                        @forelse($courses as $course)
-                            <tr class="hover:bg-gray-50 transition duration-150">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-4">
-                                        <img src="{{ $course->cover_image ? asset('storage/' . $course->cover_image) : 'https://placehold.co/600x400?text=No+Image' }}"
-                                            alt="Cover" class="w-14 h-10 object-cover rounded-md bg-gray-100 border">
-                                        <div>
-                                            <div class="font-semibold text-gray-900">{{ $course->title }}</div>
-                                            <div class="text-xs text-gray-400 max-w-xs truncate">{{ $course->description }}
-                                            </div>
+        <div class="w-full overflow-x-auto rounded-2xl border border-slate-200 shadow-xs bg-white">
+            <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Cover & Judul Kelas</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Kategori</th>
+                        @role('admin')
+                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Guru Pengajar</th>
+                        @endrole
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Harga Paket</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Murid</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100 text-sm">
+                    @forelse($courses as $course)
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-4">
+                                    <img src="{{ $course->cover_image ? asset('storage/' . $course->cover_image) : 'https://placehold.co/600x400?text=No+Image' }}"
+                                        alt="Cover" class="w-14 h-10 object-cover rounded-md bg-gray-100 border">
+                                    <div>
+                                        <div class="font-semibold text-gray-900">{{ $course->title }}</div>
+                                        <div class="text-xs text-gray-400 max-w-xs truncate">{{ $course->description }}
                                         </div>
                                     </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-700 font-medium">
+                                {{ $course->category->name }}
+                            </td>
+                            @role('admin')
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-600">
+                                    {{ $course->teacher->name }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 font-medium">
-                                    {{ $course->category->name }}
-                                </td>
-                                @role('admin')
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">
-                                        {{ $course->teacher->name }}
-                                    </td>
-                                @endrole
-                                <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
-                                    Rp {{ number_format($course->price, 0, ',', '.') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                            @endrole
+                            <td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                                Rp {{ number_format($course->price, 0, ',', '.') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    {{ $course->students_count }} Siswa
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if ($course->status === 'published')
                                     <span
-                                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        {{ $course->students_count }} Siswa
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if ($course->status === 'published')
-                                        <span
-                                            class="px-2.5 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full">Published</span>
-                                    @elseif($course->status === 'draft')
-                                        <span
-                                            class="px-2.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">Draft</span>
-                                    @else
-                                        <span
-                                            class="px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Archived</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right font-medium flex justify-end gap-3 mt-2">
-                                    <button data-course='@json($course)' onclick="handleOpenEditModal(this)"
-                                        class="text-amber-600 hover:text-amber-900">Edit</button>
+                                        class="px-2.5 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full">Published</span>
+                                @elseif($course->status === 'draft')
+                                    <span
+                                        class="px-2.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 rounded-full">Draft</span>
+                                @else
+                                    <span
+                                        class="px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Archived</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right font-medium flex justify-end gap-3 mt-2">
+                                <button data-course='@json($course)' onclick="handleOpenEditModal(this)"
+                                    class="text-amber-600 hover:text-amber-900">Edit</button>
 
-                                    <form action="/courses/{{ $course->id }}" method="POST"
-                                        onsubmit="return confirm('Hapus permanen program kelas ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-rose-600 hover:text-rose-900">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="{{ auth()->user()->hasRole('admin') ? '7' : '6' }}"
-                                    class="px-6 py-12 text-center text-gray-500">Tidak ada program kelas yang ditemukan.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                {{ $courses->links() }}
-            </div>
+                                <form action="/courses/{{ $course->id }}" method="POST"
+                                    onsubmit="return confirm('Hapus permanen program kelas ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-rose-600 hover:text-rose-900">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="{{ auth()->user()->hasRole('admin') ? '7' : '6' }}"
+                                class="px-6 py-12 text-center text-gray-500">Tidak ada program kelas yang ditemukan.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+            {{ $courses->links() }}
         </div>
     </div>
-
+    
     <div id="addCourseModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
@@ -287,9 +285,10 @@
 
     <script>
         function handleOpenEditModal(button) {
-                const courseData = JSON.parse(button.getAttribute('data-course'));
-                openEditModal(courseData); // panggil fungsi modal aseli Anda di sini
-            }
+            const courseData = JSON.parse(button.getAttribute('data-course'));
+            openEditModal(courseData); // panggil fungsi modal aseli Anda di sini
+        }
+
         function toggleModal(modalId) {
             document.getElementById(modalId).classList.toggle('hidden');
         }

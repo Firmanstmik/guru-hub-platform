@@ -39,8 +39,8 @@ class UserController extends Controller
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('email', 'like', "%{$search}%")
-                      ->orWhere('phone_number', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone_number', 'like', "%{$search}%");
                 });
             }
 
@@ -48,7 +48,6 @@ class UserController extends Controller
             $roles = Role::orderBy('name', 'asc')->get(); // Diurutkan agar rapi pada opsi dropdown
 
             return view('admin.users.index', compact('users', 'roles'));
-
         } catch (Exception $e) {
             Log::error('Gagal memuat halaman manajemen user: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat data pengguna.');
@@ -74,13 +73,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input dengan custom pesan Bahasa Indonesia
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => 'required|email|unique:users,email',
             'password'     => 'required|string|min:6',
             'phone_number' => 'nullable|string|max:20',
-            'role'         => 'required|exists:roles,name', // Tambahan proteksi input role saat pembuatan awal
         ], [
             'name.required'         => 'Nama lengkap wajib diisi.',
             'email.required'        => 'Alamat email wajib diisi.',
@@ -89,8 +86,6 @@ class UserController extends Controller
             'password.required'     => 'Kata sandi (password) wajib ditentukan.',
             'password.min'          => 'Kata sandi minimal harus terdiri dari 6 karakter.',
             'phone_number.max'      => 'Nomor telepon terlalu panjang, maksimal 20 karakter.',
-            'role.required'         => 'Peran akses (role) pengguna wajib ditentukan.',
-            'role.exists'           => 'Peran akses yang Anda pilih tidak valid atau tidak terdaftar.',
         ]);
 
         DB::beginTransaction();
@@ -98,17 +93,13 @@ class UserController extends Controller
             $user = User::create([
                 'name'         => $validated['name'],
                 'email'        => $validated['email'],
-                'password'     => Hash::make($validated['password']),
+                'password'     => Hash::make($validated['password']), // Menggunakan Hash manual jika cast model dinonaktifkan
                 'phone_number' => $validated['phone_number'] ?? null,
                 'is_active'    => true,
             ]);
 
-            // Sinkronisasi peran saat pembuatan akun baru
-            $user->assignRole($validated['role']);
-
             DB::commit();
-            return redirect()->intended('/users')->with('success', "Akun pengguna {$user->name} berhasil ditambahkan.");
-
+            return redirect('/users')->with('success', "Akun pengguna {$user->name} berhasil ditambahkan.");
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Gagal menyimpan user baru ke sistem: ' . $e->getMessage());
@@ -141,13 +132,11 @@ class UserController extends Controller
             'email'        => "required|email|unique:users,email,{$user->id}",
             'password'     => 'nullable|string|min:6',
             'phone_number' => 'nullable|string|max:20',
-            'role'         => 'required|exists:roles,name',
         ], [
             'name.required' => 'Nama lengkap pengguna wajib diisi.',
-            'email.required'=> 'Alamat email tidak boleh dikosongkan.',
+            'email.required' => 'Alamat email tidak boleh dikosongkan.',
             'email.unique'  => 'Alamat email sudah digunakan oleh pengguna lain.',
             'password.min'  => 'Kata sandi baru minimal harus terdiri dari 6 karakter.',
-            'role.required' => 'Peran akses wajib ditentukan.',
         ]);
 
         // Proteksi keamanan: Mencegah admin mengubah role-nya sendiri di luar prosedur internal
@@ -172,7 +161,6 @@ class UserController extends Controller
 
             DB::commit();
             return redirect()->intended('/users')->with('success', "Data pengguna {$user->name} berhasil diperbarui.");
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Gagal memperbarui informasi user ID ' . $user->id . ': ' . $e->getMessage());
@@ -196,9 +184,8 @@ class UserController extends Controller
             ]);
 
             $statusMessage = $user->is_active ? 'diaktifkan kembali' : 'ditangguhkan (suspend)';
-            
-            return redirect()->back()->with('success', "Akun pengguna {$user->name} berhasil {$statusMessage}.");
 
+            return redirect()->back()->with('success', "Akun pengguna {$user->name} berhasil {$statusMessage}.");
         } catch (Exception $e) {
             Log::error('Gagal melakukan toggle status user ID ' . $user->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal merubah status akun pengguna karena kendala sistem database.');
@@ -225,7 +212,6 @@ class UserController extends Controller
             $user->syncRoles([$request->role]);
 
             return redirect()->back()->with('success', "Peran akses {$user->name} berhasil diperbarui menjadi " . strtoupper($request->role));
-
         } catch (Exception $e) {
             Log::error('Gagal mengubah hak akses cepat untuk user ID ' . $user->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal memperbarui peran akses karena kendala internal sistem.');
@@ -248,12 +234,11 @@ class UserController extends Controller
 
             // Copot seluruh relasi peran Spatie terlebih dahulu agar tabel pivot bersih
             $user->syncRoles([]);
-            
+
             $user->delete();
 
             DB::commit();
             return redirect()->back()->with('success', "Akun pengguna {$userName} telah berhasil dihapus permanen dari sistem.");
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Gagal menghapus entitas user ID ' . $user->id . ': ' . $e->getMessage());

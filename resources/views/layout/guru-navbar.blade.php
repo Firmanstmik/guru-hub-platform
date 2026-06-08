@@ -4,9 +4,9 @@
 
             <div class="flex items-center space-x-8">
                 <a href="/guru-dashboard" class="flex items-center space-x-3 flex-shrink-0">
-                    <div
-                        class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
-                        G
+                    <div class="h-12 flex items-center justify-center">
+                        <img src="{{ asset('assets') }}/logo-app/guru_hub_logo.jpeg" alt="Guru Hub Logo"
+                            class="h-full rounded-full w-auto object-contain">
                     </div>
                     <div class="leading-none">
                         <span class="text-xl font-black text-gray-900 tracking-wide block">Guru Hub</span>

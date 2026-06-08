@@ -48,16 +48,11 @@
                                     <h4 class="text-sm font-bold text-gray-900 truncate" title="{{ $mat->title }}">
                                         {{ $mat->title }}
                                     </h4>
-                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
-                                        <span class="font-medium text-gray-600">
+                                    <div
+                                        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-gray-400">
+                                        <span class="font-medium text-gray-800">
                                             📖 {{ $mat->course->title ?? 'Kelas Tidak Ditemukan' }}
                                         </span>
-                                        @role('admin')
-                                            <span class="hidden sm:inline text-gray-300">|</span>
-                                            <span class="flex items-center gap-1">
-                                                👨‍🏫 {{ $mat->course->teacher->name ?? 'Tidak Ada Guru' }}
-                                            </span>
-                                        @endrole
                                     </div>
                                 </div>
                             </div>
@@ -65,15 +60,15 @@
 
                         <div
                             class="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-50 flex-shrink-0">
-                            <a href="{{ asset('storage/' . $mat->file_path) }}" target="_blank"
-                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-2 rounded-xl hover:bg-indigo-100 transition shadow-2xs">
+                            <button type="button"
+                                onclick="openDocumentModal('{{ asset('storage/' . $mat->file_path) }}', '{{ $mat->title ?? 'Dokumen Materi' }}')"
+                                class="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md hover:bg-indigo-100 transition focus:outline-none">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5l4 4v13a2 2 0 01-2 2z" />
                                 </svg>
-                                <span>Unduh Dokumen</span>
-                            </a>
-
+                                Lihat Dokumen
+                            </button>
                             <div class="flex items-center gap-2">
                                 <button data-material='@json($mat)' onclick="handleOpenEditModal(this)"
                                     class="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-bold rounded-xl transition">
@@ -214,6 +209,53 @@
         </div>
     </div>
 
+    <div id="documentPreviewModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="fixed inset-0 transition-opacity" onclick="closeDocumentModal()">
+            <div class="absolute inset-0 bg-gray-600 opacity-75 backdrop-blur-sm"></div>
+        </div>
+
+        <div class="flex items-center justify-center min-h-screen p-4 sm:p-6">
+            <div
+                class="relative bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all max-w-5xl w-full border border-gray-200 flex flex-col h-[85vh]">
+
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l4 4v13a2 2 0 01-2 2z" />
+                        </svg>
+                        <h3 id="documentModalTitle"
+                            class="text-sm font-semibold text-gray-900 truncate max-w-md sm:max-w-xl">Memuat Dokumen...
+                        </h3>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <a id="documentDownloadBtn" href="#" target="_blank" download
+                            class="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-md hover:bg-emerald-100 transition">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Unduh File
+                        </a>
+                        <button type="button" onclick="closeDocumentModal()"
+                            class="text-gray-400 hover:text-gray-600 transition focus:outline-none">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grow w-full bg-gray-100 relative">
+                    <div id="documentContainer" class="w-full h-full">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script>
         function toggleModal(modalId) {
             document.getElementById(modalId).classList.toggle('hidden');
@@ -234,5 +276,75 @@
 
             toggleModal('editMaterialModal');
         }
+
+
+        function openDocumentModal(fileUrl, title) {
+            const modal = document.getElementById('documentPreviewModal');
+            const modalTitle = document.getElementById('documentModalTitle');
+            const container = document.getElementById('documentContainer');
+            const downloadBtn = document.getElementById('documentDownloadBtn');
+
+            // Set Judul & Link Download Asli
+            modalTitle.textContent = title;
+            downloadBtn.href = fileUrl;
+
+            // Kosongkan kontainer lama
+            container.innerHTML = '';
+
+            // Ambil ekstensi berkas secara lowercase
+            const extension = fileUrl.split('.').pop().toLowerCase();
+
+            let htmlContent = '';
+
+            // Kasus 1: Berkas PDF (Dapat ditampilkan secara native di browser modern)
+            if (extension === 'pdf') {
+                htmlContent =
+                    `<iframe src="${fileUrl}#toolbar=0" class="w-full h-full border-0" allow="autoplay"></iframe>`;
+            }
+            // Kasus 2: Gambar/Foto Materi (PNG, JPG, JPEG, WEBP, GIF)
+            else if (['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(extension)) {
+                htmlContent = `
+            <div class="w-full h-full flex items-center justify-center p-4 overflow-auto">
+                <img src="${fileUrl}" alt="${title}" class="max-w-full max-h-full object-contain rounded shadow-md bg-white">
+            </div>
+        `;
+            }
+            // Kasus 3: File dokumen kantor (Docx, Xlsx, Pptx) yang membutuhkan Google Docs Viewer agar tidak terunduh paksa
+            else if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(extension)) {
+                // Menggunakan Google Docs Embedded Viewer
+                const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                htmlContent = `<iframe src="${googleViewerUrl}" class="w-full h-full border-0"></iframe>`;
+            }
+            // Kasus Alternatif lainnya
+            else {
+                htmlContent = `<iframe src="${fileUrl}" class="w-full h-full border-0"></iframe>`;
+            }
+
+            // Suntikkan komponen render ke kontainer modal
+            container.innerHTML = htmlContent;
+
+            // Tampilkan modal ke view browser
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Kunci scroll halaman utama
+        }
+
+        function closeDocumentModal() {
+            const modal = document.getElementById('documentPreviewModal');
+            const container = document.getElementById('documentContainer');
+
+            // Sembunyikan Modal
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Aktifkan kembali scroll halaman utama
+
+            // Hancurkan iframe/content di dalam agar memory clear dan proses network berhenti
+            container.innerHTML = '';
+        }
+
+        // Menutup modal otomatis jika menekan tombol 'Esc' di keyboard
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDocumentModal();
+            }
+        });
     </script>
 @endsection

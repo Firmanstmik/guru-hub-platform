@@ -11,14 +11,15 @@ use Exception;
 
 class CategoriController extends Controller
 {
-    /**
-     * INDEX (Admin & Guru)
-     */
     public function index()
     {
         try {
-            // Mengambil data kategori beserta jumlah kelas di dalamnya (eager loading)
-            $categories = Categori::withCount('courses')->latest()->paginate(10);
+            $categories = Categori::withCount([
+                'courses',
+                'teachers as teachers_count' => function ($query) {
+                    $query->distinct(); // Menghindari guru dihitung ganda jika mengajar > 1 kelas di kategori yang sama
+                }
+            ])->latest()->paginate(10);
             
             if (auth()->user()->hasRole('admin')) {
                 return view('admin.categories', compact('categories'));
@@ -33,9 +34,6 @@ class CategoriController extends Controller
         }
     }
 
-    /**
-     * STORE (Tambah Kategori Baru)
-     */
     public function store(Request $request)
     {
         // Validasi dengan custom pesan Bahasa Indonesia
@@ -61,9 +59,6 @@ class CategoriController extends Controller
         }
     }
 
-    /**
-     * UPDATE (Perbarui Data Kategori)
-     */
     public function update(Request $request, Categori $category)
     {
         // Validasi dengan custom pesan Bahasa Indonesia

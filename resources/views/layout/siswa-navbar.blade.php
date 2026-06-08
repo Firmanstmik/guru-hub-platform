@@ -4,8 +4,9 @@
             
             <div class="flex items-center space-x-8">
                 <a href="/siswa-dashboard" class="flex items-center space-x-3 flex-shrink-0">
-                    <div class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
-                        G
+                    <div class="h-12 flex items-center justify-center">
+                        <img src="{{ asset('assets') }}/logo-app/guru_hub_logo.jpeg" alt="Guru Hub Logo"
+                            class="h-full rounded-full w-auto object-contain">
                     </div>
                     <div class="leading-none">
                         <span class="text-xl font-black text-gray-900 tracking-wide block">Guru Hub</span>
@@ -48,7 +49,7 @@
             </div>
 
             <div class="hidden md:flex items-center space-x-4">
-                <div class="flex items-center space-x-3 border-r border-gray-100 pr-4">
+                <a href="/biodata" class="flex items-center space-x-3 border-r border-gray-100 pr-4">
                     <div class="overflow-hidden leading-tight text-right">
                         <h4 class="text-xs font-bold text-gray-900 truncate">{{ Auth::user()->name ?? 'Nama Siswa' }}</h4>
                         <p class="text-[10px] text-gray-400 truncate">{{ Auth::user()->email ?? 'student@email.com' }}</p>
@@ -56,7 +57,7 @@
                     <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center font-bold text-xs text-gray-700 flex-shrink-0">
                         {{ strtoupper(substr(Auth::user()->name ?? 'Student', 0, 2)) }}
                     </div>
-                </div>
+                </a>
 
                 <a href="{{ url('/logout') }}"
                    class="flex items-center space-x-2 p-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-all group"

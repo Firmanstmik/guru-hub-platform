@@ -1,6 +1,6 @@
 FROM php:8.3-fpm
 
-# Install dependencies
+# Install dependencies + Tambahan FFmpeg untuk Transcoding WebM
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libicu-dev \
     mariadb-client \
+    ffmpeg \
     && docker-php-ext-install \
     pdo_mysql \
     mbstring \

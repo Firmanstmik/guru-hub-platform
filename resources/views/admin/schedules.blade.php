@@ -37,88 +37,85 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow overflow-hidden border border-gray-100">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 text-left">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Kelas / Kursus</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Topik Sesi</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Waktu Pelaksanaan</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Platform</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Akses Ruang</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100 text-sm">
-                        @forelse($schedules as $sched)
-                            <tr class="hover:bg-gray-50 transition duration-150">
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-gray-900">
-                                        {{ $sched->course->title ?? 'Kelas Tidak Ditemukan' }}</div>
-                                    {{-- Hanya tampilkan sub-nama Guru jika user yang masuk adalah Admin --}}
-                                    @role('admin')
-                                        <div class="text-xs text-gray-400">Guru:
-                                            {{ $sched->course->teacher->name ?? 'Tidak Ada' }}</div>
-                                    @endrole
-                                </td>
-                                <td class="px-6 py-4 font-medium text-gray-700">{{ $sched->topic }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 leading-relaxed">
+        <div class="w-full overflow-x-auto rounded-2xl border border-slate-200 shadow-xs bg-white">
+            <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Kelas / Kursus</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Topik Sesi</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Waktu Pelaksanaan</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Platform</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Akses Ruang</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100 text-sm">
+                    @forelse($schedules as $sched)
+                        <tr class="hover:bg-gray-50 transition duration-150">
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-gray-900">
+                                    {{ $sched->course->title ?? 'Kelas Tidak Ditemukan' }}</div>
+                                {{-- Hanya tampilkan sub-nama Guru jika user yang masuk adalah Admin --}}
+                                @role('admin')
+                                    <div class="text-xs text-gray-400">Guru:
+                                        {{ $sched->course->teacher->name ?? 'Tidak Ada' }}</div>
+                                @endrole
+                            </td>
+                            <td class="px-6 py-4 font-medium text-gray-700">{{ $sched->topic }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-600 leading-relaxed">
+                                <span
+                                    class="font-medium text-gray-900">{{ $sched->start_time->isoFormat('dddd, D MMMM YYYY') }}</span><br>
+                                {{ $sched->start_time->format('H:i') }} - {{ $sched->end_time->format('H:i') }} WIB
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if ($sched->platform === 'zoom')
                                     <span
-                                        class="font-medium text-gray-900">{{ $sched->start_time->isoFormat('dddd, D MMMM YYYY') }}</span><br>
-                                    {{ $sched->start_time->format('H:i') }} - {{ $sched->end_time->format('H:i') }} WIB
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if ($sched->platform === 'zoom')
-                                        <span
-                                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Zoom</span>
-                                    @else
-                                        <span
-                                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Google
-                                            Meet</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-xs">
-                                    @if ($sched->meeting_link)
-                                        <a href="{{ $sched->meeting_link }}" target="_blank"
-                                            class="inline-flex items-center gap-1 font-semibold text-indigo-600 hover:underline">
-                                            Gabung Sesi
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                            </svg>
-                                        </a>
-                                    @else
-                                        <span class="text-gray-400 italic">Belum diset</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right font-medium flex justify-end gap-3">
-                                    {{-- PERBAIKAN SINTAKS JS: Menggunakan data-schedule dengan bungkusan objek JSON --}}
-                                    <button data-schedule='@json($sched)' onclick="handleOpenEditModal(this)"
-                                        class="text-amber-600 hover:text-amber-900">Edit</button>
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Zoom</span>
+                                @else
+                                    <span
+                                        class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">Google
+                                        Meet</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs">
+                                @if ($sched->meeting_link)
+                                    <a href="{{ $sched->meeting_link }}" target="_blank"
+                                        class="inline-flex items-center gap-1 font-semibold text-indigo-600 hover:underline">
+                                        Gabung Sesi
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
+                                    </a>
+                                @else
+                                    <span class="text-gray-400 italic">Belum diset</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right font-medium flex justify-end gap-3">
+                                {{-- PERBAIKAN SINTAKS JS: Menggunakan data-schedule dengan bungkusan objek JSON --}}
+                                <button data-schedule='@json($sched)' onclick="handleOpenEditModal(this)"
+                                    class="text-amber-600 hover:text-amber-900">Edit</button>
 
-                                    <form action="/schedules/{{ $sched->id }}" method="POST"
-                                        onsubmit="return confirm('Hapus jadwal sesi live ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-rose-600 hover:text-rose-900">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">Tidak ditemukan jadwal kelas
-                                    aktif saat ini.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                {{ $schedules->links() }}
-            </div>
+                                <form action="/schedules/{{ $sched->id }}" method="POST"
+                                    onsubmit="return confirm('Hapus jadwal sesi live ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-rose-600 hover:text-rose-900">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">Tidak ditemukan jadwal kelas
+                                aktif saat ini.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
+            {{ $schedules->links() }}
+        </div>
     </div>
 
     <div id="addScheduleModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
