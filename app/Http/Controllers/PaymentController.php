@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\CompanyAccount;
 use App\Models\Payment;
+use App\Models\TeacherEarning;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -185,14 +186,30 @@ class PaymentController extends Controller
                 $payment->course->students()->syncWithoutDetaching([
                     $payment->student_id => ['status' => 'active']
                 ]);
-            }
+                $teacherId = $payment->course->teacher_id;
 
-            // Jika semua operasi di atas sukses tanpa error, komit data ke database
+                if ($teacherId) {
+                    $teacherPercentage = 0.70;
+                    $amountEarned = $payment->amount * $teacherPercentage;
+
+                    TeacherEarning::updateOrInsert(
+                        [
+                            'payment_id' => $payment->id,
+                            'teacher_id' => $teacherId,
+                        ],
+                        [
+                            'amount_earned' => $amountEarned,
+                            'status'        => 'unpaid',
+                            'created_at'    => now(),
+                            'updated_at'    => now(),
+                        ]
+                    );
+                }
+            }
             DB::commit();
 
             return redirect()->back()->with('success', "Pembayaran invoice {$payment->invoice_number} berhasil disetujui!");
         } catch (Exception $e) {
-            // 🚨 GAGAL TOTAL: Jika salah satu proses di atas crash, batalkan semua perubahan!
             DB::rollBack();
 
             Log::error('Gagal menyetujui pembayaran ID ' . $payment->id . ': ' . $e->getMessage());

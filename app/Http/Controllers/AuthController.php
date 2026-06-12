@@ -45,7 +45,7 @@ class AuthController extends Controller
         try {
             // Lakukan percobaan login ke sistem
             if (Auth::attempt($credentials, $request->has('remember'))) {
-                
+
                 $user = Auth::user();
 
                 // PROTEKSI TAMBAHAN: Cek jika akun dinonaktifkan oleh Admin
@@ -53,7 +53,7 @@ class AuthController extends Controller
                     Auth::logout();
                     $request->session()->invalidate();
                     $request->session()->regenerateToken();
-                    
+
                     return back()->withInput()->with('error', 'Akun Anda telah dinonaktifkan. Silakan hubungi admin sistem.');
                 }
 
@@ -66,7 +66,6 @@ class AuthController extends Controller
 
             // Gagal otentikasi (Email atau password tidak cocok)
             return back()->withInput()->with('error', 'Alamat email atau kata sandi yang Anda masukkan salah.');
-
         } catch (Exception $e) {
             Log::error('Terjadi kesalahan fatal pada proses login: ' . $e->getMessage());
             return back()->withInput()->with('error', 'Gagal memproses masuk sistem karena kendala internal server.');
@@ -86,7 +85,6 @@ class AuthController extends Controller
             $request->session()->regenerateToken();
 
             return redirect('/login')->with('success', 'Anda telah berhasil keluar dari sistem.');
-
         } catch (Exception $e) {
             Log::error('Gagal memproses logout: ' . $e->getMessage());
             return redirect('/login');
@@ -101,11 +99,11 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if ($user->hasRole('admin')) {
-            return redirect()->intended('/admin-dashboard');
+            return redirect('/admin-dashboard');
         } elseif ($user->hasRole('guru')) {
-            return redirect()->intended('/guru-dashboard');
+            return redirect('/guru-dashboard');
         } elseif ($user->hasRole('siswa')) {
-            return redirect()->intended('/siswa-dashboard');
+            return redirect('/siswa-dashboard');
         }
 
         // Fallback: Jika pengguna tidak memiliki peran apa pun, keluarkan secara aman

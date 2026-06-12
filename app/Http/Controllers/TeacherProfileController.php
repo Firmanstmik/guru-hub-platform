@@ -50,12 +50,11 @@ class TeacherProfileController extends Controller
             }
 
             $profiles = $query->latest()->paginate(10)->withQueryString();
-            
+
             // Memastikan hanya mengambil user yang belum punya profil guru
             $users = User::whereDoesntHave('teacherProfile')->get();
 
             return view('admin.teacher', compact('profiles', 'users'));
-
         } catch (Exception $e) {
             Log::error('Gagal memuat halaman manajemen profil guru: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat data pengajar.');
@@ -71,9 +70,9 @@ class TeacherProfileController extends Controller
             'user_id'             => 'required|exists:users,id|unique:teacher_profiles,user_id',
             'title'               => 'required|string|max:255',
             'bio'                 => 'nullable|string',
-            'skills_tags'         => 'required|string', 
+            'skills_tags'         => 'required|string',
             'verification_status' => 'required|in:pending,approved,rejected',
-            'cv_file'             => 'nullable|file|mimes:pdf,doc,docx|max:2048', 
+            'cv_file'             => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'bank_name'           => 'required|string|max:100',
             'bank_account_number' => 'required|string|max:50',
             'bank_account_name'   => 'required|string|max:255',
@@ -99,7 +98,7 @@ class TeacherProfileController extends Controller
 
             $data = $request->except('cv_file');
             $data['skills_tags'] = json_encode($tagsArray);
-            $data['average_rating'] = 0; 
+            $data['average_rating'] = 0;
 
             if ($request->hasFile('cv_file')) {
                 $uploadedCv = $request->file('cv_file')->store('cv_teachers', 'public');
@@ -115,7 +114,6 @@ class TeacherProfileController extends Controller
 
             DB::commit();
             return redirect('/teachers')->with('success', 'Profil pengajar baru berhasil ditambahkan.');
-
         } catch (Exception $e) {
             DB::rollBack();
             if ($uploadedCv && Storage::disk('public')->exists($uploadedCv)) {
@@ -147,8 +145,7 @@ class TeacherProfileController extends Controller
     {
         $user = Auth::user();
 
-        // 1. KONDISI JIKA GURU YANG UPDATE PROFILNYA SENDIRI
-        if ($user->hasRole('guru') || $request->is('guru*')) {
+        if ($user->hasRole('guru') || $request->is('guru*') || is_null($profile) || !$profile->exists) {
             $request->validate([
                 'name'                => 'required|string|max:255',
                 'phone_number'        => 'nullable|string|max:20',
@@ -179,16 +176,17 @@ class TeacherProfileController extends Controller
             DB::beginTransaction();
 
             try {
-                // Update data personal di tabel users
+                // Update data personal dasar user
                 $userData = ['name' => $request->name, 'phone_number' => $request->phone_number];
                 if ($request->hasFile('avatar')) {
                     $uploadedAvatar = $request->file('avatar')->store('avatars', 'public');
                     $userData['avatar'] = $uploadedAvatar;
                 }
-                
+
                 $oldAvatar = $user->avatar;
                 $user->update($userData);
 
+                // Mempersiapkan pemecahan teks tag ke format JSON
                 $tagsArray = $request->skills_tags ? array_map('trim', explode(',', $request->skills_tags)) : [];
 
                 $profileData = [
@@ -205,12 +203,21 @@ class TeacherProfileController extends Controller
                     $profileData['cv_file'] = $uploadedCv;
                 }
 
+                // Ambil data dokumen CV lama jika ada (untuk pelindung memori hosting)
                 $oldCv = $user->teacherProfile ? $user->teacherProfile->cv_file : null;
-                $user->teacherProfile()->updateOrCreate(['user_id' => $user->id], $profileData);
+
+                // FITUR UTAMA: Jika data belum ada, dia jalankan Create. Jika sudah ada, langsung melakukan Update.
+                $user->teacherProfile()->updateOrCreate(
+                    ['user_id' => $user->id], // Kolom pencari identitas unik pemilik profil
+                    array_merge($profileData, [
+                        'verification_status' => $user->teacherProfile->verification_status ?? 'pending',
+                        'average_rating'      => $user->teacherProfile->average_rating ?? 0
+                    ])
+                );
 
                 DB::commit();
 
-                // Hapus berkas fisik lama dari server jika kueri database sukses total
+                // Bersihkan storage dari berkas usang yang tertimpa file baru
                 if ($uploadedAvatar && $oldAvatar && Storage::disk('public')->exists($oldAvatar)) {
                     Storage::disk('public')->delete($oldAvatar);
                 }
@@ -218,8 +225,7 @@ class TeacherProfileController extends Controller
                     Storage::disk('public')->delete($oldCv);
                 }
 
-                return redirect()->back()->with('success', 'Profil pengajar Anda berhasil diperbarui!');
-
+                return redirect()->back()->with('success', 'Informasi profil pengajar berhasil disinkronkan!');
             } catch (Exception $e) {
                 DB::rollBack();
                 if ($uploadedAvatar && Storage::disk('public')->exists($uploadedAvatar)) {
@@ -228,61 +234,9 @@ class TeacherProfileController extends Controller
                 if ($uploadedCv && Storage::disk('public')->exists($uploadedCv)) {
                     Storage::disk('public')->delete($uploadedCv);
                 }
-                Log::error('Guru gagal memperbarui profil mandiri: ' . $e->getMessage());
-                return redirect()->back()->withInput()->with('error', 'Gagal memperbarui profil karena kendala sistem basis data.');
+                Log::error('Sistem gagal melakukan sinkronisasi profil otomatis: ' . $e->getMessage());
+                return redirect()->back()->withInput()->with('error', 'Gagal memproses data karena gangguan pangkalan data.');
             }
-        }
-
-        // 2. KONDISI JIKA ADMIN YANG UPDATE DATA GURU
-        $request->validate([
-            'title'               => 'required|string|max:255',
-            'bio'                 => 'nullable|string',
-            'skills_tags'         => 'required|string',
-            'verification_status' => 'required|in:pending,approved,rejected',
-            'cv_file'             => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'bank_name'           => 'required|string|max:100',
-            'bank_account_number' => 'required|string|max:50',
-            'bank_account_name'   => 'required|string|max:255',
-        ]);
-
-        $uploadedAdminCv = null;
-        DB::beginTransaction();
-
-        try {
-            $tagsArray = array_map('trim', explode(',', $request->skills_tags));
-            $data = $request->except('cv_file');
-            $data['skills_tags'] = json_encode($tagsArray);
-
-            if ($request->hasFile('cv_file')) {
-                $uploadedAdminCv = $request->file('cv_file')->store('cv_teachers', 'public');
-                $data['cv_file'] = $uploadedAdminCv;
-            }
-
-            $oldAdminCv = $profile->cv_file;
-            $profile->update($data);
-
-            // Spatie: Manajemen Sinkronisasi Role Admin -> Guru
-            if ($request->verification_status === 'approved') {
-                $profile->user->syncRoles(['guru']);
-            } else {
-                $profile->user->syncRoles(['user']); 
-            }
-
-            DB::commit();
-
-            if ($uploadedAdminCv && $oldAdminCv && Storage::disk('public')->exists($oldAdminCv)) {
-                Storage::disk('public')->delete($oldAdminCv);
-            }
-
-            return redirect('/teachers')->with('success', "Profil pengajar {$profile->user->name} berhasil diperbarui.");
-
-        } catch (Exception $e) {
-            DB::rollBack();
-            if ($uploadedAdminCv && Storage::disk('public')->exists($uploadedAdminCv)) {
-                Storage::disk('public')->delete($uploadedAdminCv);
-            }
-            Log::error('Admin gagal memperbarui profil guru ID ' . ($profile->id ?? '') . ': ' . $e->getMessage());
-            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui informasi guru akibat kesalahan internal.');
         }
     }
 
@@ -293,24 +247,46 @@ class TeacherProfileController extends Controller
     {
         DB::beginTransaction();
         try {
+            // 1. Ambil data yang diperlukan sebelum dihapus dari database
+            $userName = $profile->user->name ?? 'Pengajar';
             $cvPath = $profile->cv_file;
+            $user = $profile->user;
 
-            // Spatie: Kembalikan role ke user biasa sebelum profil dihapus
-            $profile->user->syncRoles(['user']);
+            // Backup path avatar jika ingin menghapus foto profilnya juga dari storage
+            $avatarPath = $user ? $user->avatar : null;
+
+            // 2. Hapus data Profil Pengajar terlebih dahulu (menghindari lock foreign key)
             $profile->delete();
+
+            // 3. Hapus data Akun User utamanya jika data user tersebut ada
+            if ($user) {
+                // Spatie: Cabut semua roles yang melekat pada user ini agar tabel permission bersih
+                $user->roles()->detach();
+
+                // Hapus baris data user dari tabel users
+                $user->delete();
+            }
 
             DB::commit();
 
+            // 4. Bersihkan Berkas Fisik dari Storage setelah DB sukses commit
+            // Hapus file CV
             if ($cvPath && Storage::disk('public')->exists($cvPath)) {
                 Storage::disk('public')->delete($cvPath);
             }
 
-            return redirect('/teachers')->with('success', "Profil pengajar atas nama {$profile->user->name} berhasil dihapus.");
+            // Hapus file Avatar (Foto Profil) jika bukan avatar default sistem
+            if ($avatarPath && $avatarPath !== 'default-avatar.png' && Storage::disk('public')->exists($avatarPath)) {
+                Storage::disk('public')->delete($avatarPath);
+            }
 
+            return redirect('/teachers')->with('success', "Akun dan profil pengajar atas nama {$userName} berhasil dihapus permanen dari sistem.");
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Gagal menghapus profil guru ID ' . $profile->id . ': ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menghapus profil pengajar karena masalah relasi data.');
+
+            Log::error('Gagal menghapus total akun & profil guru ID ' . $profile->id . '. Pesan Error: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'Gagal menghapus data karena kendala relasi basis data: ' . $e->getMessage());
         }
     }
 
@@ -332,20 +308,25 @@ class TeacherProfileController extends Controller
                 'verification_status' => $request->verification_status
             ]);
 
-            // Spatie: Set role berdasarkan keputusan verifikasi admisi
+            $user = $profile->user;
+
             if ($request->verification_status === 'approved') {
-                $profile->user->syncRoles(['guru']);
+                $user->assignRole('guru');
             } else {
-                $profile->user->syncRoles(['user']);
+                if ($user->hasRole('guru')) {
+                    $user->removeRole('guru');
+                }
+                $user->update([
+                    'is_active' => 0
+                ]);
             }
 
             DB::commit();
-            return redirect()->back()->with('success', "Status akun pengajar {$profile->user->name} berhasil diperbarui menjadi " . strtoupper($request->verification_status));
-
+            return redirect()->back()->with('success', "Status akun pengajar {$user->name} berhasil diperbarui menjadi " . strtoupper($request->verification_status));
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Gagal mengubah status verifikasi profil guru ID ' . $profile->id . ': ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal mengubah status verifikasi karena kendala internal server.');
+            return redirect()->back()->with('error', 'Gagal mengubah status verifikasi karena kendala internal server: ' . $e->getMessage());
         }
     }
 }

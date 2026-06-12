@@ -87,20 +87,24 @@ class BookingController extends Controller
     public function create(Request $request)
     {
         try {
-            // Ambil data siswa yang sedang login
             $student = Auth::user();
 
-            // Ambil semua daftar kelas aktif untuk opsi dropdown manual
-            $courses = Course::with('teacher')
+            $courseId = $request->query('course_id');
+
+            if (!$courseId) {
+                return redirect('/courses')->with('error', 'Silakan pilih program kelas terlebih dahulu dari katalog.');
+            }
+
+            $selectedCourse = Course::with(['teacher', 'category'])
                 ->where('status', 'published')
-                ->orderBy('title')
-                ->get();
+                ->findOrFail($courseId);
+
             $banks = CompanyAccount::where('is_active', true)->get();
 
-            return view('student.booking-form', compact('courses', 'student', 'banks'));
+            return view('student.booking-form', compact('student', 'selectedCourse', 'banks'));
         } catch (Exception $e) {
             Log::error('Gagal memuat formulir booking siswa: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat menyiapkan formulir pendaftaran.');
+            return redirect('/courses')->with('error', 'Kelas yang Anda tuju tidak ditemukan atau sudah tidak aktif.');
         }
     }
 

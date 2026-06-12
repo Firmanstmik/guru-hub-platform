@@ -20,7 +20,7 @@
 <body class="bg-gray-50 antialiased font-sans">
 
     <div class="min-h-screen flex flex-col md:flex-row">
-        @if (auth()->user()->name === 'admin')
+        @if (auth()->user()->hasRole('admin'))
             @include('layout.admin-sidebar')
         @endif
 

@@ -40,24 +40,21 @@
 
                         <div class="flex-1 min-w-0 space-y-2">
                             <div class="flex items-start gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-lg flex-shrink-0">
-                                    📄
-                                </div>
                                 <div class="min-w-0 space-y-0.5">
-                                    <h4 class="text-sm font-bold text-gray-900 truncate" title="{{ $mat->title }}">
-                                        {{ $mat->title }}
-                                    </h4>
-                                    <div
-                                        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold text-gray-400">
-                                        <span class="font-medium text-gray-800">
+                                    <h4 class="text-sm font-bold text-gray-900 truncate">{{ $mat->title }}</h4>
+
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-medium text-gray-800 text-xs">
                                             📖 {{ $mat->course->title ?? 'Kelas Tidak Ditemukan' }}
+                                        </span>
+                                        <span
+                                            class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $mat->completed_count >= 5 ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500' }}">
+                                            {{ $mat->completed_count }} Siswa Selesai
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <div
                             class="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-50 flex-shrink-0">
                             <button type="button"
@@ -70,19 +67,26 @@
                                 Lihat Dokumen
                             </button>
                             <div class="flex items-center gap-2">
+                                @if ($mat->completed_count >= 5)
+                                    <a href="/guru/schedules/create?material_id={{ $mat->id }}"
+                                        class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition">
+                                        + Atur Live Class
+                                    </a>
+                                @else
+                                    <button disabled
+                                        class="px-3 py-2 bg-gray-100 text-gray-400 text-xs font-bold rounded-xl cursor-not-allowed">
+                                        Perlu 5+ Selesai
+                                    </button>
+                                @endif
+                                <a href="{{ url('/materials/'. $mat->id) }}"
+                                    class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-xl transition flex items-center gap-1">
+                                    📝 Kelola Kuis
+                                </a>
+
                                 <button data-material='@json($mat)' onclick="handleOpenEditModal(this)"
                                     class="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-bold rounded-xl transition">
                                     Edit
                                 </button>
-
-                                {{-- <form action="/materials/{{ $mat->id }}" method="POST"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus permanen berkas materi belajar ini?')" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl transition">
-                                        Hapus
-                                    </button>
-                                </form> --}}
                             </div>
                         </div>
 

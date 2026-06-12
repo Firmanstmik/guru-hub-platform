@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\CourseMaterial;
 use App\Models\Course;
+use App\Models\UserProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CourseMaterialController extends Controller
@@ -40,6 +42,20 @@ class CourseMaterialController extends Controller
             }
 
             $materials = $query->latest()->paginate(10)->withQueryString();
+
+            // Hitung progress untuk setiap materi yang tampil di halaman ini
+            $materialIds = $materials->pluck('id')->toArray();
+
+            $progressCounts = UserProgress::where('progressable_type', 'App\Models\Material')
+                ->whereIn('progressable_id', $materialIds)
+                ->select('progressable_id', DB::raw('count(*) as total'))
+                ->groupBy('progressable_id')
+                ->pluck('total', 'progressable_id');
+
+            // Masukkan hasil hitungan ke setiap model material
+            $materials->each(function ($mat) use ($progressCounts) {
+                $mat->completed_count = $progressCounts[$mat->id] ?? 0;
+            });
 
             // Mengambil daftar kelas untuk dropdown filter/modal berdasarkan Role Spatie
             if ($user->hasRole('admin')) {
@@ -157,6 +173,23 @@ class CourseMaterialController extends Controller
         } catch (Exception $e) {
             Log::error('Gagal menghapus materi ID ' . $material->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus berkas materi dari sistem.');
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            // Mengambil data materi dan me-load relasi quiz beserta hitungan (count) pertanyaannya
+            $material = CourseMaterial::with(['quiz' => function($query) {
+                $query->withCount('questions');
+            }])->findOrFail($id);
+
+            // Arahkan ke file blade detail materi guru tempat Anda menaruh komponen form kuis tadi
+            return view('guru.material-show', compact('material'));
+
+        } catch (Exception $e) {
+            Log::error('Gagal memuat detail materi guru: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Materi tidak ditemukan atau terjadi kesalahan sistem.');
         }
     }
 }

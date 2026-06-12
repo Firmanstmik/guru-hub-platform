@@ -31,9 +31,11 @@
                     <select name="status" onchange="this.form.submit()"
                         class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-full sm:w-48">
                         <option value="">Semua Status Transfer</option>
-                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending (Ditahan)
+                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>
+                            Pending (Ditahan)
                         </option>
-                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid (Sudah Ditransfer)
+                        <option value="withdrawn" {{ request('status') == 'withdrawn' ? 'selected' : '' }}>
+                            Paid (Sudah Ditransfer)
                         </option>
                     </select>
                 </form>
@@ -149,17 +151,16 @@
                         <tr class="hover:bg-gray-50 transition duration-150">
                             @role('admin')
                                 <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                                    {{ $payment->course->teacher->name ?? 'Tidak Ada' }}
+                                    {{ $payment->teacher_name }}
                                 </td>
                             @endrole
                             <td class="px-6 py-4 text-gray-600 max-w-xs truncate">
-                                {{ $payment->course->title ?? 'Kelas Terhapus' }}
+                                {{ $payment->course_title }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap font-mono text-xs text-gray-500">
                                 {{ $payment->invoice_number ?? '-' }}
                             </td>
 
-                            <!-- Kolom Bagi Hasil: Stacked Text Khusus untuk Admin -->
                             <td class="px-6 py-4 whitespace-nowrap text-xs">
                                 @role('admin')
                                     <div class="space-y-1">
@@ -168,25 +169,25 @@
                                                 class="px-1.5 py-0.2 bg-gray-100 text-gray-600 rounded text-[10px] font-semibold font-mono">Guru
                                                 ({{ $teacherPercentage * 100 }}%)</span>
                                             <span class="font-bold text-gray-950">Rp
-                                                {{ number_format($payment->amount * $teacherPercentage, 0, ',', '.') }}</span>
+                                                {{ number_format($payment->amount_earned, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <span
                                                 class="px-1.5 py-0.2 bg-indigo-50 text-indigo-600 rounded text-[10px] font-semibold font-mono">Sistem
                                                 ({{ (1 - $teacherPercentage) * 100 }}%)</span>
                                             <span class="font-medium text-indigo-600">Rp
-                                                {{ number_format($payment->amount * (1 - $teacherPercentage), 0, ',', '.') }}</span>
+                                                {{ number_format($payment->gross_amount * (1 - $teacherPercentage), 0, ',', '.') }}</span>
                                         </div>
                                     </div>
                                 @else
                                     <span class="font-bold text-gray-900">
-                                        Rp {{ number_format($payment->amount * $teacherPercentage, 0, ',', '.') }}
+                                        Rp {{ number_format($payment->amount_earned, 0, ',', '.') }}
                                     </span>
                                 @endrole
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($payment->earning_status === 'paid')
+                                @if ($payment->earning_status === 'withdrawn')
                                     <span
                                         class="px-2.5 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full">Paid</span>
                                 @else
@@ -196,13 +197,13 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-right text-xs font-medium flex justify-end">
-                                @if ($payment->earning_status === 'pending')
+                                @if ($payment->earning_status === 'unpaid')
                                     @role('admin')
-                                        <form action="/earnings/{{ $payment->id }}/status" method="POST"
+                                        <form action="/earnings/{{ $payment->payment_id }}/status" method="POST"
                                             onsubmit="return confirm('Apakah Anda sudah mentransfer hak dana bagi hasil ini ke rekening guru terkait secara manual?')">
                                             @csrf
                                             @method('PATCH')
-                                            <input type="hidden" name="status" value="paid">
+                                            <input type="hidden" name="status" value="withdrawn">
                                             <button type="submit"
                                                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3 py-1.5 rounded-md shadow-xs transition-all duration-200">
                                                 Tandai Sudah Ditransfer
@@ -215,7 +216,8 @@
                                     @endrole
                                 @else
                                     <span class="text-xs text-gray-400 italic">
-                                        Selesai diproses ({{ $payment->updated_at->format('d/m/Y') }})
+                                        Selesai diproses
+                                        ({{ \Carbon\Carbon::parse($payment->updated_at)->format('d/m/Y') }})
                                     </span>
                                 @endif
                             </td>

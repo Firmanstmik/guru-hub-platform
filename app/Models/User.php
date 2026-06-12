@@ -70,4 +70,9 @@ class User extends Authenticatable
 
         return $this->hasMany(Review::class, $foreignKey);
     }
+
+    public function studentAnswers()
+    {
+        return $this->hasMany(StudentAnswer::class, 'user_id');
+    }
 }

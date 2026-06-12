@@ -3,9 +3,10 @@
     <div class="p-6 max-w-7xl mx-auto space-y-6">
 
         <div class="bg-white p-4 rounded-2xl shadow-xs border border-gray-100">
-            <div class="flex flex-col md:flex-row items-center gap-4">
+            {{-- Mengubah grid sistem agar proporsional setelah tombol reset dihapus --}}
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
 
-                <div class="relative w-full md:flex-grow">
+                <div class="relative w-full md:col-span-6">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -16,7 +17,19 @@
                         class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
                 </div>
 
-                <div class="w-full md:w-64">
+                <div class="w-full md:col-span-3">
+                    <select id="js-category-filter"
+                        class="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-gray-700">
+                        <option value="">-- Semua Kategori --</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ strtolower($category->name) }}">
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="w-full md:col-span-3">
                     <select id="js-teacher-filter"
                         class="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-gray-700">
                         <option value="">-- Semua Guru Pengajar --</option>
@@ -28,27 +41,15 @@
                     </select>
                 </div>
 
-                <div class="w-full md:w-auto">
-                    <a href="{{ request()->url() }}" id="js-reset-btn"
-                        class="w-full md:w-auto bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-semibold px-5 py-2.5 rounded-xl shadow-xs transition duration-150 whitespace-nowrap flex items-center justify-center gap-2">
-
-                        <svg class="w-4 h-4 shrink-0 block" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
-                        </svg>
-
-                        <span>Reset Filter</span>
-                    </a>
-                </div>
-
             </div>
         </div>
 
         <div id="course-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($courses as $course)
+                {{-- TAMBAHAN: Menambahkan atribut data-category --}}
                 <div class="course-card bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden hover:shadow-md transition duration-300 flex flex-col h-full"
                     data-title="{{ strtolower($course->title) }}"
+                    data-category="{{ strtolower($course->category->name ?? 'umum') }}"
                     data-teacher="{{ strtolower($course->teacher->name ?? '') }}">
 
                     <div class="relative h-48 bg-gray-100">
@@ -141,37 +142,39 @@
             </div>
         </div>
 
-        {{-- Sembunyikan pagination jika Anda ingin filter bekerja murni di halaman ini --}}
         <div class="mt-6">
             {{ $courses->links() }}
         </div>
 
     </div>
-    <script>
-        // PERBAIKAN: Potongan kode bocor di sini sudah dihapus agar tidak menghasilkan ReferenceError
 
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('js-search-input');
+            const categoryFilter = document.getElementById('js-category-filter'); // Definisi filter kategori
             const teacherFilter = document.getElementById('js-teacher-filter');
-            const resetBtn = document.getElementById('js-reset-btn');
             const courseCards = document.querySelectorAll('.course-card');
             const clientEmptyState = document.getElementById('js-empty-state-client');
 
-            // Fungsi Utama Filter Real-time
+            // Fungsi Utama Filter Real-time (Mendukung 3 filter bersamaan)
             function filterCourses() {
                 const searchValue = searchInput.value.toLowerCase().trim();
+                const selectedCategory = categoryFilter.value; // Ambil value kategori terpilih
                 const selectedTeacher = teacherFilter.value;
                 let visibleCount = 0;
 
                 courseCards.forEach(card => {
                     const cardTitle = card.getAttribute('data-title');
+                    const cardCategory = card.getAttribute('data-category');
                     const cardTeacher = card.getAttribute('data-teacher');
 
-                    const matchesSearch = cardTitle.includes(searchValue) || cardTeacher.includes(
-                        searchValue);
+                    // Cek kecocokan masing-masing filter
+                    const matchesSearch = cardTitle.includes(searchValue) || cardTeacher.includes(searchValue);
+                    const matchesCategory = selectedCategory === "" || cardCategory === selectedCategory;
                     const matchesTeacher = selectedTeacher === "" || cardTeacher === selectedTeacher;
 
-                    if (matchesSearch && matchesTeacher) {
+                    // Harus memenuhi ketiga kondisi filter sekaligus
+                    if (matchesSearch && matchesCategory && matchesTeacher) {
                         card.style.display = 'flex';
                         visibleCount++;
                     } else {
@@ -179,44 +182,18 @@
                     }
                 });
 
-                // Atur tampilan empty state client
+                // Atur tampilan empty state client jika hasil filter nihil
                 if (visibleCount === 0 && courseCards.length > 0) {
                     clientEmptyState.classList.remove('hidden');
                 } else {
                     clientEmptyState.classList.add('hidden');
                 }
-
-                // Di sini kode penataan tombol bekerja dengan aman karena variabelnya sudah didefinisikan di atas
-                if (searchValue !== "" || selectedTeacher !== "") {
-                    resetBtn.classList.remove('bg-gray-100', 'text-gray-600');
-                    resetBtn.classList.add('bg-amber-50', 'text-amber-700', 'border', 'border-amber-200');
-                } else {
-                    resetBtn.classList.remove('bg-amber-50', 'text-amber-700', 'border', 'border-amber-200');
-                    resetBtn.classList.add('bg-gray-100', 'text-gray-600');
-                }
             }
 
-            // Daftarkan event listener pengetikan & seleksi dropdown
+            // Daftarkan event listener untuk input ketikan & perubahan seleksi dropdown
             searchInput.addEventListener('input', filterCourses);
+            categoryFilter.addEventListener('change', filterCourses); // Event untuk kategori
             teacherFilter.addEventListener('change', filterCourses);
-
-            // OPSI MODAL RESET REAL-TIME (Mencegah reload jika user ingin membersihkan ketikan instan)
-            resetBtn.addEventListener('click', function(e) {
-                if (searchInput.value === "" && teacherFilter.value === "") {
-                    return;
-                }
-
-                e.preventDefault();
-                searchInput.value = '';
-                teacherFilter.value = '';
-
-                const url = new URL(window.location);
-                url.searchParams.delete('search');
-                url.searchParams.delete('teacher_id');
-                window.history.pushState({}, '', url);
-
-                filterCourses();
-            });
         });
     </script>
 @endsection

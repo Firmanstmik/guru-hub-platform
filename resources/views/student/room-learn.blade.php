@@ -152,7 +152,6 @@
                                     rangkaian program kelas pelatihan premium ini.</p>
                             </div>
                         </div>
-
                         <a href="{{ asset('storage/' . $cert->file_path) }}" target="_blank"
                             class="w-full py-2.5 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-black rounded-xl text-center transition block shadow-md">
                             🎓 Unduh Sertifikat Resmi
@@ -166,54 +165,96 @@
 
                     <div class="space-y-4 max-h-[600px] overflow-y-auto pr-1">
 
+                        {{-- KELOMPOK VIDEO KULIAH --}}
                         <div class="space-y-2">
                             <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block">Video
                                 Kuliah ({{ $course->videos->count() }})</span>
                             <div class="space-y-1.5">
                                 @forelse($course->videos as $index => $video)
-                                    @php $isCurrentVideo = ($activeType === 'video' && $activeItem && $activeItem->id === $video->id); @endphp
-                                    <a href="?type=video&id={{ $video->id }}"
-                                        class="flex items-start gap-3 p-3 rounded-xl text-xs transition border {{ $isCurrentVideo ? 'bg-indigo-50/70 border-indigo-200 text-indigo-700 font-bold' : 'bg-gray-50/50 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                                        <span
-                                            class="w-5 h-5 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0 {{ $isCurrentVideo ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500' }}">
-                                            {{ $index + 1 }}
-                                        </span>
-                                        <div class="space-y-0.5 min-w-0">
-                                            <p class="truncate leading-tight">{{ $video->title }}</p>
-                                            <span
-                                                class="text-[10px] text-gray-400 block font-normal">{{ \Illuminate\Support\Str::upper($video->video_type ?? 'Streaming') }}</span>
+                                    @php
+                                        $isCurrentVideo =
+                                            $activeType === 'video' && $activeItem && $activeItem->id === $video->id;
+                                        // Pastikan relasi / kondisi check data completion terdefinisi dari controller (contoh: $video->is_completed)
+                                        $videoChecked = isset($video->is_completed) && $video->is_completed;
+                                    @endphp
+                                    <div
+                                        class="flex items-center gap-2.5 p-3 rounded-xl border transition {{ $isCurrentVideo ? 'bg-indigo-50/70 border-indigo-200' : 'bg-gray-50/50 border-transparent hover:bg-gray-50' }}">
+
+                                        {{-- Checkbox Kustom Video --}}
+                                        <div class="flex items-center shrink-0">
+                                            <input type="checkbox" data-id="{{ $video->id }}" data-type="video"
+                                                class="progress-checkbox w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500/30 transition cursor-pointer"
+                                                {{ $videoChecked ? 'checked' : '' }}>
                                         </div>
-                                    </a>
+
+                                        <a href="?type=video&id={{ $video->id }}"
+                                            class="flex items-start gap-3 text-xs min-w-0 flex-1 {{ $isCurrentVideo ? 'text-indigo-700 font-bold' : 'text-gray-600 hover:text-gray-900' }}">
+                                            <span
+                                                class="w-5 h-5 rounded-md flex items-center justify-center font-bold text-[10px] shrink-0 {{ $isCurrentVideo ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500' }}">
+                                                {{ $index + 1 }}
+                                            </span>
+                                            <div class="space-y-0.5 min-w-0">
+                                                <p class="truncate leading-tight">{{ $video->title }}</p>
+                                                <span
+                                                    class="text-[10px] text-gray-400 block font-normal">{{ \Illuminate\Support\Str::upper($video->video_type ?? 'Streaming') }}</span>
+                                            </div>
+                                        </a>
+                                    </div>
                                 @empty
                                     <p class="text-[11px] text-gray-400 italic pl-1">Belum ada rekaman video.</p>
                                 @endforelse
                             </div>
                         </div>
 
+                        {{-- KELOMPOK DOKUMEN & HANDOUT --}}
                         <div class="space-y-2 pt-2 border-t border-gray-50">
                             <span class="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider block">Dokumen
                                 & Handout ({{ $course->materials->count() }})</span>
                             <div class="space-y-1.5">
                                 @forelse($course->materials as $index => $material)
-                                    @php $isCurrentMaterial = ($activeType === 'material' && $activeItem && $activeItem->id === $material->id); @endphp
+                                    @php
+                                        $isCurrentMaterial =
+                                            $activeType === 'material' &&
+                                            $activeItem &&
+                                            $activeItem->id === $material->id;
+                                        $materialChecked = isset($material->is_completed) && $material->is_completed;
+                                    @endphp
                                     <div
-                                        class="flex items-start gap-3 p-3 rounded-xl text-xs transition border {{ $isCurrentMaterial ? 'bg-emerald-50/70 border-emerald-200 text-emerald-700 font-bold' : 'bg-gray-50/50 border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                                        <svg class="w-4 h-4 shrink-0 mt-0.5 {{ $isCurrentMaterial ? 'text-emerald-600' : 'text-gray-400' }}"
-                                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                        </svg>
-                                        <div class="space-y-0.5 min-w-0 flex-1">
-                                            <a href="?type=material&id={{ $material->id }}"
-                                                class="truncate leading-tight block hover:underline">{{ $material->title }}</a>
-                                            <div class="flex items-center gap-2 text-[10px] text-gray-400 font-normal">
+                                        class="flex items-center gap-2.5 p-3 rounded-xl border transition {{ $isCurrentMaterial ? 'bg-emerald-50/70 border-emerald-200' : 'bg-gray-50/50 border-transparent hover:bg-gray-50' }}">
+
+                                        {{-- Checkbox Kustom Dokumen --}}
+                                        <div class="flex items-center shrink-0">
+                                            <input type="checkbox" data-id="{{ $material->id }}" data-type="material"
+                                                class="progress-checkbox w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500/30 transition cursor-pointer"
+                                                {{ $materialChecked ? 'checked' : '' }}>
+                                        </div>
+
+                                        <div
+                                            class="flex items-start gap-3 text-xs min-w-0 flex-1 {{ $isCurrentMaterial ? 'text-emerald-700 font-bold' : 'text-gray-600' }}">
+                                            <svg class="w-4 h-4 shrink-0 mt-0.5 {{ $isCurrentMaterial ? 'text-emerald-600' : 'text-gray-400' }}"
+                                                fill="none" stroke="currentColor" stroke-width="2"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125 504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                            </svg>
+                                            <div class="space-y-0.5 min-w-0 flex-1">
                                                 <a href="?type=material&id={{ $material->id }}"
-                                                    class="hover:text-indigo-600">Baca Online</a>
-                                                <span>•</span>
-                                                <a href="{{ asset('storage/' . $material->file_path) }}" download
-                                                    class="text-indigo-600 hover:underline font-medium">Download</a>
+                                                    class="truncate leading-tight block hover:underline {{ $isCurrentMaterial ? 'text-emerald-900' : 'hover:text-gray-900' }}">{{ $material->title }}</a>
+                                                <div class="flex items-center gap-2 text-[10px] text-gray-400 font-normal">
+                                                    <a href="?type=material&id={{ $material->id }}"
+                                                        class="hover:text-indigo-600">Baca Online</a>
+                                                    <span>•</span>
+                                                    <a href="{{ asset('storage/' . $material->file_path) }}" download
+                                                        class="text-indigo-600 hover:underline font-medium">Download</a>
+                                                </div>
                                             </div>
                                         </div>
+
+                                        {{-- tombol quiz --}}
+                                        <a href="{{ url('/materials/'.$material->id.'/quiz') }}"
+                                            class="btn bg-indigo-600 text-white font-bold">
+                                            Kerjakan Kuis
+                                        </a>
                                     </div>
                                 @empty
                                     <p class="text-[11px] text-gray-400 italic pl-1">Belum ada modul PDF.</p>
@@ -221,6 +262,7 @@
                             </div>
                         </div>
 
+                        {{-- KELOMPOK JADWAL LIVE CLASS --}}
                         <div class="space-y-2 pt-2 border-t border-gray-50">
                             <span class="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider block">Jadwal
                                 Live Class ({{ $course->schedules->count() }})</span>
@@ -281,6 +323,59 @@
                 </div>
             </div>
 
+
         </div>
     </div>
+
+    {{-- SCRIPT AJAX PROSES PROGRESS CHECKLIST --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const itemId = this.getAttribute('data-id');
+                    const itemType = this.getAttribute('data-type');
+                    const isChecked = this.checked;
+
+                    // Nonaktifkan sementara saat proses berlangsung (mencegah double-click spam)
+                    this.disabled = true;
+
+                    // AJAX Request menggunakan Fetch API bawaan browser
+                    fetch('/course-progress/toggle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Token CSRF Laravel Keamanan
+                            },
+                            body: JSON.stringify({
+                                item_id: itemId,
+                                item_type: itemType,
+                                status: isChecked
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Jika lulus otomatis memicu reload untuk dapetin komponen sertifikat, silakan diaktifkan jika perlu:
+                                // if(data.class_completed) window.location.reload();
+                                console.log('Progress berhasil diperbarui');
+                            } else {
+                                // Balikkan state jika gagal di server
+                                this.checked = !isChecked;
+                                alert('Gagal memperbarui progress, silahkan coba lagi.');
+                            }
+                        })
+                        .catch(error => {
+                            this.checked = !isChecked;
+                            console.error('Error:', error);
+                        })
+                        .finally(() => {
+                            // Aktifkan kembali checkbox
+                            this.disabled = false;
+                        });
+                });
+            });
+        });
+    </script>
 @endsection

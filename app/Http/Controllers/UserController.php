@@ -126,26 +126,29 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        // Validasi pembaruan data dengan custom pesan Bahasa Indonesia
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => "required|email|unique:users,email,{$user->id}",
             'password'     => 'nullable|string|min:6',
             'phone_number' => 'nullable|string|max:20',
+            'role'         => 'required|string|exists:roles,name', // Validasi Spatie role agar terdeteksi sah
         ], [
             'name.required' => 'Nama lengkap pengguna wajib diisi.',
             'email.required' => 'Alamat email tidak boleh dikosongkan.',
-            'email.unique'  => 'Alamat email sudah digunakan oleh pengguna lain.',
-            'password.min'  => 'Kata sandi baru minimal harus terdiri dari 6 karakter.',
+            'email.unique'   => 'Alamat email sudah digunakan oleh pengguna lain.',
+            'password.min'   => 'Kata sandi baru minimal harus terdiri dari 6 karakter.',
+            'role.required'  => 'Hak akses (role) pengguna wajib ditentukan.',
+            'role.exists'    => 'Hak akses yang Anda pilih tidak terdaftar di sistem.',
         ]);
 
-        // Proteksi keamanan: Mencegah admin mengubah role-nya sendiri di luar prosedur internal
+        // Proteksi keamanan: Mencegah admin mengubah role-nya sendiri
         if (Auth::id() === $user->id && $user->roles->first()?->name !== $validated['role']) {
             return redirect()->back()->withInput()->with('error', 'Anda tidak diperbolehkan mengubah peran akun Anda sendiri demi alasan keamanan.');
         }
 
         DB::beginTransaction();
         try {
+            // 2. Perbarui data pengguna
             $user->name = $validated['name'];
             $user->email = $validated['email'];
             $user->phone_number = $validated['phone_number'] ?? null;
@@ -156,17 +159,20 @@ class UserController extends Controller
 
             $user->save();
 
-            // Sinkronisasi peran Spatie Permissions
+            // 3. Sinkronisasi peran Spatie Permissions menggunakan data ter-validasi
             $user->syncRoles([$validated['role']]);
 
             DB::commit();
-            return redirect()->intended('/users')->with('success', "Data pengguna {$user->name} berhasil diperbarui.");
+
+            // Menggunakan redirect biasa ke '/users' jika intended kosong
+            return redirect('/users')->with('success', "Data pengguna {$user->name} berhasil diperbarui.");
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Gagal memperbarui informasi user ID ' . $user->id . ': ' . $e->getMessage());
-            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data pengguna karena kendala internal server.');
+            Log::error('Gagal memperbarui informasi user ID ' . $user->id . '. Pesan Error: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui data pengguna karena kendala internal server: ' . $e->getMessage());
         }
     }
+
 
     /**
      * TOGGLE STATUS (Aktifkan / Tangguhkan Pengguna)

@@ -315,18 +315,23 @@
                         </div>
                     </div>
 
-                    <div id="show_verify_container" class="pt-2 flex gap-2 hidden">
+                    <div id="show_verify_container" class="flex gap-3 mt-4">
                         <form id="showVerifyApproveForm" method="POST" class="flex-1">
-                            @csrf @method('PATCH')
-                            <input type="hidden" name="verification_status" value="approved">
+                            @csrf
+                            @method('PUT') <input type="hidden" name="verification_status" value="approved">
                             <button type="submit"
-                                class="w-full py-2 bg-emerald-600 text-white rounded-lg font-bold text-xs uppercase transition tracking-wider">Setujui</button>
+                                class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-xs uppercase transition tracking-wider shadow-xs">
+                                Setujui
+                            </button>
                         </form>
+
                         <form id="showVerifyRejectForm" method="POST" class="flex-1">
-                            @csrf @method('PATCH')
-                            <input type="hidden" name="verification_status" value="rejected">
+                            @csrf
+                            @method('PUT') <input type="hidden" name="verification_status" value="rejected">
                             <button type="submit"
-                                class="w-full py-2 bg-rose-100 text-rose-700 rounded-lg font-bold text-xs uppercase transition tracking-wider">Tolak</button>
+                                class="w-full py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg font-bold text-xs uppercase transition tracking-wider">
+                                Tolak
+                            </button>
                         </form>
                     </div>
                 </div>

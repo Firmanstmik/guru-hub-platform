@@ -34,9 +34,10 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total
-                        Transaksi</span>
-                    <span class="text-lg font-black text-gray-900 leading-tight">Rp 24.890.000</span>
+                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total Pendapatan
+                        Kotor</span>
+                    <span class="text-lg font-black text-gray-900 leading-tight">Rp
+                        {{ number_format($totalTransactions, 0, ',', '.') }}</span>
                 </div>
             </div>
 
@@ -50,8 +51,9 @@
                 </div>
                 <div>
                     <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total Siswa</span>
-                    <span class="text-lg font-black text-gray-900 leading-tight">1.240 <span
-                            class="text-xs font-normal text-gray-400">User</span></span>
+                    <span
+                        class="text-lg font-black text-gray-900 leading-tight">{{ number_format($totalStudents, 0, ',', '.') }}
+                        <span class="text-xs font-normal text-gray-400">User</span></span>
                 </div>
             </div>
 
@@ -63,9 +65,8 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total
-                        Mentor</span>
-                    <span class="text-lg font-black text-gray-900 leading-tight">38 <span
+                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total Mentor</span>
+                    <span class="text-lg font-black text-gray-900 leading-tight">{{ $totalTeachers }} <span
                             class="text-xs font-normal text-gray-400">Guru</span></span>
                 </div>
             </div>
@@ -78,20 +79,18 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Kursus
-                        Aktif</span>
-                    <span class="text-lg font-black text-gray-900 leading-tight">56 <span
+                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Kursus Aktif</span>
+                    <span class="text-lg font-black text-gray-900 leading-tight">{{ $totalCourses }} <span
                             class="text-xs font-normal text-gray-400">Kelas</span></span>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
             <div class="lg:col-span-2 space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-sm font-black text-gray-900 uppercase tracking-wide">
-                        Log Masuk Dana Transaksi Belajar
+                        Log Masuk Dana Transaksi Belajar Terbaru
                     </h2>
                     <a href="/admin/transaksi" class="text-xs font-bold text-indigo-600 hover:underline">
                         Lihat Semua
@@ -104,50 +103,46 @@
                             <thead>
                                 <tr
                                     class="bg-gray-50 border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                                    <th class="p-4">Invoice ID</th>
+                                    <th class="p-4">No. Invoice</th>
                                     <th class="p-4">Siswa</th>
                                     <th class="p-4">Kursus</th>
-                                    <th class="p-4">Harga bersih</th>
+                                    <th class="p-4">Nominal</th>
                                     <th class="p-4">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50 text-gray-600 font-medium">
-                                <tr class="hover:bg-gray-50/50 transition-all">
-                                    <td class="p-4 font-bold text-gray-900">#TRX-9482</td>
-                                    <td class="p-4">Ahmad Hermawan</td>
-                                    <td class="p-4 truncate max-w-[150px]">Laravel REST API</td>
-                                    <td class="p-4 text-gray-900 font-bold">Rp 250.000</td>
-                                    <td class="p-4">
-                                        <span
-                                            class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-600">Berhasil</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50/50 transition-all">
-                                    <td class="p-4 font-bold text-gray-900">#TRX-9481</td>
-                                    <td class="p-4">Siti Rahmawati</td>
-                                    <td class="p-4 truncate max-w-[150px]">Android Kotlin Advanced</td>
-                                    <td class="p-4 text-gray-900 font-bold">Rp 350.000</td>
-                                    <td class="p-4">
-                                        <span
-                                            class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-600">Berhasil</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50/50 transition-all">
-                                    <td class="p-4 font-bold text-gray-900">#TRX-9480</td>
-                                    <td class="p-4">Bagus Pratama</td>
-                                    <td class="p-4 truncate max-w-[150px]">UI/UX Design Masterclass</td>
-                                    <td class="p-4 text-gray-900 font-bold">Rp 180.000</td>
-                                    <td class="p-4">
-                                        <span
-                                            class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-600">Pending</span>
-                                    </td>
-                                </tr>
+                                @forelse ($latestPayments as $pay)
+                                    <tr class="hover:bg-gray-50/50 transition-all">
+                                        <td class="p-4 font-bold text-gray-900">#{{ $pay->invoice_number }}</td>
+                                        <td class="p-4">{{ $pay->student->name ?? 'User Terhapus' }}</td>
+                                        <td class="p-4 truncate max-w-[150px]">{{ $pay->course->title ?? 'Kelas Terhapus' }}
+                                        </td>
+                                        <td class="p-4 text-gray-900 font-bold">Rp
+                                            {{ number_format($pay->amount, 0, ',', '.') }}</td>
+                                        <td class="p-4">
+                                            @if ($pay->status === 'approved')
+                                                <span
+                                                    class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-600">Berhasil</span>
+                                            @elseif($pay->status === 'pending')
+                                                <span
+                                                    class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-600">Pending</span>
+                                            @else
+                                                <span
+                                                    class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-600">Ditolak</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="p-8 text-center text-gray-400 font-medium">Belum ada
+                                            riwayat transaksi masuk.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
             <div class="space-y-4">
                 <h2 class="text-sm font-black text-gray-900 uppercase tracking-wide">
                     Persetujuan Verifikasi (Approval)
@@ -158,87 +153,84 @@
                         <button @click="activeTab = 'semua'"
                             :class="activeTab === 'semua' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'"
                             class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all">
-                            Pengajar Baru (2)
+                            Pengajar Baru ({{ $pendingTeachers->count() }})
                         </button>
                         <button @click="activeTab = 'kelas'"
                             :class="activeTab === 'kelas' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'"
                             class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all">
-                            Kelas Baru (1)
+                            Kelas Baru ({{ $pendingCourses->count() }})
                         </button>
                     </div>
 
                     <div class="p-4 space-y-4">
 
-                        <div x-show="activeTab === 'semua'"
-                            class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-3 transition-all">
-                            <div class="flex items-center space-x-3">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
-                                    R
+                        <div x-show="activeTab === 'semua'" class="space-y-3">
+                            @forelse($pendingTeachers as $teacher)
+                                <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-3 transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
+                                            {{ strtoupper(substr($teacher->teacher_name, 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-gray-900">{{ $teacher->teacher_name }}</h4>
+                                            <p class="text-[10px] text-gray-400 font-medium mt-0.5">
+                                                Keahlian: {{ $teacher->skills_tags ?? 'Tidak spesifik' }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex space-x-2 pt-1">
+                                        <a href="/teachers"
+                                            class="flex-1">
+                                            <button type="submit"
+                                                class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] rounded-lg transition-all">
+                                                Tinjau
+                                            </button>
+                                        </a>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-gray-900">Rian Fitriadi, S.Kom</h4>
-                                    <p class="text-[10px] text-gray-400 font-medium mt-0.5">Keahlian: Mobile Expert</p>
+                            @empty
+                                <div class="text-center py-6 text-xs text-gray-400 font-medium">
+                                    Tidak ada pengajar baru yang menunggu persetujuan.
                                 </div>
-                            </div>
-                            <div class="flex space-x-2 pt-1">
-                                <button
-                                    class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] rounded-lg transition-all">
-                                    Terima
-                                </button>
-                                <button
-                                    class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 font-bold text-[10px] rounded-lg transition-all">
-                                    Tolak
-                                </button>
-                            </div>
+                            @endforelse
                         </div>
 
-                        <div x-show="activeTab === 'semua'"
-                            class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-3 transition-all">
-                            <div class="flex items-center space-x-3">
+                        <div x-show="activeTab === 'kelas'" class="space-y-3">
+                            @forelse($pendingCourses as $course)
                                 <div
-                                    class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
-                                    D
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-gray-900">Danu Wijaya</h4>
-                                    <p class="text-[10px] text-gray-400 font-medium mt-0.5">Keahlian: Cloud AWS Core
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2 pt-1">
-                                <button
-                                    class="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] rounded-lg transition-all">
-                                    Terima
-                                </button>
-                                <button
-                                    class="px-3 py-1.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 font-bold text-[10px] rounded-lg transition-all">
-                                    Tolak
-                                </button>
-                            </div>
-                        </div>
+                                    class="p-3 bg-amber-50/40 rounded-xl border border-amber-100 space-y-3 transition-all">
+                                    <div>
+                                        <span
+                                            class="text-[9px] font-bold text-amber-700 bg-amber-100/60 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                            Menunggu Review Silabus
+                                        </span>
+                                        <h4 class="text-xs font-black text-gray-900 mt-2">{{ $course->title }}</h4>
+                                        <p class="text-[10px] text-gray-400 mt-0.5">Diajukan oleh:
+                                            {{ $course->teacher->name ?? 'Guru' }}</p>
+                                    </div>
 
-                        <div x-show="activeTab === 'kelas'"
-                            class="p-3 bg-amber-50/40 rounded-xl border border-amber-100 space-y-3 transition-all">
-                            <div>
-                                <span
-                                    class="text-[9px] font-bold text-amber-700 bg-amber-100/60 px-1.5 py-0.5 rounded uppercase tracking-wider">Menunggu
-                                    Review Silabus</span>
-                                <h4 class="text-xs font-black text-gray-900 mt-2">Jaringan Dasar Mikrotik MTCNA</h4>
-                                <p class="text-[10px] text-gray-400 mt-0.5">Diajukan oleh: Fauzi Rahman</p>
-                            </div>
-                            <div class="flex space-x-2 pt-1">
-                                <button
-                                    class="flex-1 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-[10px] rounded-lg transition-all">
-                                    Publikasikan Kelas
-                                </button>
-                            </div>
+                                    <form action="/admin/courses/{{ $course->id }}/publish" method="POST"
+                                        class="pt-1">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit"
+                                            class="w-full py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-[10px] rounded-lg transition-all">
+                                            Publikasikan Kelas
+                                        </button>
+                                    </form>
+                                </div>
+                            @empty
+                                <div class="text-center py-6 text-xs text-gray-400 font-medium">
+                                    Tidak ada pengajuan kelas baru saat ini.
+                                </div>
+                            @endforelse
                         </div>
 
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 @endsection

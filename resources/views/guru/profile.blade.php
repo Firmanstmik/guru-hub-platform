@@ -3,30 +3,33 @@
 @section('content')
     <div class="container mx-auto px-4 max-w-[1600px]">
 
-        <div class="mb-8 space-y-1">
-            <div class="flex items-center gap-2 text-xs font-semibold text-gray-400">
-                <span>Ruang Pengajar</span>
-                <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-                <span class="text-gray-600 font-bold">Profil Saya</span>
-            </div>
-            <h1 class="text-2xl font-black text-gray-900 tracking-tight">Pengaturan Profil Pengajar</h1>
-            <p class="text-xs text-gray-400">Kelola informasi publik Anda, sertifikasi kompetensi, serta kredensial akun
-                bank pencairan.</p>
-        </div>
-
-        @if (session('success'))
-            <div
-                class="mb-6 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-xs font-bold text-emerald-800 flex items-center gap-3 shadow-3xs animate-fade-in">
-                <div class="p-1.5 bg-emerald-500 text-white rounded-lg">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="space-y-1">
+                <div class="flex items-center gap-2 text-xs font-semibold text-gray-400">
+                    <span>Ruang Pengajar</span>
+                    <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" stroke-width="2.5"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
+                    <span class="text-gray-600 font-bold">Profil Saya</span>
                 </div>
-                <span>{{ session('success') }}</span>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Pengaturan Profil Pengajar</h1>
+                <p class="text-xs text-gray-400">Kelola informasi publik Anda, sertifikasi kompetensi, serta kredensial akun
+                    bank pencairan.</p>
             </div>
-        @endif
+
+            @if (is_null($profile) || !$profile->id)
+                <div>
+                    <button type="button" onclick="openModal('addProfileModal')"
+                        class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black px-6 py-3 rounded-xl shadow-md transition text-xs tracking-wider uppercase flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        Buat Profil Pengajar
+                    </button>
+                </div>
+            @endif
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
@@ -43,17 +46,19 @@
                             <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar {{ $user->name }}"
                                 class="w-24 h-24 rounded-2xl object-cover border-4 border-gray-50 shadow-xs">
                         @endif
-                        <button type="button" onclick="openUploadModal()"
+                        @if($profile->id)
+                        <button type="button" onclick="openModal('uploadMediaModal')"
                             class="absolute bottom-0 right-0 p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md border-2 border-white transition transform hover:scale-105"
-                            title="Ubah Foto / CV">
+                            title="Upload Foto / CV">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
                             </svg>
                         </button>
+                        @else
+                            <p class="text-red-500 text-sm">Lengkapi Profile terlebih dahulu</p>
+                        @endif
                     </div>
 
                     <div>
@@ -70,7 +75,8 @@
                             @endif
                         </h2>
                         <p class="text-xs font-bold text-indigo-600 uppercase tracking-widest mt-1">
-                            {{ $profile->title ?? 'Instruktur Pengajar' }}</p>
+                            {{ $profile->title ?? 'Instruktur Pengajar' }}
+                        </p>
                     </div>
 
                     <div class="flex items-center justify-center gap-2">
@@ -91,7 +97,7 @@
                 <div class="space-y-2 text-left">
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Keahlian Utama</h4>
                     <div class="flex flex-wrap gap-1.5">
-                        @forelse($skills as $tag)
+                        @forelse($skills ?? [] as $tag)
                             <span
                                 class="px-2 py-1 bg-gray-50 text-gray-600 font-bold border border-gray-100 rounded-lg text-[10px]">{{ $tag }}</span>
                         @empty
@@ -102,7 +108,7 @@
 
                 <div class="pt-2 text-left border-t border-gray-50">
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Berkas Pendukung</h4>
-                    @if ($profile->cv_file)
+                    @if (isset($profile) && $profile->cv_file)
                         <a href="{{ asset('storage/' . $profile->cv_file) }}" target="_blank"
                             class="inline-flex items-center gap-2 p-2.5 w-full bg-gray-50 border border-gray-100 hover:border-indigo-200 text-xs font-bold text-gray-700 rounded-xl transition group">
                             <svg class="w-4 h-4 text-rose-500 shrink-0" fill="none" stroke="currentColor"
@@ -119,174 +125,104 @@
                 </div>
             </div>
 
-            <div class="lg:col-span-2">
-                <form action="{{ url('/teachers/' . $profile->id) }}" method="POST" class="space-y-6">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="space-y-6">
-
-                        <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-2xs space-y-4">
-                            <div class="flex items-center gap-2 border-b border-gray-50 pb-3">
-                                <div class="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                    </svg>
-                                </div>
-                                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">A. Data Personal
-                                    Dasar</h3>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Nama Lengkap & Gelar</label>
-                                    <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                                    @error('name')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Nomor Telepon / WhatsApp</label>
-                                    <input type="text" name="phone_number"
-                                        value="{{ old('phone_number', $user->phone_number) }}"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                                    @error('phone_number')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-2xs space-y-6">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-4">
+                        <div>
+                            <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Detail Ringkasan Profil
+                            </h3>
+                            <p class="text-[11px] text-gray-400 mt-0.5">Berikut adalah rincian data Anda yang terdaftar pada
+                                sistem.</p>
                         </div>
-
-                        <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-2xs space-y-4">
-                            <div class="flex items-center gap-2 border-b border-gray-50 pb-3">
-                                <div class="p-1.5 bg-purple-50 pointer-events-none text-purple-600 rounded-lg">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M4.26 10.142s.512-.64.734-.842m14.746 0c.223.2.735.842.735.842a37.322 37.322 0 00-4.143-6.523 2.191 2.191 0 00-1.393-.733 50.154 50.154 0 00-13.914 0 2.19 2.19 0 00-1.393.733 37.306 37.306 0 00-4.143 6.523zm14.746 0a40.231 40.231 0 01-14.747 0m14.746 0l-1.348 8.1c-.139.832-.862 1.442-1.701 1.442H5.064c-.84 0-1.562-.61-1.701-1.442l-1.348-8.1m14.746 0H4.26" />
-                                    </svg>
-                                </div>
-                                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">B. Portofolio &
-                                    Keahlian Profesional</h3>
-                            </div>
-
-                            <div class="space-y-4">
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Judul Profesional / Headline</label>
-                                    <input type="text" name="title" value="{{ old('title', $profile->title) }}"
-                                        placeholder="Contoh: Senior Fullstack Engineer & Informatics Educator"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                                    @error('title')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Keahlian Tags (Pisahkan Dengan Tanda
-                                        Koma)</label>
-                                    <input type="text" name="skills_tags"
-                                        value="{{ old('skills_tags', $profile->skills_tags ? implode(', ', json_decode($profile->skills_tags, true)) : '') }}"
-                                        placeholder="Laravel, Kotlin, Unit Testing, Docker"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                                    <span class="text-[10px] text-gray-400 block mt-0.5">Sistem otomatis memecah kata kunci
-                                        ini menjadi susunan badge keahlian.</span>
-                                    @error('skills_tags')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Biografi Singkat (Profil
-                                        Singkat)</label>
-                                    <textarea name="bio" rows="4"
-                                        placeholder="Jelaskan pengalaman industri Anda, riset kurikulum, atau fokus pengajaran yang Anda kuasai..."
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition resize-none">{{ old('bio', $profile->bio) }}</textarea>
-                                    @error('bio')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-2xs space-y-4">
-                            <div class="flex items-center gap-2 border-b border-gray-50 pb-3">
-                                <div class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h16.5M4.5 19.5h15M5.25 4.5v15m13.5-15v15M6.75 7.5h10.5M6.75 10.5h10.5M6.75 13.5h10.5M6.75 16.5h10.5" />
-                                    </svg>
-                                </div>
-                                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">C. Informasi
-                                    Rekening Bank</h3>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Nama Bank</label>
-                                    <input type="text" name="bank_name"
-                                        value="{{ old('bank_name', $profile->bank_name) }}"
-                                        placeholder="Contoh: Mandiri / BCA / BNI"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                                    @error('bank_name')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Nomor Rekening</label>
-                                    <input type="text" name="bank_account_number"
-                                        value="{{ old('bank_account_number', $profile->bank_account_number) }}"
-                                        placeholder="Contoh: 041289129"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                                    @error('bank_account_number')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-xs font-black text-gray-600">Nama Pemilik Akun Bank</label>
-                                    <input type="text" name="bank_account_name"
-                                        value="{{ old('bank_account_name', $profile->bank_account_name) }}"
-                                        placeholder="Harus sesuai buku tabungan"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition">
-                                    @error('bank_account_name')
-                                        <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
+                        @if (isset($profile) && $profile->id)
+                            <button type="button" onclick="openModal('editProfileModal')"
+                                class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                                Edit Profil
+                            </button>
+                        @endif
                     </div>
 
-                    <div class="flex justify-end pt-4">
-                        <button type="submit"
-                            class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black px-8 py-3 rounded-xl shadow-sm transition text-xs tracking-wider uppercase">
-                            Simpan Perubahan Profil
-                        </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nama Lengkap
+                                & Gelar</span>
+                            <p
+                                class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
+                                {{ $user->name }}</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nomor Telepon
+                                / WhatsApp</span>
+                            <p
+                                class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
+                                {{ $user->phone_number ?? '-' }}</p>
+                        </div>
+                        <div class="md:col-span-2 space-y-1">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Headline
+                                Profesional</span>
+                            <p
+                                class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
+                                {{ $profile->title ?? 'Belum ditentukan' }}</p>
+                        </div>
+                        <div class="md:col-span-2 space-y-1">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Biografi &
+                                Deskripsi Pengajaran</span>
+                            <div
+                                class="text-xs font-medium text-gray-600 bg-gray-50 px-3 py-3 rounded-xl border border-gray-100 leading-relaxed whitespace-pre-line">
+                                {{ $profile->bio ?? 'Anda belum menuliskan biografi singkat pengajaran Anda.' }}
+                            </div>
+                        </div>
                     </div>
-                </form>
+
+                    <div class="border-t border-gray-100 pt-5 space-y-4">
+                        <h4 class="text-xs font-black text-gray-900 uppercase tracking-wider">Kredensial Rekening Pencairan
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nama
+                                    Bank</span>
+                                <p
+                                    class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
+                                    {{ $profile->bank_name ?? '-' }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nomor
+                                    Rekening</span>
+                                <p
+                                    class="text-xs font-mono font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
+                                    {{ $profile->bank_account_number ?? '-' }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Pemilik
+                                    Rekening</span>
+                                <p
+                                    class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
+                                    {{ $profile->bank_account_name ?? '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="uploadMediaModal" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title"
-        role="dialog" aria-modal="true">
+    <div id="addProfileModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-xs transition-opacity" aria-hidden="true"
-                onclick="closeUploadModal()"></div>
-
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
+            <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-xs transition-opacity"
+                onclick="closeModal('addProfileModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
             <div
-                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100 animate-slide-up">
-                <div class="bg-white px-5 pt-5 pb-4 sm:p-6 sm:pb-4 space-y-4">
-                    <div class="flex items-center justify-between border-b border-gray-50 pb-3">
-                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider" id="modal-title">Perbarui
-                            File Media</h3>
-                        <button type="button" onclick="closeUploadModal()"
-                            class="text-gray-400 hover:text-gray-600 transition">
+                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100">
+                <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Lengkapi Profile</h3>
+                        <button type="button" onclick="closeModal('addProfileModal')"
+                            class="text-gray-400 hover:text-gray-600">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -294,32 +230,203 @@
                         </button>
                     </div>
 
-                    <form action="{{ url('/teachers/' . $profile->id) }} " method="POST" enctype="multipart/form-data"
-                        class="space-y-5">
+                    <form action="{{ url('/teachers') }}" method="POST" enctype="multipart/form-data"
+                        class="space-y-4">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="verification_status" value="pending">
+
+                        <div class="space-y-1">
+                            <label class="text-xs font-black text-gray-600">Judul Profesional / Headline</label>
+                            <input type="text" name="title" value="{{ old('title') }}"
+                                placeholder="Contoh: Senior Fullstack Engineer & Informatics Educator"
+                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-xs font-black text-gray-600">Keahlian Tags (Pisahkan Dengan Koma)</label>
+                            <input type="text" name="skills_tags" value="{{ old('skills_tags') }}"
+                                placeholder="Laravel, Kotlin, Unit Testing"
+                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-xs font-black text-gray-600">Biografi Singkat</label>
+                            <textarea name="bio" rows="3" placeholder="Jelaskan pengalaman industri Anda..."
+                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:border-indigo-500 focus:outline-none resize-none">{{ old('bio') }}</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                            <div>
+                                <label class="text-xs font-black text-gray-600">Nama Bank</label>
+                                <input type="text" name="bank_name" value="{{ old('bank_name') }}"
+                                    placeholder="BCA/Mandiri"
+                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-black text-gray-600">No. Rekening</label>
+                                <input type="text" name="bank_account_number"
+                                    value="{{ old('bank_account_number') }}" placeholder="04128912"
+                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-black text-gray-600">Nama Pemilik Akun</label>
+                                <input type="text" name="bank_account_name" value="{{ old('bank_account_name') }}"
+                                    placeholder="Sesuai buku tabungan"
+                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end gap-2 border-t border-gray-50 pt-3 mt-4">
+                            <button type="button" onclick="closeModal('addProfileModal')"
+                                class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700">Batal</button>
+                            <button type="submit"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow-xs uppercase tracking-wider">Simpan
+                                Profil</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isset($profile) && $profile->id)
+        <div id="editProfileModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-xs transition-opacity"
+                    onclick="closeModal('editProfileModal')"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+                <div
+                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100">
+                    <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Edit Informasi Profil
+                                Anda</h3>
+                            <button type="button" onclick="closeModal('editProfileModal')"
+                                class="text-gray-400 hover:text-gray-600">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form action="{{ url('/teachers/' . $profile->id) }}" method="POST" class="space-y-4">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs font-black text-gray-600">Nama Lengkap & Gelar</label>
+                                    <input type="text" name="name" value="{{ old('name', $user->name) }}"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-black text-gray-600">Nomor Telepon / WhatsApp</label>
+                                    <input type="text" name="phone_number"
+                                        value="{{ old('phone_number', $user->phone_number) }}"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
+                                </div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="text-xs font-black text-gray-600">Judul Profesional / Headline</label>
+                                <input type="text" name="title" value="{{ old('title', $profile->title ?? '') }}"
+                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="text-xs font-black text-gray-600">Keahlian Tags (Pisahkan Dengan
+                                    Koma)</label>
+                                <input type="text" name="skills_tags"
+                                    value="{{ old('skills_tags', $profile->skills_tags ? implode(', ', json_decode($profile->skills_tags, true)) : '') }}"
+                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none">
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="text-xs font-black text-gray-600">Biografi Singkat</label>
+                                <textarea name="bio" rows="4"
+                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:border-indigo-500 focus:outline-none resize-none">{{ old('bio', $profile->bio ?? '') }}</textarea>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 border-t border-gray-50 pt-3">
+                                <div>
+                                    <label class="text-xs font-black text-gray-600">Nama Bank</label>
+                                    <input type="text" name="bank_name"
+                                        value="{{ old('bank_name', $profile->bank_name ?? '') }}"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-black text-gray-600">No. Rekening</label>
+                                    <input type="text" name="bank_account_number"
+                                        value="{{ old('bank_account_number', $profile->bank_account_number ?? '') }}"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-black text-gray-600">Nama Pemilik Akun</label>
+                                    <input type="text" name="bank_account_name"
+                                        value="{{ old('bank_account_name', $profile->bank_account_name ?? '') }}"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-end gap-2 border-t border-gray-50 pt-3 mt-4">
+                                <button type="button" onclick="closeModal('editProfileModal')"
+                                    class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700">Batal</button>
+                                <button type="submit"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow-xs uppercase tracking-wider">Simpan
+                                    Perubahan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <div id="uploadMediaModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-xs transition-opacity"
+                onclick="closeModal('uploadMediaModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <div
+                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100">
+                <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
+                    <div class="flex items-center justify-between border-b border-gray-50 pb-3">
+                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Perbarui File Media</h3>
+                        <button type="button" onclick="closeModal('uploadMediaModal')"
+                            class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form action="{{ url('/teachers/' . ($profile->id ?? $user->id)) }}" method="POST"
+                        enctype="multipart/form-data" class="space-y-5">
                         @csrf
                         @method('PUT')
 
                         <input type="hidden" name="name" value="{{ $user->name }}">
                         <input type="hidden" name="phone_number" value="{{ $user->phone_number }}">
-                        <input type="hidden" name="title" value="{{ $profile->title }}">
-                        <input type="hidden" name="bio" value="{{ $profile->bio }}">
+                        <input type="hidden" name="title" value="{{ $profile->title ?? 'Instructor' }}">
+                        <input type="hidden" name="bio" value="{{ $profile->bio ?? '' }}">
                         <input type="hidden" name="skills_tags"
-                            value="{{ $profile->skills_tags ? implode(', ', json_decode($profile->skills_tags, true)) : '' }}">
-                        <input type="hidden" name="bank_name" value="{{ $profile->bank_name }}">
-                        <input type="hidden" name="bank_account_number" value="{{ $profile->bank_account_number }}">
-                        <input type="hidden" name="bank_account_name" value="{{ $profile->bank_account_name }}">
+                            value="{{ isset($profile) && $profile->skills_tags ? implode(', ', json_decode($profile->skills_tags, true)) : '' }}">
+                        <input type="hidden" name="bank_name" value="{{ $profile->bank_name ?? 'Mandiri' }}">
+                        <input type="hidden" name="bank_account_number"
+                            value="{{ $profile->bank_account_number ?? '00000' }}">
+                        <input type="hidden" name="bank_account_name"
+                            value="{{ $profile->bank_account_name ?? $user->name }}">
 
                         <div class="space-y-1">
                             <label class="text-xs font-black text-gray-600 block">Ubah Foto Profil (Avatar)</label>
                             <div class="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                                 <input type="file" name="avatar"
-                                    class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:text-[11px] file:font-black file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                                    class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 cursor-pointer">
                             </div>
-                            <span class="text-[10px] text-gray-400 block">Ekstensi yang diizinkan: JPG, JPEG, PNG (Maks
-                                2MB).</span>
-                            @error('avatar')
-                                <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                            @enderror
+                            <span class="text-[10px] text-gray-400 block">Ekstensi: JPG, JPEG, PNG (Maks 2MB).</span>
                         </div>
 
                         <div class="space-y-1">
@@ -327,22 +434,17 @@
                                 Baru</label>
                             <div class="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                                 <input type="file" name="cv_file"
-                                    class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:text-[11px] file:font-black file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
+                                    class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
                             </div>
-                            <span class="text-[10px] text-gray-400 block">Ekstensi dokumen wajib: PDF (Maksimal ukuran
-                                3MB).</span>
-                            @error('cv_file')
-                                <p class="text-[10px] text-rose-600 font-bold mt-0.5">{{ $message }}</p>
-                            @enderror
+                            <span class="text-[10px] text-gray-400 block">Ekstensi: PDF (Maksimal 3MB).</span>
                         </div>
 
                         <div class="flex items-center justify-end gap-2 border-t border-gray-50 pt-3">
-                            <button type="button" onclick="closeUploadModal()"
-                                class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700 transition">Batal</button>
+                            <button type="button" onclick="closeModal('uploadMediaModal')"
+                                class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700">Batal</button>
                             <button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow-xs transition">
-                                Simpan Berkas
-                            </button>
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow-xs transition">Simpan
+                                Berkas</button>
                         </div>
                     </form>
                 </div>
@@ -351,21 +453,26 @@
     </div>
 
     <script>
-        function openUploadModal() {
-            const modal = document.getElementById('uploadMediaModal');
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
         }
 
-        function closeUploadModal() {
-            const modal = document.getElementById('uploadMediaModal');
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
         }
 
+        // Otomatis popup kembali modal jika ada error validasi saat upload berkas
         @if ($errors->has('avatar') || $errors->has('cv_file'))
             document.addEventListener("DOMContentLoaded", function() {
-                openUploadModal();
+                openModal('uploadMediaModal');
             });
         @endif
     </script>

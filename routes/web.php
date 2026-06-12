@@ -28,8 +28,8 @@ use Spatie\Permission\Models\Permission;
 Route::get('/', function () {
     return view('landingpage.home');
 });
-Route::get('/login', [AuthController::class, 'viewLogin']);
-Route::post('/login', [AuthController::class, 'Login'])->name('login');
+Route::get('/login', [AuthController::class, 'viewLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'Login']);
 Route::get('/logout', [AuthController::class, 'Logout'])->middleware('auth')->name('logout');
 
 Route::prefix('register')->group(function () {
