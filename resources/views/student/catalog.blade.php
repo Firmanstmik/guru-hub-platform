@@ -3,7 +3,6 @@
     <div class="p-6 max-w-7xl mx-auto space-y-6">
 
         <div class="bg-white p-4 rounded-2xl shadow-xs border border-gray-100">
-            {{-- Mengubah grid sistem agar proporsional setelah tombol reset dihapus --}}
             <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
 
                 <div class="relative w-full md:col-span-6">
@@ -18,11 +17,12 @@
                 </div>
 
                 <div class="w-full md:col-span-3">
+                    {{-- PERBAIKAN: Menggunakan ID sebagai value utama filter --}}
                     <select id="js-category-filter"
                         class="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-gray-700">
                         <option value="">-- Semua Kategori --</option>
                         @foreach ($categories as $category)
-                            <option value="{{ strtolower($category->name) }}">
+                            <option value="{{ $category->id }}">
                                 {{ $category->name }}
                             </option>
                         @endforeach
@@ -30,11 +30,12 @@
                 </div>
 
                 <div class="w-full md:col-span-3">
+                    {{-- PERBAIKAN: Menggunakan ID sebagai value utama filter --}}
                     <select id="js-teacher-filter"
                         class="w-full px-3 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-gray-700">
                         <option value="">-- Semua Guru Pengajar --</option>
                         @foreach ($teachers as $teacher)
-                            <option value="{{ strtolower($teacher->name) }}">
+                            <option value="{{ $teacher->id }}">
                                 {{ $teacher->name }}
                             </option>
                         @endforeach
@@ -46,11 +47,12 @@
 
         <div id="course-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($courses as $course)
-                {{-- TAMBAHAN: Menambahkan atribut data-category --}}
+                {{-- PERBAIKAN: Mengikat data-category dan data-teacher langsung ke ID database agar 100% presisi --}}
                 <div class="course-card bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden hover:shadow-md transition duration-300 flex flex-col h-full"
                     data-title="{{ strtolower($course->title) }}"
-                    data-category="{{ strtolower($course->category->name ?? 'umum') }}"
-                    data-teacher="{{ strtolower($course->teacher->name ?? '') }}">
+                    data-category-id="{{ $course->category_id ?? '' }}"
+                    data-teacher-id="{{ $course->teacher_id ?? '' }}"
+                    data-teacher-name="{{ strtolower($course->teacher->name ?? '') }}">
 
                     <div class="relative h-48 bg-gray-100">
                         <img src="{{ $course->cover_image ? asset('storage/' . $course->cover_image) : 'https://placehold.co/600x400?text=No+Image' }}"
@@ -151,29 +153,28 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('js-search-input');
-            const categoryFilter = document.getElementById('js-category-filter'); // Definisi filter kategori
+            const categoryFilter = document.getElementById('js-category-filter');
             const teacherFilter = document.getElementById('js-teacher-filter');
             const courseCards = document.querySelectorAll('.course-card');
             const clientEmptyState = document.getElementById('js-empty-state-client');
 
-            // Fungsi Utama Filter Real-time (Mendukung 3 filter bersamaan)
             function filterCourses() {
                 const searchValue = searchInput.value.toLowerCase().trim();
-                const selectedCategory = categoryFilter.value; // Ambil value kategori terpilih
-                const selectedTeacher = teacherFilter.value;
+                const selectedCategoryId = categoryFilter.value; // Berisi ID (string numerik) atau ""
+                const selectedTeacherId = teacherFilter.value;   // Berisi ID (string numerik) atau ""
                 let visibleCount = 0;
 
                 courseCards.forEach(card => {
                     const cardTitle = card.getAttribute('data-title');
-                    const cardCategory = card.getAttribute('data-category');
-                    const cardTeacher = card.getAttribute('data-teacher');
+                    const cardCategoryId = card.getAttribute('data-category-id');
+                    const cardTeacherId = card.getAttribute('data-teacher-id');
+                    const cardTeacherName = card.getAttribute('data-teacher-name');
 
-                    // Cek kecocokan masing-masing filter
-                    const matchesSearch = cardTitle.includes(searchValue) || cardTeacher.includes(searchValue);
-                    const matchesCategory = selectedCategory === "" || cardCategory === selectedCategory;
-                    const matchesTeacher = selectedTeacher === "" || cardTeacher === selectedTeacher;
+                    // PERBAIKAN LOGIKA: Bandingkan kecocokan berbasis ID data-atribut
+                    const matchesSearch = cardTitle.includes(searchValue) || cardTeacherName.includes(searchValue);
+                    const matchesCategory = selectedCategoryId === "" || cardCategoryId === selectedCategoryId;
+                    const matchesTeacher = selectedTeacherId === "" || cardTeacherId === selectedTeacherId;
 
-                    // Harus memenuhi ketiga kondisi filter sekaligus
                     if (matchesSearch && matchesCategory && matchesTeacher) {
                         card.style.display = 'flex';
                         visibleCount++;
@@ -182,7 +183,6 @@
                     }
                 });
 
-                // Atur tampilan empty state client jika hasil filter nihil
                 if (visibleCount === 0 && courseCards.length > 0) {
                     clientEmptyState.classList.remove('hidden');
                 } else {
@@ -190,9 +190,8 @@
                 }
             }
 
-            // Daftarkan event listener untuk input ketikan & perubahan seleksi dropdown
             searchInput.addEventListener('input', filterCourses);
-            categoryFilter.addEventListener('change', filterCourses); // Event untuk kategori
+            categoryFilter.addEventListener('change', filterCourses);
             teacherFilter.addEventListener('change', filterCourses);
         });
     </script>

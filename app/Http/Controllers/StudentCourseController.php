@@ -66,19 +66,50 @@ class StudentCourseController extends Controller
     }
 
     /**
-     * KELASKU / KELAS SAYA (Siswa)
+     * KELAS SAYA (Siswa)
      */
     public function myCourse()
     {
         try {
             $student = Auth::user();
 
-            // 1. Ambil Kelas yang sedang AKTIF (Sudah dibayar dan siap dipelajari)
+            // 1. Ambil Kelas yang sedang AKTIF + Hitung Progres Belajar secara realtime
             $activeCourses = Booking::with(['course.teacher', 'course.category'])
                 ->where('student_id', $student->id)
                 ->where('status', 'success')
                 ->latest()
-                ->get();
+                ->get()
+                ->map(function ($booking) use ($student) {
+                    $course = $booking->course;
+
+                    if (!$course) {
+                        $booking->progress_percentage = 0;
+                        return $booking;
+                    }
+
+                    // Hitung total materi yang memiliki kuis di kelas ini
+                    $totalQuizzes = $course->quizzes()->count();
+
+                    if ($totalQuizzes > 0) {
+                        // Hitung berapa banyak kuis unik dari kelas ini yang sudah dijawab oleh siswa
+                        $completedQuizzes = DB::table('student_answers')
+                            ->join('questions', 'student_answers.question_id', '=', 'questions.id')
+                            ->join('quizzes', 'questions.quiz_id', '=', 'quizzes.id')
+                            ->join('course_materials', 'quizzes.material_id', '=', 'course_materials.id')
+                            ->where('student_answers.user_id', $student->id)
+                            ->where('course_materials.course_id', $course->id)
+                            ->distinct('quizzes.id')
+                            ->count('quizzes.id');
+
+                        // Rumus Progres: (Kuis Selesai / Total Kuis) * 100
+                        $booking->progress_percentage = min(100, round(($completedQuizzes / $totalQuizzes) * 100));
+                    } else {
+                        // Jika kelas belum memiliki kuis/materi sama sekali, set ke 0 atau 100 tergantung kebijakan
+                        $booking->progress_percentage = 0;
+                    }
+
+                    return $booking;
+                });
 
             // 2. Ambil Kelas yang sudah selesai / lulus
             $completedCourses = Booking::with(['course.teacher', 'course.category'])

@@ -35,8 +35,8 @@
                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm py-3 rounded-xl transition shadow-xs">
                         Mulai Kerjakan Sekarang 🚀
                     </a>
-                    <a href="/student/materials/{{ $material->id }}" class="text-xs font-semibold text-gray-500 hover:underline">
-                        Kembali ke Materi
+                    <a href="/my-courses" class="text-xs font-semibold text-gray-500 hover:underline">
+                        Kembali ke Kelas
                     </a>
                 </div>
             @endif

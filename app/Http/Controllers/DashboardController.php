@@ -47,16 +47,16 @@ class DashboardController extends Controller
                 ->get();
 
             $pendingStudents = DB::table('student_biodatas')
-            ->join('users', 'student_biodatas.user_id', '=', 'users.id')
-            ->where('student_biodatas.status', 'pending')
-            ->select(
-                'student_biodatas.id as biodata_id',
-                'users.name as student_name',
-                'student_biodatas.institution_name',
-                'student_biodatas.nisn'
-            )
-            ->latest('student_biodatas.created_at')
-            ->get();
+                ->join('users', 'student_biodatas.user_id', '=', 'users.id')
+                ->where('student_biodatas.status', 'pending')
+                ->select(
+                    'student_biodatas.id as biodata_id',
+                    'users.name as student_name',
+                    'student_biodatas.institution_name',
+                    'student_biodatas.nisn'
+                )
+                ->latest('student_biodatas.created_at')
+                ->get();
 
             return view('admin.dashboard', compact(
                 'totalTransactions',
@@ -205,6 +205,7 @@ class DashboardController extends Controller
             abort(500, 'Terjadi kegagalan sistem saat memuat data dashboard guru: ' . $e->getMessage());
         }
     }
+
     public function dashboardSiswa()
     {
         try {
@@ -228,24 +229,41 @@ class DashboardController extends Controller
             $activeCourses = Course::whereHas('students', function ($q) use ($userId) {
                 $q->where('student_id', $userId);
             })
-                ->with(['teacher', 'category', 'students' => function ($q) use ($userId) {
-                    // Eager load data siswa yang sedang login beserta pivot-nya
-                    $q->where('student_id', $userId);
-                }])
+                ->with(['teacher', 'category']) // Menggunakan 'teacher' sesuai dengan model Course Anda
                 ->get()
-                ->map(function ($course) {
-                    // AMAN: Cek dulu apakah data siswa ditemukan di koleksi relasi
-                    $studentRelation = $course->students->first();
+                ->map(function ($course) use ($userId) {
 
-                    // Jika ada datanya dan ada pivotnya, ambil progressnya. Jika tidak, default 0
-                    $studentProgress = ($studentRelation && $studentRelation->pivot) ? $studentRelation->pivot->progress : 0;
+                    // A. Hitung total kuis yang tersedia di kelas ini
+                    $totalQuizzes = $course->materials()
+                        ->whereHas('quiz')
+                        ->count();
 
-                    $course->student_progress = $studentProgress;
+                    if ($totalQuizzes > 0) {
+                        // B. Hitung berapa kuis unik di kelas ini yang sudah dijawab oleh siswa
+                        $completedQuizzes = DB::table('student_answers')
+                            ->join('questions', 'student_answers.question_id', '=', 'questions.id')
+                            ->join('quizzes', 'questions.quiz_id', '=', 'quizzes.id')
+                            ->join('course_materials', 'quizzes.material_id', '=', 'course_materials.id')
+                            ->where('student_answers.user_id', $userId)
+                            ->where('course_materials.course_id', $course->id)
+                            ->distinct('quizzes.id')
+                            ->count('quizzes.id');
 
-                    // Singkatan nama otomatis
-                    $course->short_name = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $course->title), 0, 3));
+                        // C. Hitung presentasi progres belajar
+                        $course->student_progress = min(100, round(($completedQuizzes / $totalQuizzes) * 100));
+                    } else {
+                        // Default 0 jika instruktur belum membuat kuis sama sekali
+                        $course->student_progress = 0;
+                    }
+
+                    // Singkatan nama otomatis (Contoh: Advanced Mobile Programming -> ADV)
+                    // Menghapus spasi/karakter non-alphanumeric, lalu ambil 3 huruf pertama
+                    $cleanTitle = preg_replace('/[^A-Za-z0-9]/', '', $course->title);
+                    $course->short_name = strtoupper(substr($cleanTitle, 0, 3));
+
                     return $course;
                 })
+                // Mengurutkan dari progress terkecil agar siswa termotivasi melanjutkan kelas yang tertinggal
                 ->sortBy('student_progress')
                 ->take(3);
 

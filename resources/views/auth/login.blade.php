@@ -47,7 +47,7 @@
                         <div class="flex items-center justify-between mb-1.5">
                             <label for="password" class="block text-xs font-semibold text-gray-600 uppercase tracking-wider">Password</label>
                             <!-- Opsional: Link lupa password -->
-                            <a href="#" class="text-xs font-medium text-indigo-600 hover:text-indigo-500 transition">Lupa Password?</a>
+                            {{-- <a href="#" class="text-xs font-medium text-indigo-600 hover:text-indigo-500 transition">Lupa Password?</a> --}}
                         </div>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">

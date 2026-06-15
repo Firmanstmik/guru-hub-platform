@@ -36,7 +36,6 @@ class Course extends Model
         return $this->hasMany(ClassSchedule::class);
     }
 
-    // Mendapatkan semua siswa yang terdaftar di kelas ini
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'course_students', 'course_id', 'student_id')
@@ -44,9 +43,13 @@ class Course extends Model
             ->withTimestamps();
     }
 
-
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function quizzes()
+    {
+        return $this->hasManyThrough(Quizze::class, CourseMaterial::class, 'course_id', 'material_id');
     }
 }
