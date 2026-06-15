@@ -46,6 +46,20 @@ class StudentBiodataController extends Controller
         }
     }
 
+    public function verify(Request $request, $id)
+    {
+        // Validasi input status yang diperbolehkan masuk ke database
+        $validated = $request->validate([
+            'status' => 'required|in:approved,rejected',
+        ]);
+
+        $biodata = StudentBiodata::findOrFail($id);
+        $biodata->update([
+            'status' => $validated['status']
+        ]);
+
+        return redirect()->back()->with('success', 'Status validasi biodata siswa berhasil diperbarui.');
+    }
 
     // FUNGSI UNTUK ROLE SISWA
     public function siswaForm()

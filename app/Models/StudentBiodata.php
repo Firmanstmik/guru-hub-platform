@@ -16,6 +16,7 @@ class StudentBiodata extends Model
         'birth_date',
         'gender',
         'address',
+        'status',
     ];
 
     public function user(): BelongsTo

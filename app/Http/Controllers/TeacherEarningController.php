@@ -60,14 +60,15 @@ class TeacherEarningController extends Controller
             // ALUR KHUSUS ADMIN (Membaca Tabel payments untuk Verifikasi Manual)
             // ==========================================
             if ($user->hasRole('admin')) {
-                // 1. Inisialisasi Query Utama untuk Admin membaca tabel murni teacher_earnings
-                // Menggunakan relasi payment untuk filter pencarian dan filter status
+                // 1. Inisialisasi Query Utama
                 $query = DB::table('teacher_earnings')
                     ->join('payments', 'teacher_earnings.payment_id', '=', 'payments.id')
                     ->join('courses', 'payments.course_id', '=', 'courses.id')
                     ->join('users as teachers', 'teacher_earnings.teacher_id', '=', 'teachers.id')
                     ->join('users as students', 'payments.student_id', '=', 'students.id')
-                    ->where('payments.status', 'approved'); // Hanya tampilkan transaksi yang sudah sah
+                    // TAMBAHKAN JOIN KE TABEL PROFIL GURU UNTUK AMBIL DATA BANK
+                    ->leftJoin('teacher_profiles', 'teachers.id', '=', 'teacher_profiles.user_id')
+                    ->where('payments.status', 'approved');
 
                 // 2. Filter Pencarian Nama Guru
                 if ($request->filled('search')) {
@@ -75,25 +76,29 @@ class TeacherEarningController extends Controller
                     $query->where('teachers.name', 'like', '%' . $search . '%');
                 }
 
-                // 3. Filter Berdasarkan Status Transfer Bagi Hasil ('unpaid' / 'withdrawn')
+                // 3. Filter Berdasarkan Status Transfer Bagi Hasil
                 if ($request->filled('status')) {
                     $query->where('teacher_earnings.status', $request->status);
                 }
 
-                // 4. Perhitungan Widget Angka Ringkasan yang Cepat dan Akurat dari Database
+                // 4. Perhitungan Widget Angka Ringkasan
                 $totalPending = (clone $query)->where('teacher_earnings.status', 'unpaid')->sum('teacher_earnings.amount_earned');
                 $totalPaid    = (clone $query)->where('teacher_earnings.status', 'withdrawn')->sum('teacher_earnings.amount_earned');
 
-                // 5. Ambil Data Pagination dengan Properti Flat Object agar Seragam dan Ringan
+                // 5. Ambil Data Pagination dengan Select yang diarahkan ke tabel profil guru
                 $earnings = $query->select(
                     'payments.id as payment_id',
                     'payments.invoice_number',
                     'payments.amount as gross_amount',
                     'teachers.name as teacher_name',
+                    // UBAH ALIAS ASAL TABELNYA KE TABEL PROFIL GURU
+                    'teacher_profiles.bank_name',
+                    'teacher_profiles.bank_account_number',
+                    'teacher_profiles.bank_account_name',
                     'courses.title as course_title',
                     'students.name as student_name',
                     'teacher_earnings.amount_earned',
-                    'teacher_earnings.status as earning_status', // Kita jadikan alias agar view blade tidak pecah
+                    'teacher_earnings.status as earning_status',
                     'teacher_earnings.created_at',
                     'teacher_earnings.updated_at'
                 )
@@ -107,6 +112,7 @@ class TeacherEarningController extends Controller
             // Fallback jika ada user dengan role lain mencoba masuk
             abort(403, 'Anda tidak memiliki hak akses untuk melihat halaman pendapatan ini.');
         } catch (Exception $e) {
+            dd($e->getMessage());
             Log::error('Gagal memuat data pendapatan bagi hasil pengajar: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat laporan pendapatan.');
         }

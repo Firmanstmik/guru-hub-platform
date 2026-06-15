@@ -115,7 +115,7 @@
                                 </div>
                                 <div class="w-full sm:w-auto sm:text-right flex sm:flex-col justify-between sm:justify-center items-center sm:items-end gap-1.5 border-t sm:border-t-0 pt-3 sm:pt-0 border-gray-50">
                                     <span class="text-xs font-black text-gray-800 font-mono">{{ $course->student_progress }}%</span>
-                                    <a href="/room-learn/{{ $course->id }}"
+                                    <a href="/student/courses/{{ $course->id }}/learn"
                                         class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold rounded-lg transition-all text-center w-auto">
                                         Lanjutkan
                                     </a>

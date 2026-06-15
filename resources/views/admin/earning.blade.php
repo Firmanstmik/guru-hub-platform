@@ -130,30 +130,39 @@
             <table class="min-w-full divide-y divide-slate-200 text-sm whitespace-nowrap">
                 <thead class="bg-gray-50">
                     <tr>
-                        @role('admin')
-                            <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Nama Pengajar / Guru</th>
-                        @endrole
+
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Nama Guru</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Rekening Guru</th>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Kelas Sumber Dana</th>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">No. Invoice Asal</th>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">
-                            @role('admin')
-                                Rincian Pembagian Hasil
-                            @else
-                                Hak Pendapatan Anda ({{ $teacherPercentage * 100 }}%)
-                            @endrole
+
+                            Rincian Pembagian Hasil
                         </th>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Status Transfer</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi Tindakan</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100 text-sm">
                     @forelse($earnings as $payment)
                         <tr class="hover:bg-gray-50 transition duration-150">
-                            @role('admin')
-                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                                    {{ $payment->teacher_name }}
-                                </td>
-                            @endrole
+
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                                {{ $payment->teacher_name }}
+                            </td>
+                            <td class="px-6 py-4 text-xs">
+                                <div class="flex flex-col gap-0.5 text-left font-medium text-gray-900">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600">
+                                        {{ $payment->bank_name }}
+                                    </span>
+                                    <span class="font-bold text-gray-800">
+                                        {{ $payment->bank_account_number }}
+                                    </span>
+                                    <span class="text-gray-500 text-[11px]">
+                                        a.n. {{ $payment->bank_account_name }}
+                                    </span>
+                                </div>
+                            </td>
                             <td class="px-6 py-4 text-gray-600 max-w-xs truncate">
                                 {{ $payment->course_title }}
                             </td>
@@ -162,28 +171,23 @@
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap text-xs">
-                                @role('admin')
-                                    <div class="space-y-1">
-                                        <div class="flex items-center gap-1.5">
-                                            <span
-                                                class="px-1.5 py-0.2 bg-gray-100 text-gray-600 rounded text-[10px] font-semibold font-mono">Guru
-                                                ({{ $teacherPercentage * 100 }}%)</span>
-                                            <span class="font-bold text-gray-950">Rp
-                                                {{ number_format($payment->amount_earned, 0, ',', '.') }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-1.5">
-                                            <span
-                                                class="px-1.5 py-0.2 bg-indigo-50 text-indigo-600 rounded text-[10px] font-semibold font-mono">Sistem
-                                                ({{ (1 - $teacherPercentage) * 100 }}%)</span>
-                                            <span class="font-medium text-indigo-600">Rp
-                                                {{ number_format($payment->gross_amount * (1 - $teacherPercentage), 0, ',', '.') }}</span>
-                                        </div>
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-1.5">
+                                        <span
+                                            class="px-1.5 py-0.2 bg-gray-100 text-gray-600 rounded text-[10px] font-semibold font-mono">Guru
+                                            ({{ $teacherPercentage * 100 }}%)
+                                        </span>
+                                        <span class="font-bold text-gray-950">Rp
+                                            {{ number_format($payment->amount_earned, 0, ',', '.') }}</span>
                                     </div>
-                                @else
-                                    <span class="font-bold text-gray-900">
-                                        Rp {{ number_format($payment->amount_earned, 0, ',', '.') }}
-                                    </span>
-                                @endrole
+                                    <div class="flex items-center gap-1.5">
+                                        <span
+                                            class="px-1.5 py-0.2 bg-indigo-50 text-indigo-600 rounded text-[10px] font-semibold font-mono">Sistem
+                                            ({{ (1 - $teacherPercentage) * 100 }}%)</span>
+                                        <span class="font-medium text-indigo-600">Rp
+                                            {{ number_format($payment->gross_amount * (1 - $teacherPercentage), 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
                             </td>
 
                             <td class="px-6 py-4 whitespace-nowrap">

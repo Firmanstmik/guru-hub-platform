@@ -45,12 +45,26 @@ class DashboardController extends Controller
                 ->where('status', 'pending')
                 ->latest()
                 ->get();
+
+            $pendingStudents = DB::table('student_biodatas')
+            ->join('users', 'student_biodatas.user_id', '=', 'users.id')
+            ->where('student_biodatas.status', 'pending')
+            ->select(
+                'student_biodatas.id as biodata_id',
+                'users.name as student_name',
+                'student_biodatas.institution_name',
+                'student_biodatas.nisn'
+            )
+            ->latest('student_biodatas.created_at')
+            ->get();
+
             return view('admin.dashboard', compact(
                 'totalTransactions',
                 'totalStudents',
                 'totalTeachers',
                 'totalCourses',
                 'pendingTeachers',
+                'pendingStudents',
                 'pendingCourses',
                 'latestPayments'
             ));

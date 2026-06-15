@@ -32,14 +32,6 @@
                         </option>
                     </select>
                 </form>
-
-                <button onclick="openCreateModal()"
-                    class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm shadow-xs transition flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Daftarkan Murid
-                </button>
             </div>
         </div>
 
@@ -109,65 +101,6 @@
         </div>
     </div>
 
-    <div id="createModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen px-4">
-            <div class="fixed inset-0 transition-opacity" onclick="closeModal('createModal')">
-                <div class="absolute inset-0 bg-gray-900 opacity-75"></div>
-            </div>
-            <div class="bg-white rounded-xl overflow-hidden shadow-xl transform transition-all max-w-md w-full z-10">
-                <form action="/course-students" method="POST" class="p-6">
-                    @csrf
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Daftarkan Murid Secara Manual</h3>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Pilih
-                                Murid</label>
-                            <select name="student_id" required
-                                class="w-full border border-gray-300 rounded-lg text-sm p-2.5 bg-white focus:border-indigo-500">
-                                <option value="">-- Pilih Akun Murid --</option>
-                                @foreach ($students as $student)
-                                    <option value="{{ $student->id }}">{{ $student->name }} ({{ $student->email }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Pilih
-                                Program Kelas</label>
-                            <select name="course_id" required
-                                class="w-full border border-gray-300 rounded-lg text-sm p-2.5 bg-white focus:border-indigo-500">
-                                <option value="">-- Pilih Kelas --</option>
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->id }}">{{ $course->title }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">Status
-                                Awal Belajar</label>
-                            <select name="status" required
-                                class="w-full border border-gray-300 rounded-lg text-sm p-2.5 bg-white focus:border-indigo-500">
-                                <option value="active" selected>Active (Masih Belajar)</option>
-                                <option value="completed">Completed (Selesai & Buka Sertifikat)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex justify-end gap-3 border-t border-gray-100 pt-4">
-                        <button type="button" onclick="closeModal('createModal')"
-                            class="bg-white border border-gray-300 text-gray-700 font-medium px-4 py-2 rounded-lg text-sm">Batal</button>
-                        <button type="submit"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm shadow-xs">Daftarkan
-                            Selesai</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <div id="editModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="fixed inset-0 transition-opacity" onclick="closeModal('editModal')">
@@ -176,7 +109,6 @@
             <div class="bg-white rounded-xl overflow-hidden shadow-xl transform transition-all max-w-md w-full z-10">
                 <form id="editForm" method="POST" class="p-6">
                     @csrf
-                    @method('PUT')
                     <h3 class="text-lg font-semibold text-gray-900 mb-2">Perbarui Status Pembelajaran</h3>
                     <p class="text-xxs text-gray-400 mb-4 leading-tight">Mengubah status menjadi <span
                             class="font-bold text-emerald-600">Completed</span> akan otomatis merilis hak sertifikat
@@ -203,8 +135,9 @@
                         <button type="button" onclick="closeModal('editModal')"
                             class="bg-white border border-gray-300 text-gray-700 font-medium px-4 py-2 rounded-lg text-sm">Batal</button>
                         <button type="submit"
-                            class="bg-amber-600 hover:bg-amber-700 text-white font-medium px-4 py-2 rounded-lg text-sm shadow-xs">Simpan
-                            Perubahan</button>
+                            class="bg-amber-600 hover:bg-amber-700 text-white font-medium px-4 py-2 rounded-lg text-sm shadow-xs">
+                            Simpan Perubahan
+                        </button>
                     </div>
                 </form>
             </div>
@@ -212,9 +145,6 @@
     </div>
 
     <script>
-        function openCreateModal() {
-            document.getElementById('createModal').classList.remove('hidden');
-        }
 
         function openEditModal(id, studentName, courseTitle, currentStatus) {
             document.getElementById('editStudentName').innerText = studentName;

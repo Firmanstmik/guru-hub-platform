@@ -21,7 +21,7 @@ return new class extends Migration
             $blueprint->date('birth_date')->nullable();
             $blueprint->enum('gender', ['L', 'P'])->nullable();
             $blueprint->text('address')->nullable();
-            
+            $blueprint->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $blueprint->timestamps();
         });
     }

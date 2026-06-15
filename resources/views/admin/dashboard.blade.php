@@ -12,16 +12,6 @@
                     Akses penuh kendali sistem. Pantau transaksi keuangan, total pengguna, dan kelayakan konten kursus.
                 </p>
             </div>
-            <div class="flex space-x-2">
-                <a href="/admin/laporan-ekspor"
-                    class="inline-flex items-center space-x-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 active:scale-95 text-white text-xs font-bold rounded-xl shadow-sm transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span>Cetak Laporan Keuangan</span>
-                </a>
-            </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -92,7 +82,7 @@
                     <h2 class="text-sm font-black text-gray-900 uppercase tracking-wide">
                         Log Masuk Dana Transaksi Belajar Terbaru
                     </h2>
-                    <a href="/admin/transaksi" class="text-xs font-bold text-indigo-600 hover:underline">
+                    <a href="/payments" class="text-xs font-bold text-indigo-600 hover:underline">
                         Lihat Semua
                     </a>
                 </div>
@@ -145,25 +135,32 @@
             </div>
             <div class="space-y-4">
                 <h2 class="text-sm font-black text-gray-900 uppercase tracking-wide">
-                    Persetujuan Verifikasi (Approval)
+                    Verifikasi (Approval)
                 </h2>
 
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div class="flex border-b border-gray-100 bg-gray-50/50 p-1">
+                    {{-- Navigasi Tab Kontrol --}}
+                    <div class="flex border-b border-gray-100 bg-gray-50/50 p-1 gap-0.5">
                         <button @click="activeTab = 'semua'"
                             :class="activeTab === 'semua' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'"
-                            class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all">
-                            Pengajar Baru ({{ $pendingTeachers->count() }})
+                            class="flex-1 text-center py-2 text-[11px] font-bold rounded-xl transition-all">
+                            Pengajar ({{ $pendingTeachers->count() }})
+                        </button>
+                        <button @click="activeTab = 'siswa'"
+                            :class="activeTab === 'siswa' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'"
+                            class="flex-1 text-center py-2 text-[11px] font-bold rounded-xl transition-all">
+                            Siswa ({{ $pendingStudents->count() }})
                         </button>
                         <button @click="activeTab = 'kelas'"
                             :class="activeTab === 'kelas' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-400'"
-                            class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all">
-                            Kelas Baru ({{ $pendingCourses->count() }})
+                            class="flex-1 text-center py-2 text-[11px] font-bold rounded-xl transition-all">
+                            Kelas ({{ $pendingCourses->count() }})
                         </button>
                     </div>
 
                     <div class="p-4 space-y-4">
 
+                        {{-- TAB: PENGAJAR PENDING --}}
                         <div x-show="activeTab === 'semua'" class="space-y-3">
                             @forelse($pendingTeachers as $teacher)
                                 <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-3 transition-all">
@@ -181,11 +178,10 @@
                                     </div>
 
                                     <div class="flex space-x-2 pt-1">
-                                        <a href="/teachers"
-                                            class="flex-1">
-                                            <button type="submit"
+                                        <a href="/teachers" class="w-full">
+                                            <button type="button"
                                                 class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] rounded-lg transition-all">
-                                                Tinjau
+                                                Tinjau Berkas Pengajar
                                             </button>
                                         </a>
                                     </div>
@@ -197,7 +193,43 @@
                             @endforelse
                         </div>
 
-                        <div x-show="activeTab === 'kelas'" class="space-y-3">
+                        {{-- TAB BARU: SISWA PENDING --}}
+                        <div x-show="activeTab === 'siswa'" class="space-y-3" x-cloak>
+                            @forelse($pendingStudents as $student)
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-3 transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
+                                            {{ strtoupper(substr($student->student_name, 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-gray-900">{{ $student->student_name }}</h4>
+                                            <p class="text-[10px] text-gray-400 font-medium mt-0.5">
+                                                Instansi: {{ $student->institution_name ?? '-' }} @if ($student->nisn)
+                                                    (NISN: {{ $student->nisn }})
+                                                @endif
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex space-x-2 pt-1">
+                                        <a href="/student-biodata" class="w-full">
+                                            <button type="button"
+                                                class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] rounded-lg transition-all">
+                                                Validasi Biodata Siswa
+                                            </button>
+                                        </a>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-6 text-xs text-gray-400 font-medium">
+                                    Tidak ada biodata siswa yang menunggu verifikasi.
+                                </div>
+                            @endforelse
+                        </div>
+
+                        {{-- TAB: KELAS PENDING --}}
+                        <div x-show="activeTab === 'kelas'" class="space-y-3" x-cloak>
                             @forelse($pendingCourses as $course)
                                 <div
                                     class="p-3 bg-amber-50/40 rounded-xl border border-amber-100 space-y-3 transition-all">
