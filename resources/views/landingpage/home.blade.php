@@ -100,7 +100,7 @@
                     GuruHub menghubungkan siswa, pengajar, dan institusi dalam satu pengalaman belajar yang
                     <span class="text-[#60A5FA]">terstruktur</span> — dari <span class="text-[#60A5FA]">penemuan</span> kursus hingga sertifikasi.
                 </p>
-                <div class="mt-9 flex flex-wrap items-center gap-3">
+                <div class="gh-ref-hero-ctas flex flex-wrap items-center gap-3">
                     <a href="{{ url('register/student') }}" class="gh-ref-btn-hero-primary">
                         Mulai belajar sekarang
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -110,10 +110,42 @@
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </a>
                 </div>
+
+                {{-- Mobile app preview (replaces 3D mockup on phone) --}}
+                <div class="gh-landing-mobile-preview lg:hidden" aria-hidden="true">
+                    <div class="gh-landing-mobile-preview-card">
+                        <div class="gh-landing-mobile-preview-ring">
+                            <svg viewBox="0 0 36 36" class="h-full w-full -rotate-90" aria-hidden="true">
+                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"/>
+                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="url(#ghMobG1)" stroke-width="3" stroke-dasharray="78 100" stroke-linecap="round"/>
+                                <defs><linearGradient id="ghMobG1" x1="0" x2="1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
+                            </svg>
+                            <div class="absolute inset-0 grid place-items-center text-[0.875rem] font-bold text-white">78%</div>
+                        </div>
+                        <p class="gh-landing-mobile-preview-label mt-3 text-center">Progress belajar rata-rata</p>
+                    </div>
+                    <div class="gh-landing-mobile-preview-card">
+                        <p class="gh-landing-mobile-preview-value">{{ $fmtStat((int) $stats['students']) }}</p>
+                        <p class="gh-landing-mobile-preview-label">Siswa aktif</p>
+                    </div>
+                    <div class="gh-landing-mobile-preview-card">
+                        <p class="gh-landing-mobile-preview-value">{{ number_format((int) $stats['teachers']) }}</p>
+                        <p class="gh-landing-mobile-preview-label">Pengajar terverifikasi</p>
+                    </div>
+                    <div class="gh-landing-mobile-preview-card gh-landing-mobile-preview-card--wide">
+                        <span class="gh-landing-mobile-preview-icon">
+                            <x-ui.lucide name="award" class="h-6 w-6" />
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-[1.0625rem] font-bold text-white">Sertifikat terverifikasi</p>
+                            <p class="mt-1 text-[0.875rem] leading-snug text-white/55">Dari penemuan kursus hingga sertifikasi — semua dalam satu aplikasi.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {{-- Dashboard mockup --}}
-            <div class="relative lg:col-span-7 gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
+            <div class="relative hidden lg:col-span-7 lg:block gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
                 <div class="gh-ref-scene-3d relative flex items-start gap-5 lg:gap-6">
                     <div class="gh-ref-dash-card gh-ref-tilt-main">
                         <div class="flex items-center justify-between px-2 pt-1 pb-3">
@@ -462,6 +494,17 @@
                 <span class="gh-ref-muted">Mengajar • Berbagi Ilmu • Membangun Masa Depan</span>
             </div>
         </footer>
+    </div>
+
+    {{-- Mobile sticky dock --}}
+    <div class="gh-landing-mobile-dock lg:hidden" role="navigation" aria-label="Aksi cepat">
+        <div class="gh-landing-mobile-dock-inner">
+            <a href="{{ url('/login') }}" class="gh-landing-dock-secondary">Masuk</a>
+            <a href="{{ url('register/student') }}" class="gh-landing-dock-primary">
+                Mulai Belajar
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+        </div>
     </div>
 </div>
 @endsection

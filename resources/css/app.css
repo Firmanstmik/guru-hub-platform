@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './design-system.css';
 @import './landing-reference.css';
+@import './landing-mobile.css';
 @import './auth-reference.css';
 @import './guru-dashboard.css';
 @import './app-mobile.css';

@@ -12,14 +12,20 @@
 @hasSection('flush')
     <header class="gh-ref-nav-bar fixed inset-x-0 top-0 z-50" aria-label="Navigasi situs">
         <div class="gh-ref-nav-inner">
-            <a href="{{ url('/') }}" class="shrink-0" aria-label="Guru Hub">
-                <span class="gh-ref-nav-logo">
-                    <img src="{{ asset('assets/logo-app/guru_hub_logo.jpeg') }}" alt="Guru Hub">
-                </span>
-            </a>
+            <div class="gh-ref-nav-brand-wrap">
+                <a href="{{ url('/') }}" class="shrink-0" aria-label="Guru Hub">
+                    <span class="gh-ref-nav-logo">
+                        <img src="{{ asset('assets/logo-app/guru_hub_logo.jpeg') }}" alt="Guru Hub">
+                    </span>
+                </a>
+                <div class="gh-ref-nav-brand-text lg:hidden">
+                    <span class="gh-ref-nav-brand-name">GuruHub</span>
+                    <span class="gh-ref-nav-brand-tag">Belajar • Mengajar • Berkembang</span>
+                </div>
+            </div>
 
             <div class="gh-ref-nav-actions">
-                <div class="relative">
+                <div class="relative hidden sm:block">
                     <button type="button" @click="registerOpen = !registerOpen" @click.away="registerOpen = false"
                         class="gh-ref-btn-ghost-nav"
                         x-bind:class="registerOpen ? 'border-white/25 bg-white/10 text-white' : ''"
@@ -59,6 +65,10 @@
                         </a>
                     </div>
                 </div>
+                <a href="{{ url('register/student') }}" class="gh-ref-btn-ghost-nav sm:hidden" aria-label="Daftar">
+                    <x-ui.lucide name="users" class="h-5 w-5" />
+                    <span class="sr-only">Daftar</span>
+                </a>
                 <span class="gh-ref-nav-divider" aria-hidden="true"></span>
                 <a href="{{ url('/login') }}" class="gh-ref-btn-primary">Masuk</a>
                 <button type="button" class="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-white/80 transition hover:bg-white/5 sm:hidden"
@@ -73,7 +83,7 @@
             x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 -translate-y-1"
             x-transition:enter-end="opacity-100 translate-y-0"
-            class="border-t border-white/10 px-6 py-4 sm:hidden">
+            class="gh-ref-nav-mobile-panel sm:hidden">
             <nav class="flex flex-col gap-1" aria-label="Navigasi mobile">
                 <a href="{{ url('register/student') }}" class="rounded-lg px-3 py-2.5 text-sm text-white/80" @click="mobileOpen = false">
                     <x-ui.lucide name="book-open" class="mr-2 inline h-4 w-4 opacity-70" />
