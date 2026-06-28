@@ -11,6 +11,7 @@ use App\Http\Controllers\CourseMaterialController;
 use App\Http\Controllers\CourseStudentController;
 use App\Http\Controllers\CourseVideoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegisterController;
@@ -25,9 +26,7 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 
 // PUBLIC ROUTES
-Route::get('/', function () {
-    return view('landingpage.home');
-});
+Route::get('/', [LandingPageController::class, 'index']);
 Route::get('/login', [AuthController::class, 'viewLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'Login']);
 Route::get('/logout', [AuthController::class, 'Logout'])->middleware('auth')->name('logout');

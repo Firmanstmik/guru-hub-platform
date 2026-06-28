@@ -116,55 +116,33 @@
             @apply h-3.5 w-3.5;
         }
 
-        /* Preview stat cards */
-        .gh-landing-mobile-preview {
-            @apply mt-6 grid grid-cols-2 gap-2.5;
+        /* Dashboard mockup — scaled premium on mobile */
+        .gh-landing-dash-wrap {
+            @apply mt-5 w-full;
         }
 
-        .gh-landing-mobile-preview-card {
-            @apply relative overflow-hidden rounded-xl p-3;
-            background: linear-gradient(160deg, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.02));
-            border: 1px solid rgb(255 255 255 / 0.08);
-            backdrop-filter: blur(16px);
-            box-shadow: 0 12px 32px -24px rgb(0 0 0 / 0.55);
+        .gh-landing-dash-wrap .gh-ref-scene-3d {
+            perspective: none;
         }
 
-        .gh-landing-mobile-preview-card--wide {
-            @apply col-span-2 flex items-center gap-3 p-3.5;
+        .gh-landing-dash-wrap .gh-ref-tilt-main {
+            transform: none !important;
         }
 
-        .gh-landing-mobile-preview-icon {
-            @apply grid h-9 w-9 shrink-0 place-items-center rounded-xl text-white;
-            background: linear-gradient(135deg, #3b82f6, #22d3ee);
+        .gh-landing-dash-wrap .gh-ref-dash-card {
+            @apply rounded-2xl p-2;
+            box-shadow:
+                0 24px 56px -28px rgb(0 0 0 / 0.65),
+                inset 0 1px 0 rgb(255 255 255 / 0.05);
         }
 
-        .gh-landing-mobile-preview-icon svg {
-            @apply h-4 w-4;
+        .gh-landing-dash-side-stack .gh-ref-glass-side {
+            transform: none !important;
+            animation: none !important;
         }
 
-        .gh-landing-mobile-preview-value {
-            font-family: var(--gh-font-ui);
-            @apply text-[1.25rem] font-bold leading-none text-white;
-        }
-
-        .gh-landing-mobile-preview-label {
-            @apply mt-1 text-[0.6875rem] font-medium leading-snug text-white/50;
-        }
-
-        .gh-landing-mobile-preview-title {
-            @apply text-[0.875rem] font-semibold text-white;
-        }
-
-        .gh-landing-mobile-preview-desc {
-            @apply mt-0.5 text-[0.75rem] leading-snug text-white/50;
-        }
-
-        .gh-landing-mobile-preview-ring {
-            @apply relative mx-auto h-12 w-12;
-        }
-
-        .gh-landing-mobile-preview-ring > div {
-            @apply text-[0.6875rem];
+        .gh-ref-hero .gh-ref-container-wide {
+            @apply gap-6;
         }
 
         .gh-ref-topo-wrap {

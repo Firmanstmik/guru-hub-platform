@@ -4,22 +4,13 @@
 @section('meta_image', asset('assets/logo-app/guru_hub_logo.jpeg'))
 
 @php
-    $fallbackStats = ['students' => 120000, 'teachers' => 8500, 'courses' => 320, 'certificates' => 520, 'rating' => '4.9'];
-    $stats = $fallbackStats;
-    $featuredCourses = collect([
-        (object) ['title' => 'Fondasi Machine Learning untuk Pendidik', 'category' => (object) ['name' => 'Teknologi'], 'students_count' => 8200, 'cover_image' => null, 'price' => 299000, 'instructor' => 'Dr. Rian Pratama', 'modules' => 12, 'rating' => 4.9, 'progress' => 55, 'badge' => 'Bestseller'],
-        (object) ['title' => 'Kalkulus Lanjutan & Aplikasinya', 'category' => (object) ['name' => 'Sains'], 'students_count' => 4600, 'cover_image' => null, 'price' => 0, 'instructor' => 'Prof. Andini', 'modules' => 18, 'rating' => 4.8, 'progress' => 35, 'badge' => null],
-        (object) ['title' => 'Strategi Produk untuk Era AI', 'category' => (object) ['name' => 'Bisnis'], 'students_count' => 2100, 'cover_image' => null, 'price' => 449000, 'instructor' => 'Maya Soeharto', 'modules' => 9, 'rating' => 4.9, 'progress' => 25, 'badge' => 'Baru'],
-        (object) ['title' => 'Mengajar di Kelas Hybrid yang Modern', 'category' => (object) ['name' => 'Pedagogi'], 'students_count' => 3400, 'cover_image' => null, 'price' => 199000, 'instructor' => 'Dr. Bima Saputra', 'modules' => 14, 'rating' => 4.9, 'progress' => 75, 'badge' => null],
-    ]);
-    $partners = [
-        ['name' => 'STMIK Lombok', 'from' => '#3B82F6', 'to' => '#0E7490'],
-        ['name' => 'BMKG', 'from' => '#1E40AF', 'to' => '#22D3EE'],
-        ['name' => 'Atlas Transport', 'from' => '#14B8A6', 'to' => '#0E7490'],
-        ['name' => 'Sekolah Digital', 'from' => '#3B82F6', 'to' => '#22D3EE'],
-        ['name' => 'EduPartner', 'from' => '#0E7490', 'to' => '#14B8A6'],
-    ];
-    $courseChips = ['Semua', 'Teknologi', 'Sains', 'Bisnis', 'Bahasa', 'Pedagogi'];
+    $fmtStat = function (int $n): string {
+        if ($n >= 100000) return number_format($n / 1000, 0) . 'k+';
+        if ($n >= 1000) return number_format($n / 1000, 1) . 'k+';
+        return (string) $n;
+    };
+    $logo = asset('assets/logo-app/guru_hub_logo.jpeg');
+    $courseChips = $categories ?? collect(['Semua']);
     $journeySteps = [
         ['num' => '01', 'label' => 'Discover', 'desc' => 'Telusuri ribuan kursus & pengajar terkurasi.'],
         ['num' => '02', 'label' => 'Enroll', 'desc' => 'Daftar dalam hitungan detik, langsung mulai.'],
@@ -33,40 +24,6 @@
         ['title' => 'Untuk Sekolah', 'desc' => 'Manajemen kelas digital, integrasi rapor, dan komunikasi orang tua.', 'icon' => 'home'],
         ['title' => 'Universitas & Institusi', 'desc' => 'SSO, kepatuhan data, dan dashboard akademik untuk skala ribuan.', 'icon' => 'award'],
     ];
-    $testimonials = [
-        ['name' => 'Dr. Sinta Wijaya', 'role' => 'Wakil Rektor, Universitas Nusantara', 'quote' => 'GuruHub mengubah cara kampus kami menyelenggarakan kelas hybrid. Analitiknya luar biasa — kami melihat dampak nyata di semester pertama.', 'from' => '#14B8A6', 'to' => '#0E7490'],
-        ['name' => 'Rian Pratama', 'role' => 'Pengajar AI · 12k siswa', 'quote' => 'Sebagai pengajar independen, studio GuruHub memberi saya kemewahan tim produksi tanpa biayanya. Pendapatan saya naik 3x.', 'from' => '#0E7490', 'to' => '#0A1A4F'],
-        ['name' => 'Maya Soeharto', 'role' => 'Kepala Sekolah, Cakrawala', 'quote' => 'Antarmukanya elegan, performanya cepat, dan tim onboarding luar biasa. Ini terasa seperti produk kelas dunia.', 'from' => '#5EEAD4', 'to' => '#14B8A6'],
-    ];
-
-    try {
-        $stats['students'] = \App\Models\User::role('siswa')->count() ?: $fallbackStats['students'];
-        $stats['teachers'] = \App\Models\User::role('guru')->count() ?: $fallbackStats['teachers'];
-        $stats['courses'] = \App\Models\Course::where('status', 'published')->count() ?: $fallbackStats['courses'];
-        $stats['certificates'] = \App\Models\Certificate::count() ?: $fallbackStats['certificates'];
-        $fromDb = \App\Models\Course::query()->where('status', 'published')->with('category:id,name')->withCount('students')->latest()->take(4)->get();
-        if ($fromDb->isNotEmpty()) {
-            $featuredCourses = $fromDb->map(function ($c, $i) use ($featuredCourses) {
-                $fb = $featuredCourses->get($i % 4);
-                $c->instructor = $c->instructor ?? ($fb->instructor ?? 'Pengajar terverifikasi');
-                $c->modules = $c->modules ?? ($fb->modules ?? 10);
-                $c->rating = $fb->rating ?? 4.9;
-                $c->progress = $fb->progress ?? 40;
-                $c->badge = $i === 0 ? 'Bestseller' : ($fb->badge ?? null);
-                return $c;
-            });
-            while ($featuredCourses->count() < 4) {
-                $featuredCourses->push($featuredCourses->first());
-            }
-        }
-    } catch (\Throwable $e) {}
-
-    $fmtStat = function (int $n): string {
-        if ($n >= 100000) return number_format($n / 1000, 0) . 'k+';
-        if ($n >= 1000) return number_format($n / 1000, 1) . 'k+';
-        return $n . '+';
-    };
-    $logo = asset('assets/logo-app/guru_hub_logo.jpeg');
 @endphp
 
 @section('flush', true)
@@ -112,154 +69,9 @@
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </a>
                 </div>
-
-                {{-- Mobile app preview (replaces 3D mockup on phone) --}}
-                <div class="gh-landing-mobile-preview lg:hidden" aria-hidden="true">
-                    <div class="gh-landing-mobile-preview-card">
-                        <div class="gh-landing-mobile-preview-ring">
-                            <svg viewBox="0 0 36 36" class="h-full w-full -rotate-90" aria-hidden="true">
-                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"/>
-                                <circle cx="18" cy="18" r="15.9" fill="none" stroke="url(#ghMobG1)" stroke-width="3" stroke-dasharray="78 100" stroke-linecap="round"/>
-                                <defs><linearGradient id="ghMobG1" x1="0" x2="1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                            </svg>
-                            <div class="absolute inset-0 grid place-items-center text-[0.875rem] font-bold text-white">78%</div>
-                        </div>
-                        <p class="gh-landing-mobile-preview-label mt-3 text-center">Progress belajar rata-rata</p>
-                    </div>
-                    <div class="gh-landing-mobile-preview-card">
-                        <p class="gh-landing-mobile-preview-value">{{ $fmtStat((int) $stats['students']) }}</p>
-                        <p class="gh-landing-mobile-preview-label">Siswa aktif</p>
-                    </div>
-                    <div class="gh-landing-mobile-preview-card">
-                        <p class="gh-landing-mobile-preview-value">{{ number_format((int) $stats['teachers']) }}</p>
-                        <p class="gh-landing-mobile-preview-label">Pengajar terverifikasi</p>
-                    </div>
-                    <div class="gh-landing-mobile-preview-card gh-landing-mobile-preview-card--wide">
-                        <span class="gh-landing-mobile-preview-icon">
-                            <x-ui.lucide name="award" class="h-6 w-6" />
-                        </span>
-                        <div class="min-w-0">
-                            <p class="gh-landing-mobile-preview-title">Sertifikat terverifikasi</p>
-                            <p class="gh-landing-mobile-preview-desc">Dari penemuan kursus hingga sertifikasi — semua dalam satu aplikasi.</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            {{-- Dashboard mockup --}}
-            <div class="relative hidden lg:col-span-7 lg:block gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
-                <div class="gh-ref-scene-3d relative flex items-start gap-5 lg:gap-6">
-                    <div class="gh-ref-dash-card gh-ref-tilt-main">
-                        <div class="flex items-center justify-between px-2 pt-1 pb-3">
-                            <div class="flex items-center gap-2.5">
-                                <span class="grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-white ring-1 ring-white/20">
-                                    <img src="{{ $logo }}" alt="" class="h-9 w-9 scale-[1.35] object-cover">
-                                </span>
-                                <span class="font-semibold text-white" style="font-family:var(--gh-font-ui)">Dashboard Siswa</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-[130px_1fr] gap-3">
-                            <div class="rounded-xl bg-white/[0.025] p-2 text-[12px]" style="font-family:var(--gh-font-ui)">
-                                <div class="flex items-center gap-2 rounded-lg bg-white/[0.06] px-3 py-2 text-white ring-1 ring-white/5">
-                                    <x-ui.lucide name="home" class="h-3.5 w-3.5 text-[#60A5FA]" /> Beranda
-                                </div>
-                                <div class="mt-0.5 flex items-center gap-2 px-3 py-2 text-white/50"><x-ui.lucide name="book-open" class="h-3.5 w-3.5" />Kursus Saya</div>
-                                <div class="flex items-center gap-2 px-3 py-2 text-white/50"><x-ui.lucide name="video" class="h-3.5 w-3.5" />Live Class</div>
-                                <div class="flex items-center gap-2 px-3 py-2 text-white/50"><x-ui.lucide name="clipboard-check" class="h-3.5 w-3.5" />Tugas</div>
-                                <div class="flex items-center gap-2 px-3 py-2 text-white/50"><x-ui.lucide name="award" class="h-3.5 w-3.5" />Sertifikat</div>
-                            </div>
-                            <div class="min-w-0 space-y-3">
-                                <div class="px-1">
-                                    <p class="text-[22px] font-extrabold text-white" style="font-family:var(--gh-font-ui)">Halo, Andi 👋</p>
-                                    <p class="text-[12px] text-white/45">Terus belajar, raih masa depanmu!</p>
-                                </div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div class="rounded-xl bg-white/[0.04] p-3.5 ring-1 ring-white/5">
-                                        <div class="flex items-center justify-between text-[11px] text-white/55"><span>Progress Belajar</span></div>
-                                        <div class="mt-2.5 flex items-center gap-3">
-                                            <div class="relative h-[58px] w-[58px] shrink-0">
-                                                <svg viewBox="0 0 36 36" class="h-full w-full -rotate-90" aria-hidden="true">
-                                                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"/>
-                                                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="url(#ghRefG1)" stroke-width="3" stroke-dasharray="78 100" stroke-linecap="round"/>
-                                                    <defs><linearGradient id="ghRefG1" x1="0" x2="1"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient></defs>
-                                                </svg>
-                                                <div class="absolute inset-0 grid place-items-center text-[12px] font-bold text-white">78%</div>
-                                            </div>
-                                            <div class="text-[11px] leading-tight">
-                                                <p class="font-semibold text-white">Hampir selesai!</p>
-                                                <p class="text-white/45">Lanjutkan kursusmu.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="rounded-xl bg-white/[0.04] p-3.5 ring-1 ring-white/5">
-                                        <p class="text-[11px] text-white/55">Kelas Live Berikutnya</p>
-                                        <div class="mt-2 flex gap-2.5">
-                                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-gradient-to-br from-[#3B82F6] to-[#22D3EE] text-[10px] font-bold text-white">▶</span>
-                                            <div class="text-[11px] leading-tight">
-                                                <p class="font-semibold text-white">UI/UX Design System</p>
-                                                <p class="text-white/45">Bersama Sarah Wijaya</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="rounded-xl bg-white/[0.04] p-3.5 ring-1 ring-white/5">
-                                    <p class="text-[11px] font-semibold text-white">Kursus Aktif</p>
-                                    <div class="mt-3 space-y-2.5">
-                                        @foreach ([['UI/UX Design Fundamental', 82, 'from-orange-500 to-rose-600'], ['Web Development dengan Laravel', 61, 'from-red-700 to-amber-800'], ['Digital Marketing untuk Pemula', 45, 'from-yellow-500 to-orange-600']] as $ac)
-                                            <div class="flex items-center gap-3">
-                                                <span class="h-8 w-8 shrink-0 rounded-md bg-gradient-to-br {{ $ac[2] }}"></span>
-                                                <div class="min-w-0 flex-1">
-                                                    <div class="flex items-center justify-between text-[11px]"><span class="truncate text-white">{{ $ac[0] }}</span><span class="ml-2 text-white/60">{{ $ac[1] }}%</span></div>
-                                                    <div class="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10"><div class="h-full bg-gradient-to-r from-[#3B82F6] to-[#22D3EE]" style="width:{{ $ac[1] }}%"></div></div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="hidden w-[210px] shrink-0 flex-col gap-4 pt-2 lg:flex">
-                        <div class="gh-ref-glass-side gh-ref-floaty rounded-2xl p-3.5">
-                            <p class="text-[11px] text-white/55">Sertifikat Diperoleh</p>
-                            <div class="mt-2 flex items-center gap-2.5">
-                                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-[#3B82F6] to-[#22D3EE]">
-                                    <x-ui.lucide name="award" class="h-5 w-5 text-white" />
-                                </span>
-                                <div class="text-[12px] leading-tight">
-                                    <p class="font-semibold text-white">UI/UX Design</p>
-                                    <p class="text-[10.5px] text-white/45">Diperoleh hari ini</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="gh-ref-glass-side gh-ref-floaty gh-ref-floaty-d1 rounded-2xl p-3.5">
-                            <p class="text-[11px] text-white/55">Siswa Aktif Minggu Ini</p>
-                            <div class="mt-1 flex items-end justify-between gap-2">
-                                <svg viewBox="0 0 100 36" class="h-9 w-[90px]" aria-hidden="true">
-                                    <defs><linearGradient id="g2" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#22D3EE" stop-opacity=".5"/><stop offset="100%" stop-color="#22D3EE" stop-opacity="0"/></linearGradient></defs>
-                                    <path d="M0,28 L12,22 L24,26 L36,16 L48,20 L60,10 L72,14 L84,6 L100,10 L100,36 L0,36 Z" fill="url(#g2)"/>
-                                    <polyline fill="none" stroke="#22D3EE" stroke-width="1.6" points="0,28 12,22 24,26 36,16 48,20 60,10 72,14 84,6 100,10"/>
-                                </svg>
-                                <div class="text-right">
-                                    <p class="text-[18px] font-extrabold text-white" style="font-family:var(--gh-font-ui)">+128</p>
-                                    <p class="text-[10px] text-[#22D3EE]">12% ↑</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="gh-ref-glass-side gh-ref-floaty gh-ref-floaty-d2 rounded-2xl p-3.5">
-                            <p class="text-[11px] text-white/55">Rating Platform</p>
-                            <div class="mt-1 flex items-center justify-between">
-                                <div class="flex gap-0.5 text-yellow-400">
-                                    @for ($i = 0; $i < 4; $i++) <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg> @endfor
-                                    <svg class="h-3.5 w-3.5 text-yellow-400/50" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
-                                </div>
-                                <p class="font-extrabold text-white" style="font-family:var(--gh-font-ui)">4.9/5</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-landing.dashboard-mockup :dashboard="$dashboard" :logo="$logo" class="relative lg:col-span-7" />
         </div>
 
         <div class="gh-ref-topo-wrap" aria-hidden="true">
@@ -284,26 +96,36 @@
                 <span class="h-px w-10 bg-[#0A1A4F]/15"></span>
             </div>
             <h2 class="text-center text-[28px] font-extrabold tracking-tight text-[#0A1A4F] sm:text-[34px]" style="font-family:var(--gh-font-ui)">
-                Dipercaya oleh institusi & perusahaan terkemuka
+                @if (count($partners))
+                    Bidang pembelajaran unggulan di GuruHub
+                @else
+                    Platform pembelajaran terpercaya
+                @endif
             </h2>
             <p class="mx-auto mt-3 max-w-xl text-center text-[15px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">
-                Bergabung bersama universitas, sekolah, dan korporasi yang membangun masa depan pendidikan Indonesia.
+                @if (count($partners))
+                    Kategori kursus yang dikurasi langsung dari data admin — siap untuk siswa dan pengajar.
+                @else
+                    Bergabung bersama komunitas belajar yang terus berkembang di Indonesia.
+                @endif
             </p>
+            @if (count($partners))
             <div class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
                 @foreach ($partners as $p)
                     <div class="gh-ref-partner-tile">
                         <span class="grid h-10 w-10 place-items-center rounded-xl text-white shadow-[0_6px_18px_-6px_rgba(59,130,246,0.55)]" style="background:linear-gradient(135deg,{{ $p['from'] }},{{ $p['to'] }})">
-                            <x-ui.lucide name="shield-check" class="h-5 w-5" />
+                            <x-ui.lucide name="book-open" class="h-5 w-5" />
                         </span>
                         <span class="font-semibold text-[#0A1A4F]" style="font-family:var(--gh-font-ui)">{{ $p['name'] }}</span>
                     </div>
                 @endforeach
             </div>
+            @endif
             <div class="mt-14 grid grid-cols-2 gap-6 md:grid-cols-4">
-                <div class="text-center"><p class="gh-ref-stat-gradient">{{ $fmtStat((int) $stats['students']) }}</p><p class="mt-1 text-[12.5px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">Siswa aktif</p></div>
+                <div class="text-center"><p class="gh-ref-stat-gradient">{{ $fmtStat((int) $stats['students']) }}</p><p class="mt-1 text-[12.5px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">Siswa terdaftar</p></div>
                 <div class="text-center"><p class="gh-ref-stat-gradient">{{ number_format((int) $stats['teachers']) }}</p><p class="mt-1 text-[12.5px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">Pengajar terverifikasi</p></div>
-                <div class="text-center"><p class="gh-ref-stat-gradient">{{ $fmtStat((int) $stats['courses']) }}</p><p class="mt-1 text-[12.5px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">Institusi mitra</p></div>
-                <div class="text-center"><p class="gh-ref-stat-gradient">4.9 ★</p><p class="mt-1 text-[12.5px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">Rating platform</p></div>
+                <div class="text-center"><p class="gh-ref-stat-gradient">{{ $fmtStat((int) $stats['courses']) }}</p><p class="mt-1 text-[12.5px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">Kursus tersedia</p></div>
+                <div class="text-center"><p class="gh-ref-stat-gradient">{{ $stats['rating'] ?? '5.0' }} ★</p><p class="mt-1 text-[12.5px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">Rating platform</p></div>
             </div>
         </div>
     </section>
@@ -325,7 +147,8 @@
                     </a>
                 </div>
 
-                <div class="gh-ref-chip-row gh-ref-no-scrollbar mt-8 flex gap-2 overflow-x-auto" x-data="{ active: 'Semua' }">
+                <div x-data="{ active: 'Semua' }">
+                <div class="gh-ref-chip-row gh-ref-no-scrollbar mt-8 flex gap-2 overflow-x-auto">
                     @foreach ($courseChips as $chip)
                         <button type="button" class="gh-ref-chip whitespace-nowrap"
                             x-bind:class="active === @js($chip) ? 'gh-ref-chip-active' : ''"
@@ -334,29 +157,34 @@
                 </div>
 
                 <div class="gh-ref-course-row mt-8 sm:mt-10 sm:grid sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
-                    @foreach ($featuredCourses->take(4) as $i => $course)
-                        <a href="{{ url('register/student') }}" class="gh-ref-l-card block overflow-hidden gh-reveal gh-reveal-delay-{{ min($i + 1, 4) }}"
+                    @forelse ($featuredCourses->take(8) as $i => $course)
+                        <a href="{{ url('register/student') }}"
+                            x-show="active === 'Semua' || active === @js($course->category_name)"
+                            class="gh-ref-l-card block overflow-hidden gh-reveal gh-reveal-delay-{{ min($i + 1, 4) }}"
                             x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
-                            <div class="gh-ref-thumb gh-ref-thumb-{{ ($i % 4) + 1 }} relative h-44 sm:h-48">
-                                @if ($course->cover_image ?? null)
-                                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" class="absolute inset-0 h-full w-full object-cover" loading="lazy">
-                                @endif
-                                <span class="gh-ref-tag absolute top-3 left-3">{{ $course->category->name ?? 'Kursus' }}</span>
+                            <div class="gh-ref-thumb relative h-44 sm:h-48">
+                                <img src="{{ $course->cover_url }}" alt="{{ $course->title }}" class="absolute inset-0 h-full w-full object-cover" loading="lazy">
+                                <span class="gh-ref-tag absolute top-3 left-3">{{ $course->category_name }}</span>
                                 @if (!empty($course->badge))
                                     <span class="gh-ref-tag-best absolute top-3 right-3">{{ $course->badge }}</span>
                                 @endif
                             </div>
                             <div class="p-5">
-                                <p class="gh-ref-muted text-[12px]">{{ $course->instructor ?? 'Pengajar' }} · {{ $course->modules ?? 10 }} modul</p>
+                                <p class="gh-ref-muted text-[12px]">{{ $course->instructor }} · {{ $course->modules }} modul</p>
                                 <h3 class="gh-ref-display mt-1.5 text-[19px] leading-snug">{{ $course->title }}</h3>
                                 <div class="gh-ref-muted mt-4 flex items-center justify-between text-[12px] font-medium">
-                                    <span>★ {{ $course->rating ?? 4.9 }} · {{ number_format($course->students_count ?? 0) }} siswa</span>
+                                    <span>★ {{ $course->rating }} · {{ number_format($course->students_count) }} siswa</span>
                                     <span class="font-semibold text-[#0E7490]">Mulai →</span>
                                 </div>
-                                <div class="gh-ref-progress mt-3"><i style="width:{{ $course->progress ?? 40 }}%"></i></div>
+                                <div class="gh-ref-progress mt-3"><i style="width:{{ $course->progress }}%"></i></div>
                             </div>
                         </a>
-                    @endforeach
+                    @empty
+                        <div class="col-span-full rounded-2xl border border-dashed border-[#0A1A4F]/15 bg-white/80 p-10 text-center">
+                            <p class="gh-ref-muted text-[15px]">Belum ada kursus dipublikasikan. Login sebagai admin untuk menambahkan kursus.</p>
+                        </div>
+                    @endforelse
+                </div>
                 </div>
             </div>
         </section>
@@ -394,7 +222,7 @@
                     <div class="mt-8 grid grid-cols-3 gap-4 sm:gap-6">
                         <div><p class="gh-ref-stat-num text-[28px] font-semibold sm:text-[34px]">{{ $fmtStat((int) $stats['students']) }}</p><p class="gh-ref-muted mt-1 text-[12px]">Siswa aktif</p></div>
                         <div><p class="gh-ref-stat-num text-[28px] font-semibold sm:text-[34px]">{{ number_format((int) $stats['teachers']) }}</p><p class="gh-ref-muted mt-1 text-[12px]">Pengajar</p></div>
-                        <div><p class="gh-ref-stat-num text-[28px] font-semibold sm:text-[34px]">{{ $fmtStat((int) $stats['courses']) }}</p><p class="gh-ref-muted mt-1 text-[12px]">Institusi</p></div>
+                        <div><p class="gh-ref-stat-num text-[28px] font-semibold sm:text-[34px]">{{ $fmtStat((int) $stats['courses']) }}</p><p class="gh-ref-muted mt-1 text-[12px]">Kursus</p></div>
                     </div>
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2 lg:col-span-7">
@@ -410,6 +238,7 @@
         </section>
 
         {{-- Testimonials --}}
+        @if ($testimonials->isNotEmpty())
         <section class="gh-ref-section border-t gh-ref-divider">
             <div class="gh-ref-container">
                 <div class="max-w-2xl gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
@@ -433,6 +262,7 @@
                 </div>
             </div>
         </section>
+        @endif
 
         {{-- CTA --}}
         <section class="gh-ref-section">
