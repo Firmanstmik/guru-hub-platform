@@ -1,22 +1,17 @@
 @extends('layout.master-app')
 @section('content')
-    <div class="p-6 max-w-5xl mx-auto space-y-6">
-        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Quiz Builder per Materi</span>
-                <h3 class="text-gray-900 text-2xl font-bold mt-1">{{ $quiz->title }}</h3>
-                <p class="text-xs text-gray-500 mt-1">Materi: <strong class="text-gray-700">{{ $quiz->material->title ?? 'N/A' }}</strong> | Durasi: <strong>{{ $quiz->duration_minutes }} Menit</strong></p>
-            </div>
-            <div class="flex gap-2">
-                <a href="/quiz/{{ $quiz->id }}/review" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold px-4 py-2.5 rounded-xl transition">
-                    📊 Lihat Pengumpulan Siswa
-                </a>
-            </div>
-        </div>
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner space-y-4">
+        <x-app.page-header title="{{ $quiz->title }}" subtitle="Materi: {{ $quiz->material->title ?? 'N/A' }} · Durasi: {{ $quiz->duration_minutes }} Menit" eyebrow="Quiz Builder">
+            <x-slot:action>
+                <a href="/quiz/{{ $quiz->id }}/review" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">📊 Lihat Pengumpulan Siswa</a>
+            </x-slot:action>
+        </x-app.page-header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
             
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs space-y-4 lg:col-span-1">
+            <div class="gh-app-card space-y-4 lg:col-span-1">
                 <h4 class="font-bold text-gray-900 text-base border-b border-gray-50 pb-2">➕ Tambah Soal Baru</h4>
                 
                 <form action="/quiz/{{ $quiz->id }}/questions" method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -117,6 +112,7 @@
             </div>
 
         </div>
+    </div>
     </div>
 
     <script>

@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "firmanstmik/guru-hub-platform",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "GuruHub — Laravel LMS platform for Indonesian educators and students with mobile-first UI.",
     "keywords": [
         "laravel",
         "framework"

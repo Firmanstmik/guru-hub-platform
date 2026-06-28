@@ -238,6 +238,73 @@ class TeacherProfileController extends Controller
                 return redirect()->back()->withInput()->with('error', 'Gagal memproses data karena gangguan pangkalan data.');
             }
         }
+
+        if (!$user->hasRole('admin')) {
+            abort(403, 'Anda tidak memiliki hak akses untuk memperbarui profil pengajar ini.');
+        }
+
+        if (!$profile || !$profile->exists) {
+            return redirect()->back()->with('error', 'Profil pengajar tidak ditemukan.');
+        }
+
+        $request->validate([
+            'title'               => 'required|string|max:255',
+            'bio'                 => 'nullable|string',
+            'skills_tags'         => 'required|string',
+            'verification_status' => 'required|in:pending,approved,rejected',
+            'cv_file'             => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'bank_name'           => 'required|string|max:100',
+            'bank_account_number' => 'required|string|max:50',
+            'bank_account_name'   => 'required|string|max:255',
+        ]);
+
+        $uploadedCv = null;
+        DB::beginTransaction();
+
+        try {
+            $tagsArray = array_map('trim', explode(',', $request->skills_tags));
+
+            $data = [
+                'title'               => $request->title,
+                'bio'                 => $request->bio,
+                'skills_tags'         => json_encode($tagsArray),
+                'verification_status' => $request->verification_status,
+                'bank_name'           => $request->bank_name,
+                'bank_account_number' => $request->bank_account_number,
+                'bank_account_name'   => $request->bank_account_name,
+            ];
+
+            $oldCv = $profile->cv_file;
+
+            if ($request->hasFile('cv_file')) {
+                $uploadedCv = $request->file('cv_file')->store('cv_teachers', 'public');
+                $data['cv_file'] = $uploadedCv;
+            }
+
+            $profile->update($data);
+
+            $profileUser = $profile->user;
+            if ($request->verification_status === 'approved' && $profileUser) {
+                $profileUser->assignRole('guru');
+            } elseif ($request->verification_status === 'rejected' && $profileUser && $profileUser->hasRole('guru')) {
+                $profileUser->removeRole('guru');
+            }
+
+            DB::commit();
+
+            if ($uploadedCv && $oldCv && Storage::disk('public')->exists($oldCv)) {
+                Storage::disk('public')->delete($oldCv);
+            }
+
+            return redirect()->back()->with('success', 'Profil pengajar berhasil diperbarui oleh admin.');
+        } catch (Exception $e) {
+            DB::rollBack();
+            if ($uploadedCv && Storage::disk('public')->exists($uploadedCv)) {
+                Storage::disk('public')->delete($uploadedCv);
+            }
+            Log::error('Gagal memperbarui profil guru oleh admin ID ' . $profile->id . ': ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui profil pengajar karena kendala sistem.');
+        }
     }
 
     /**

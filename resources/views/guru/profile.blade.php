@@ -1,54 +1,31 @@
 @extends('layout.master-app')
 
 @section('content')
-    <div class="container mx-auto px-4 max-w-[1600px]">
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner space-y-4">
+            <x-app.page-header title="Pengaturan Profil Pengajar" subtitle="Kelola informasi publik Anda, sertifikasi kompetensi, serta kredensial akun bank pencairan." eyebrow="Ruang Pengajar">
+                <x-slot:action>
+                    @if (is_null($profile) || !$profile->id)
+                        <button type="button" onclick="openModal('addProfileModal')"
+                            class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">
+                            Buat Profil Pengajar
+                        </button>
+                    @endif
+                </x-slot:action>
+            </x-app.page-header>
 
-        <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div class="space-y-1">
-                <div class="flex items-center gap-2 text-xs font-semibold text-gray-400">
-                    <span>Ruang Pengajar</span>
-                    <svg class="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" stroke-width="2.5"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                    <span class="text-gray-600 font-bold">Profil Saya</span>
-                </div>
-                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Pengaturan Profil Pengajar</h1>
-                <p class="text-xs text-gray-400">Kelola informasi publik Anda, sertifikasi kompetensi, serta kredensial akun
-                    bank pencairan.</p>
-            </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
-            @if (is_null($profile) || !$profile->id)
-                <div>
-                    <button type="button" onclick="openModal('addProfileModal')"
-                        class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-black px-6 py-3 rounded-xl shadow-md transition text-xs tracking-wider uppercase flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        Buat Profil Pengajar
-                    </button>
-                </div>
-            @endif
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
-            <div
-                class="bg-white border border-gray-100 rounded-2xl p-6 shadow-2xs space-y-6 text-center relative overflow-hidden">
-                <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+            <div class="gh-app-card relative overflow-hidden p-6 text-center space-y-6">
+                <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0A1A4F] via-[#0E7490] to-[#C9A227]"></div>
 
                 <div class="space-y-4 pt-2">
-                    <div class="relative w-28 h-28 mx-auto group">
-                        @if ($user->avatar === 'default-avatar.png')
-                            <img src="{{ asset('assets/avatar/' . $user->avatar) }}" alt="Avatar {{ $user->name }}"
-                                class="w-24 h-24 rounded-2xl object-cover border-4 border-gray-50 shadow-xs">
-                        @else
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar {{ $user->name }}"
-                                class="w-24 h-24 rounded-2xl object-cover border-4 border-gray-50 shadow-xs">
-                        @endif
+                    <div class="relative mx-auto w-fit group">
+                        <x-app.user-avatar :user="$user" size="xl" class="mx-auto" />
                         @if($profile->id)
                         <button type="button" onclick="openModal('uploadMediaModal')"
-                            class="absolute bottom-0 right-0 p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md border-2 border-white transition transform hover:scale-105"
+                            class="gh-app-btn gh-app-btn-primary absolute -bottom-1 -right-1 !min-h-0 !h-8 !w-8 !rounded-xl !p-0 shadow-lg border-2 border-white"
                             title="Upload Foto / CV">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
                                 viewBox="0 0 24 24">
@@ -208,6 +185,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 

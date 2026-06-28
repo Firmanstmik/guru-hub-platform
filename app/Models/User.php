@@ -75,4 +75,34 @@ class User extends Authenticatable
     {
         return $this->hasMany(StudentAnswer::class, 'user_id');
     }
+
+    public function hasCustomAvatar(): bool
+    {
+        if (blank($this->avatar)) {
+            return false;
+        }
+
+        if (in_array($this->avatar, ['default-avatar.png', 'default-guru.png', 'default-siswa.png'], true)) {
+            return false;
+        }
+
+        return \Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar);
+    }
+
+    public function avatarUrl(): string
+    {
+        if ($this->hasCustomAvatar()) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        if ($this->hasRole('guru')) {
+            return asset('assets/avatar/default-guru.png');
+        }
+
+        if ($this->hasRole('siswa')) {
+            return asset('assets/avatar/default-siswa.png');
+        }
+
+        return asset('assets/avatar/default-avatar.png');
+    }
 }

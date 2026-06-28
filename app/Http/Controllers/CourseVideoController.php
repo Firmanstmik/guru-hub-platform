@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesCourseOwnership;
+use App\Http\Controllers\Concerns\RethrowsAuthorizationFailures;
 use App\Http\Controllers\Controller;
 use App\Models\CourseVideo;
 use App\Models\Course;
@@ -16,6 +18,9 @@ use Exception;
 
 class CourseVideoController extends Controller
 {
+    use AuthorizesCourseOwnership;
+    use RethrowsAuthorizationFailures;
+
     public function index(Request $request)
     {
         try {
@@ -98,6 +103,8 @@ class CourseVideoController extends Controller
         $originalPath = null;
         $webmPath = null;
 
+        $this->authorizeOwnsCourseId((int) $request->course_id);
+
         DB::beginTransaction();
         try {
             $finalVideoUrl = $request->video_url;
@@ -161,6 +168,7 @@ class CourseVideoController extends Controller
             return redirect()->back()->with('success', 'Video pembelajaran baru berhasil diproses dan disematkan!');
         } catch (Exception $e) {
             DB::rollBack();
+            $this->rethrowAuthorizationFailures($e);
 
             // Hapus sisa kegagalan berkas fisik di server jika database rollBack
             if ($originalPath) {
@@ -206,6 +214,10 @@ class CourseVideoController extends Controller
 
         DB::beginTransaction();
         try {
+            $video->loadMissing('course');
+            $this->authorizeOwnsCourse($video->course);
+            $this->authorizeOwnsCourseId((int) $request->course_id);
+
             // Logika dasar: Ambil nilai URL yang dikirim dari form (bisa link youtube baru, atau link webm lama bawaan form)
             $finalVideoUrl = $request->video_url;
 
@@ -283,6 +295,7 @@ class CourseVideoController extends Controller
             return redirect()->back()->with('success', 'Data video pembelajaran berhasil diperbarui!');
         } catch (Exception $e) {
             DB::rollBack();
+            $this->rethrowAuthorizationFailures($e);
 
             // Hapus sisa kegagalan transaksi file di server agar tidak menyisakan sampah berkas rusak
             if ($originalPath) {
@@ -298,6 +311,9 @@ class CourseVideoController extends Controller
     }
     public function destroy(CourseVideo $video)
     {
+        $video->loadMissing('course');
+        $this->authorizeOwnsCourse($video->course);
+
         try {
             $videoUrl = $video->video_url;
 
@@ -326,6 +342,7 @@ class CourseVideoController extends Controller
 
             return redirect()->back()->with('success', 'Data video beserta berkas fisik .webm di server berhasil dihapus selamanya!');
         } catch (Exception $e) {
+            $this->rethrowAuthorizationFailures($e);
             Log::error('Gagal menghapus video ID ' . $video->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus data video dari sistem.');
         }

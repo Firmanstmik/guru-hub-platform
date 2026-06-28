@@ -1,134 +1,66 @@
 @extends('layout.master-app')
 @section('title', 'Materi Pembelajaran')
 @section('content')
-    <div class="container mx-auto px-6 py-8">
-        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
-            <div>
-                <h3 class="text-gray-700 text-3xl font-semibold">Kelola Video Pembelajaran</h3>
-                <p class="text-sm text-gray-500 mt-1">Pantau tautan video materi, rekaman kelas, dan rekaman materi
-                    asinkronus.</p>
-            </div>
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner">
+            <x-app.page-header title="Video Pembelajaran" subtitle="Tautan video materi dan rekaman kelas.">
+                <x-slot:action>
+                    <button onclick="toggleModal('addVideoModal')" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">
+                        <x-ui.lucide name="plus" class="h-4 w-4" /> Sematkan
+                    </button>
+                </x-slot:action>
+            </x-app.page-header>
 
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                <form action="/videos" method="GET" class="flex gap-2 w-full sm:w-auto">
-                    <select name="video_type" onchange="this.form.submit()"
-                        class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none">
+            <form action="/videos" method="GET" class="gh-app-filter-bar">
+                <select name="video_type" onchange="this.form.submit()" class="gh-app-select flex-1">
                         <option value="">Semua Tipe Video</option>
                         <option value="material" {{ request('video_type') == 'material' ? 'selected' : '' }}>Materi</option>
                         <option value="recording" {{ request('video_type') == 'recording' ? 'selected' : '' }}>Rekaman
                         </option>
                     </select>
-                    <select name="course_id" onchange="this.form.submit()"
-                        class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none">
+                    <select name="course_id" onchange="this.form.submit()" class="gh-app-select flex-1">
                         <option value="">Semua Kelas</option>
                         @foreach ($courses as $course)
                             <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
                                 {{ $course->title }}
                             </option>
                         @endforeach
-                    </select>
-                </form>
+                </select>
+            </form>
 
-                <button onclick="toggleModal('addVideoModal')"
-                    class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm shadow-xs transition flex items-center justify-center gap-2 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Sematkan Video
-                </button>
-            </div>
-        </div>
-
-        <div class="space-y-3">
+        <div class="gh-app-list">
             @forelse($videos as $video)
-                <div
-                    class="bg-white p-5 rounded-xl border border-gray-100 shadow-xs hover:border-gray-200 transition duration-150">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-                        <div class="flex-1 min-w-0 space-y-2">
-                            <div class="flex items-start gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-md flex-shrink-0 border border-indigo-100">
-                                    ▶️
-                                </div>
-                                <div class="min-w-0 space-y-0.5">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <h4 class="text-sm font-bold text-gray-900 truncate max-w-md"
-                                            title="{{ $video->title }}">
-                                            {{ $video->title }}
-                                        </h4>
-
-                                        @if ($video->video_type === 'material')
-                                            <span
-                                                class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-100 text-indigo-800">Materi</span>
-                                        @else
-                                            <span
-                                                class="inline-flex px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-100 text-teal-800">Rekaman</span>
-                                        @endif
-                                    </div>
-
-                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-800">
-                                        <span class="font-medium text-gray-800">
-                                            📖 {{ $video->course->title ?? 'Kelas Tidak Ditemukan' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="gh-app-list-item">
+                    <div class="gh-app-list-thumb relative">
+                        <x-app.cover-image type="video" :alt="$video->title" />
+                        <span class="absolute inset-0 grid place-items-center bg-[#06122E]/25">
+                            <x-ui.lucide name="play" class="h-5 w-5 text-white drop-shadow" />
+                        </span>
+                    </div>
+                    <div class="gh-app-list-body">
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            <h4 class="gh-app-list-title">{{ $video->title }}</h4>
+                            <x-app.badge :variant="$video->video_type === 'material' ? 'info' : 'success'">{{ $video->video_type === 'material' ? 'Materi' : 'Rekaman' }}</x-app.badge>
                         </div>
-
-                        <div
-                            class="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-50 flex-shrink-0">
-                            <button type="button"
-                                onclick="playVideoModal('{{ $video->video_url }}', '{{ $video->title }}')"
-                                class="inline-flex items-center gap-1 font-semibold text-indigo-600 text-xs hover:text-indigo-900 transition focus:outline-none">
-                                Putar Video
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </button>
-
-                            <div class="flex items-center gap-2">
-                                <button data-video='@json($video)' onclick="handleEditModal(this)"
-                                    class="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-bold rounded-xl transition">
-                                    Edit
-                                </button>
-                                {{-- 
-                                <form action="/videos/{{ $video->id }}" method="POST"
-                                    onsubmit="return confirm('Hapus tautan video materi ini dari sistem?')" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl transition">
-                                        Hapus
-                                    </button>
-                                </form> --}}
-                            </div>
-                        </div>
-
+                        <p class="gh-app-list-meta">📖 {{ $video->course->title ?? 'Kelas Tidak Ditemukan' }}</p>
+                    </div>
+                    <div class="flex shrink-0 flex-col gap-2">
+                        <button type="button" onclick="playVideoModal('{{ $video->video_url }}', '{{ $video->title }}')" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">Putar</button>
+                        <button data-video='@json($video)' onclick="handleEditModal(this)" class="gh-app-btn gh-app-btn-ghost gh-app-btn-sm">
+                            <x-ui.lucide name="edit" class="h-3.5 w-3.5" />
+                        </button>
                     </div>
                 </div>
             @empty
-                <div class="bg-white border border-gray-100 rounded-xl p-12 text-center space-y-3 shadow-xs">
-                    <div
-                        class="w-12 h-12 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto text-lg">
-                        📹
-                    </div>
-                    <div class="space-y-1">
-                        <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider">Video Tidak Ditemukan</h3>
-                        <p class="text-xs text-gray-400 max-w-xs mx-auto">Tidak ada rekaman atau materi video yang sesuai
-                            dengan kriteria penyaringan saat ini.</p>
-                    </div>
-                </div>
+                <x-app.empty-state icon="video" title="Video tidak ditemukan" description="Tidak ada video sesuai filter." />
             @endforelse
         </div>
 
         @if ($videos->hasPages())
-            <div class="mt-4 p-4 bg-white border border-gray-100 rounded-xl shadow-xs">
-                {{ $videos->links() }}
-            </div>
+            <div class="gh-app-card mt-4">{{ $videos->links() }}</div>
         @endif
+        </div>
     </div>
 
     <div id="addVideoModal" class="fixed inset-0 z-50 overflow-y-auto hidden">

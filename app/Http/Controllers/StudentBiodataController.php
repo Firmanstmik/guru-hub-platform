@@ -64,6 +64,10 @@ class StudentBiodataController extends Controller
     // FUNGSI UNTUK ROLE SISWA
     public function siswaForm()
     {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
         $user = Auth::user();
         $biodata = $user->studentBiodata;
         return view('student.biodata-form', compact('user', 'biodata'));

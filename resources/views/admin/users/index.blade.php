@@ -61,15 +61,9 @@
                         <tr class="hover:bg-gray-50 transition duration-150">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
-                                    @if ($user->avatar === 'default-avatar.png')
-                                        <img src="{{ asset('assets/avatar/' . $user->avatar) }}"
-                                            alt="Avatar {{ $user->name }}"
-                                            class="w-9 h-9 rounded-full object-cover border border-gray-200">
-                                    @else
-                                        <img src="{{ asset('storage/' . $user->avatar) }}"
-                                            alt="Avatar {{ $user->name }}"
-                                            class="w-9 h-9 rounded-full object-cover border border-gray-200">
-                                    @endif
+                                    <img src="{{ $user->avatarUrl() }}"
+                                        alt="Avatar {{ $user->name }}"
+                                        class="gh-app-user-photo gh-app-user-photo--sm gh-app-user-photo--ring">
                                     <div>
                                         <div class="font-bold text-gray-900">{{ $user->name }}</div>
                                         <div class="text-xxs text-gray-400">ID Pengguna: #{{ $user->id }}</div>

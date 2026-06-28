@@ -1,113 +1,55 @@
 @extends('layout.master-app')
 @section('content')
-    <div class="container mx-auto px-6 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <div>
-                <h3 class="text-gray-700 text-3xl font-semibold">Kelola Sertifikat Kelulusan</h3>
-                <p class="text-sm text-gray-500 mt-1">Daftar sertifikat resmi yang diterbitkan untuk siswa Guru Hub.</p>
-            </div>
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner">
+            <x-app.page-header title="Kelola Sertifikat" subtitle="Sertifikat resmi untuk siswa Guru Hub.">
+                <x-slot:action>
+                    <button onclick="toggleModal('addCertificateModal')" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">
+                        <x-ui.lucide name="plus" class="h-4 w-4" /> Terbitkan
+                    </button>
+                </x-slot:action>
+            </x-app.page-header>
 
-            <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                <form action="/certificates" method="GET" class="w-full sm:w-auto">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari nama siswa / kode..."
-                        class="w-full sm:w-64 bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none">
-                </form>
+            <form action="/certificates" method="GET" class="gh-app-search mb-3">
+                <x-ui.lucide name="search" class="gh-app-search-icon" />
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama siswa / kode..." class="gh-app-input">
+            </form>
 
-                <button onclick="toggleModal('addCertificateModal')"
-                    class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-xs transition text-sm flex items-center justify-center gap-2 flex-shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Terbitkan Sertifikat
-                </button>
-            </div>
-        </div>
-
-        <div class="space-y-3">
+        <div class="gh-app-list">
             @forelse($certificates as $cert)
-                <div
-                    class="bg-white p-5 rounded-xl border border-gray-100 shadow-xs hover:border-gray-200 transition duration-150">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-                        <div class="flex-1 min-w-0 space-y-2">
-                            <div class="flex items-start gap-3">
-                                <div
-                                    class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-md flex-shrink-0 border border-indigo-100">
-                                    🎓
-                                </div>
-                                <div class="min-w-0 space-y-0.5">
-                                    <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                                        <h4 class="text-sm font-bold text-gray-900 truncate"
-                                            title="{{ $cert->student->name ?? 'Siswa Non-Aktif' }}">
-                                            {{ $cert->student->name ?? 'Siswa Non-Aktif' }}
-                                        </h4>
-                                        <span
-                                            class="inline-flex text-[10px] font-mono bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-md font-bold tracking-wider">
-                                            {{ $cert->certificate_code }}
-                                        </span>
-                                    </div>
-                                    <p class="text-xs text-gray-600 font-medium truncate"
-                                        title="{{ $cert->course->title ?? 'Kelas Terhapus' }}">
-                                        📖 {{ $cert->course->title ?? 'Kelas Terhapus' }}
-                                    </p>
-                                    <div class="text-[11px] text-gray-400">
-                                        📅 Terbit: <span
-                                            class="font-medium text-gray-500">{{ $cert->issued_at ? $cert->issued_at->isoFormat('D MMMM YYYY') : '-' }}</span>
-                                    </div>
-                                </div>
+                <div class="gh-app-list-item overflow-hidden !p-0">
+                    <div class="gh-app-list-thumb !h-auto !w-full sm:!w-28 sm:!min-h-[88px]">
+                        <x-app.cover-image type="certificate" :alt="$cert->student->name ?? 'Sertifikat'" />
+                    </div>
+                    <div class="flex flex-1 flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="min-w-0">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h4 class="gh-app-subheading truncate">{{ $cert->student->name ?? 'Siswa Non-Aktif' }}</h4>
+                                <x-app.badge variant="info">{{ $cert->certificate_code }}</x-app.badge>
                             </div>
+                            <p class="gh-app-caption mt-1">{{ $cert->course->title ?? 'Kelas Terhapus' }}</p>
+                            <p class="gh-app-caption">{{ $cert->issued_at ? $cert->issued_at->isoFormat('D MMMM YYYY') : '-' }}</p>
                         </div>
-
-                        <div
-                            class="flex items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 pt-3 lg:pt-0 border-gray-50 flex-shrink-0">
-                            <a href="{{ asset('storage/' . $cert->file_path) }}" target="_blank"
-                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-2 rounded-xl hover:bg-indigo-100 transition shadow-2xs">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                                <span>Lihat PDF</span>
+                        <div class="flex gap-2 shrink-0">
+                            <a href="{{ asset('storage/' . $cert->file_path) }}" target="_blank" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">
+                                <x-ui.lucide name="eye" class="h-3.5 w-3.5" /> Lihat
                             </a>
-
-                            <button data-certificate='@json($cert)' onclick="handleOpenEditModal(this)"
-                                class="px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-bold rounded-xl transition">
-                                Edit
+                            <button data-certificate='@json($cert)' onclick="handleOpenEditModal(this)" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">
+                                <x-ui.lucide name="edit" class="h-3.5 w-3.5" /> Edit
                             </button>
-                            {{-- <form action="/certificates/{{ $cert->id }}" method="POST"
-                                onsubmit="return confirm('Apakah Anda yakin ingin mencabut dan menghapus permanen sertifikat ini?')"
-                                class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-xl transition">
-                                    Cabut
-                                </button>
-                            </form> --}}
                         </div>
-
                     </div>
                 </div>
             @empty
-                <div class="bg-white border border-gray-100 rounded-xl p-12 text-center space-y-3 shadow-xs">
-                    <div
-                        class="w-12 h-12 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto text-lg">
-                        📜
-                    </div>
-                    <div class="space-y-1">
-                        <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider">Sertifikat Tidak Ditemukan</h3>
-                        <p class="text-xs text-gray-400 max-w-xs mx-auto">Belum ada riwayat pencatatan atau nama siswa yang
-                            dicari tidak terdaftar dalam database.</p>
-                    </div>
-                </div>
+                <x-app.empty-state icon="award" title="Sertifikat tidak ditemukan" description="Belum ada sertifikat terdaftar." />
             @endforelse
         </div>
 
         @if ($certificates->hasPages())
-            <div class="mt-4 p-4 bg-white border border-gray-100 rounded-xl shadow-xs">
-                {{ $certificates->links() }}
-            </div>
+            <div class="gh-app-card mt-4">{{ $certificates->links() }}</div>
         @endif
+        </div>
     </div>
     <div id="addCertificateModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">

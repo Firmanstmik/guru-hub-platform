@@ -1,9 +1,9 @@
 @extends('layout.master-app')
 @section('content')
-    <div class="p-6 max-w-4xl mx-auto space-y-6">
-
-        <div
-            class="bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-3xs">
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner space-y-4">
+            <div class="gh-app-card border-amber-200 bg-amber-50/80 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div class="flex gap-3 items-center">
                 <div class="p-3 bg-amber-500 text-white rounded-xl shrink-0 animate-pulse">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,18 +22,16 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-
-            <div class="md:col-span-3 space-y-6">
-                <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-2xs space-y-3">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-5">
+            <div class="md:col-span-3 space-y-4">
+                <div class="gh-app-card space-y-3">
                     <h2 class="text-sm font-bold text-gray-900 tracking-wide uppercase border-b border-gray-50 pb-3">Metode
                         Transfer Bank Manual</h2>
 
                     <p class="text-xs text-gray-500 leading-relaxed">Silakan transfer nominal tagihan Anda ke salah satu
                         rekening resmi pengelola di bawah ini:</p>
                     @foreach ($banks as $bank)
-                        <div
-                            class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-between gap-4">
+                        <div class="gh-app-card flex items-center justify-between gap-4">
                             <div class="space-y-1">
                                 <span class="text-xs font-bold text-blue-800 tracking-wider">{{ $bank->bank_name }}</span>
                                 <p class="text-sm font-mono font-bold text-gray-800 tracking-wide">
@@ -63,7 +61,7 @@
             </div>
 
             <div class="md:col-span-2 space-y-4">
-                <div class="bg-white border border-gray-100 p-5 rounded-2xl shadow-2xs space-y-4">
+                <div class="gh-app-card space-y-4">
                     <h2 class="text-sm font-bold text-gray-900 border-b border-gray-50 pb-3">Rincian Pembelian</h2>
 
                     <div class="space-y-1">
@@ -77,14 +75,14 @@
 
                     <hr class="border-gray-100">
 
-                    <div class="bg-indigo-600 text-white p-4 rounded-xl space-y-1 shadow-sm">
+                    <div class="gh-app-card p-4 text-white" style="background: linear-gradient(135deg, #3b82f6, #14b8a6); border: none;">
                         <span class="text-[10px] text-indigo-200 font-semibold uppercase tracking-wider">Total yang Harus
                             Dibayar</span>
                         <div class="flex items-center justify-between">
                             <span class="text-lg font-extrabold font-mono" id="total-tagihan">Rp
                                 {{ number_format($booking->total_amount, 0, ',', '.') }}</span>
                             <button onclick="copyToClipboardValue('{{ $booking->total_amount }}', this)"
-                                class="px-2 py-1 bg-indigo-500/50 hover:bg-indigo-500 border border-indigo-400/30 text-[11px] font-semibold rounded-md transition">
+                                class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">
                                 Salin Angka
                             </button>
                         </div>
@@ -93,7 +91,7 @@
                     <div class="pt-2 space-y-2">
                         <a href="https://wa.me/628123456789?text=Halo%20Admin,%20saya%20ingin%20konfirmasi%20pembayaran%20dengan%20Kode%20Invoice:%20{{ $booking->transaction_code }}"
                             target="_blank"
-                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-xs">
+                            class="gh-app-btn gh-app-btn-primary gh-app-btn-block">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.455L0 24zm6.59-4.846c1.66.986 3.296 1.48 4.905 1.481 5.482 0 9.94-4.461 9.943-9.94 0-2.654-1.033-5.15-2.908-7.028-1.876-1.877-4.374-2.909-7.03-2.91-5.485 0-9.942 4.46-9.944 9.941-.001 1.764.484 3.42 1.4 4.898L1.15 22.882l4.497-1.179z" />
@@ -102,7 +100,7 @@
                         </a>
 
                         <a href="/student/catalog"
-                            class="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 text-xs font-semibold py-2.5 px-4 rounded-xl transition duration-150 block text-center shadow-2xs">
+                            class="gh-app-btn gh-app-btn-secondary gh-app-btn-block text-center">
                             Kembali ke Katalog
                         </a>
                     </div>
@@ -110,7 +108,7 @@
             </div>
         </div>
 
-        <div class="bg-white border border-gray-100 p-6 rounded-2xl shadow-2xs">
+        <div class="gh-app-card">
             <h2 class="text-sm font-bold text-gray-900 tracking-wide uppercase border-b border-gray-50 pb-3 mb-4">Formulir
                 Upload Bukti Transfer</h2>
 
@@ -122,7 +120,7 @@
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Kelas Yang
                             Diikuti</label>
                         <div
-                            class="w-full bg-gray-50 border border-gray-200 text-gray-700 rounded-xl p-3 text-sm font-bold flex items-center gap-2">
+                            class="w-full gh-app-input bg-gray-50">
                             <span>📖</span> <span class="truncate">{{ $booking->course->title }}</span>
                         </div>
                     </div>
@@ -131,7 +129,7 @@
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Tagihan
                             Pembayaran</label>
                         <div
-                            class="w-full bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-xl p-3 text-sm font-mono font-extrabold">
+                            class="w-full gh-app-input font-mono font-bold text-[#0E7490]">
                             Rp {{ number_format($booking->total_amount, 0, ',', '.') }}
                         </div>
                     </div>
@@ -163,13 +161,13 @@
 
                 <div class="flex justify-end pt-2 border-t border-gray-50">
                     <button type="submit"
-                        class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition shadow-xs">
+                        class="gh-app-btn gh-app-btn-primary gh-app-btn-block">
                         Kirim Konfirmasi Pembayaran
                     </button>
                 </div>
             </form>
         </div>
-
+        </div>
     </div>
 
     <script>

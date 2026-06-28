@@ -1,35 +1,15 @@
 @extends('layout.master-app')
 @section('content')
-    <div class="p-4 md:p-6 max-w-[1600px] mx-auto">
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner">
+            <x-app.page-header :title="$course->title" back="/my-courses">
+                <x-slot:action>
+                    <a href="{{ url('/student/courses/' . $course->id . '/review') }}" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">⭐ Beri Ulasan</a>
+                </x-slot:action>
+            </x-app.page-header>
 
-        <!-- Header Navigasi Atas -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-5 mb-6">
-            <div class="space-y-1">
-                <a href="/my-courses"
-                    class="inline-flex items-center gap-1 text-xs font-semibold text-gray-400 hover:text-indigo-600 transition mb-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Kembali ke Kelas Saya
-                </a>
-                <h1 class="text-xl font-black text-gray-900 leading-tight">{{ $course->title }}</h1>
-            </div>
-
-            <!-- Tombol Tulis Testimoni/Review -->
-            <div>
-                <a href="{{ url('/student/courses/' . $course->id . '/review') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-xs transition">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                        <path
-                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    Beri Ulasan Kelas
-                </a>
-            </div>
-        </div>
-
-        <!-- Grid Layout Belajar Utama -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
             <!-- PANEL KIRI (2/3): Player Video atau Preview Dokumen -->
             <div class="lg:col-span-2 space-y-4">
@@ -100,7 +80,7 @@
                         @endif
                     </div>
 
-                    <div class="bg-white border border-gray-100 rounded-2xl p-5 space-y-2">
+                    <div class="gh-app-card space-y-2">
                         <div class="flex items-center gap-2">
                             <span
                                 class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider {{ $activeType === 'video' ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600' }}">
@@ -159,7 +139,7 @@
                     </div>
                 @endif
 
-                <div class="bg-white border border-gray-100 rounded-2xl p-5 space-y-5 shadow-2xs">
+                <div class="gh-app-card space-y-5">
                     <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest border-b border-gray-50 pb-3">
                         Silabus & Modul Belajar</h3>
 
@@ -324,6 +304,7 @@
             </div>
 
 
+        </div>
         </div>
     </div>
 

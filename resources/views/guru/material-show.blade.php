@@ -1,23 +1,14 @@
 @extends('layout.master-app')
 
 @section('content')
-<div class="p-6 max-w-7xl mx-auto space-y-6">
-
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-xs">
-        <div>
-            <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Ruang Lingkup Materi</span>
-            <h2 class="text-gray-900 text-2xl font-bold mt-1">{{ $material->title }}</h2>
-            <p class="text-xs text-gray-500 mt-1">Kelas: <strong class="text-gray-700">{{ $material->course->title ?? 'Kelas Tidak Ditemukan' }}</strong></p>
-        </div>
-        <a href="/teacher/materials" class="text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 px-4 py-2.5 rounded-xl transition">
-            ⬅️ Kembali ke Daftar Materi
-        </a>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+<div class="gh-app-page">
+    <div class="gh-app-page-grid" aria-hidden="true"></div>
+    <div class="gh-app-page-inner space-y-4">
+        <x-app.page-header title="{{ $material->title }}" subtitle="Kelas: {{ $material->course->title ?? '-' }}" back="/materials" />
         
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-xs space-y-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+            <div class="lg:col-span-2 space-y-4">
+            <div class="gh-app-card space-y-4">
                 <h3 class="font-bold text-gray-900 text-lg border-b border-gray-50 pb-2">📖 Informasi Deskripsi Materi</h3>
                 
                 <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
@@ -41,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-xs">
+            <div class="gh-app-card">
                 <h3 class="font-bold text-gray-900 text-sm mb-3">Progression Rate</h3>
                 <div class="flex items-center gap-4">
                     <div class="text-3xl font-black text-gray-900">{{ $material->completed_count ?? 0 }}</div>
@@ -51,7 +42,7 @@
         </div>
 
         <div class="lg:col-span-1">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-xs space-y-4">
+            <div class="gh-app-card space-y-4">
                 <div class="flex items-center gap-2 border-b border-gray-50 pb-3">
                     <span class="text-xl">📝</span>
                     <div>
@@ -72,11 +63,11 @@
                         
                         <div class="flex flex-col gap-2 pt-1">
                             <a href="{{ url('/quiz/'.$material->quiz->id.'/build') }}" 
-                               class="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2.5 rounded-lg transition shadow-xs">
+                               class="gh-app-btn gh-app-btn-primary gh-app-btn-block text-center">
                                 ⚙️ Kelola & Tambah Soal
                             </a>
                             <a href="{{ url('/quiz/'.$material->quiz->id.'/review') }}" 
-                               class="w-full text-center bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs py-2.5 rounded-lg transition">
+                               class="gh-app-btn gh-app-btn-secondary gh-app-btn-block text-center">
                                 📊 Periksa Nilai Jawaban Siswa
                             </a>
                         </div>
@@ -119,6 +110,7 @@
             </div>
         </div>
 
+        </div>
     </div>
 </div>
 @endsection

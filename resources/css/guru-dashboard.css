@@ -1,0 +1,243 @@
+/* Guru dashboard & app shell — premium landing DNA */
+
+@layer components {
+    .gh-guru-app {
+        font-family: var(--gh-font-ui);
+        background:
+            radial-gradient(900px 380px at 80% 0%, rgb(34 211 238 / 0.1), transparent 60%),
+            radial-gradient(900px 500px at 0% 40%, rgb(59 130 246 / 0.07), transparent 60%),
+            linear-gradient(180deg, #ffffff 0%, #f6f9fd 60%, #eef3fa 100%);
+        color: #0a1a4f;
+    }
+
+    .gh-guru-app .gh-layout-content {
+        @apply max-w-none px-0 py-0 lg:py-6;
+    }
+
+    .gh-guru-app .gh-layout-main {
+        @apply pb-24 lg:pb-0;
+    }
+
+    .gh-guru-app .gh-layout-footer-compact {
+        @apply hidden lg:block;
+    }
+
+    /* ── Top nav ── */
+    .gh-guru-nav {
+        @apply sticky top-0 z-40 border-b border-[#0A1A4F]/[0.06] bg-white/85 backdrop-blur-2xl;
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 0.95),
+            0 12px 40px -20px rgb(10 26 79 / 0.14);
+    }
+
+    .gh-guru-nav::before {
+        content: '';
+        @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+        background: linear-gradient(90deg, transparent, rgb(34 211 238 / 0.4), rgb(59 130 246 / 0.3), transparent);
+    }
+
+    .gh-guru-nav .gh-nav-brand-title {
+        font-family: var(--gh-font-ui);
+        @apply font-bold text-[#0A1A4F];
+    }
+
+    .gh-guru-nav .gh-nav-brand-logo {
+        @apply rounded-full ring-1 ring-[#22D3EE]/20;
+        box-shadow:
+            0 0 0 1px rgb(34 211 238 / 0.08),
+            0 0 32px -8px rgb(34 211 238 / 0.55);
+    }
+
+    .gh-guru-nav .gh-nav-link-active {
+        @apply font-semibold text-[#0A1A4F];
+        background: linear-gradient(180deg, rgb(236 254 255 / 0.9), rgb(224 242 254 / 0.6));
+        box-shadow: inset 0 -2px 0 0 #14b8a6;
+    }
+
+    .gh-guru-nav .gh-nav-link:hover {
+        @apply text-[#0E7490];
+    }
+
+    .gh-guru-nav .gh-avatar-accent {
+        @apply text-white;
+        background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 55%, #14b8a6 100%);
+        box-shadow: 0 4px 16px -4px rgb(34 211 238 / 0.5);
+    }
+
+    .gh-guru-nav .gh-nav-items,
+    .gh-guru-nav .gh-nav-actions {
+        @apply hidden lg:flex;
+    }
+
+    .gh-guru-nav .gh-nav-mobile-toggle,
+    .gh-guru-nav .gh-nav-mobile-panel {
+        @apply !hidden;
+    }
+
+    .gh-guru-nav-mobile-actions {
+        @apply ml-auto flex items-center gap-2 lg:hidden;
+    }
+
+    /* ── Bottom tab bar ── */
+    .gh-guru-bottom-nav {
+        @apply fixed inset-x-0 bottom-0 z-50 lg:hidden;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        background: linear-gradient(180deg, rgb(255 255 255 / 0.72) 0%, rgb(255 255 255 / 0.94) 100%);
+        backdrop-filter: blur(24px) saturate(180%);
+        border-top: 1px solid rgb(10 26 79 / 0.06);
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 0.9),
+            0 -16px 48px -16px rgb(10 26 79 / 0.18);
+    }
+
+    .gh-guru-bottom-nav-inner {
+        @apply mx-auto grid max-w-lg grid-cols-5 gap-0.5 px-2 pt-1.5 pb-1;
+    }
+
+    .gh-guru-tab {
+        @apply relative flex flex-col items-center justify-center gap-0.5 rounded-2xl px-1 py-2 text-[10px] font-semibold text-[#94A3B8] transition-all duration-300;
+    }
+
+    .gh-guru-tab-icon {
+        @apply h-[22px] w-[22px] shrink-0 transition-all duration-300;
+    }
+
+    .gh-guru-tab-active {
+        @apply text-[#0A1A4F];
+        background: linear-gradient(180deg, rgb(236 254 255 / 0.95), rgb(224 242 254 / 0.5));
+        box-shadow:
+            inset 0 0 0 1px rgb(34 211 238 / 0.2),
+            0 4px 16px -6px rgb(34 211 238 / 0.35);
+    }
+
+    .gh-guru-tab-active .gh-guru-tab-icon {
+        @apply text-[#0E7490];
+        filter: drop-shadow(0 0 8px rgb(34 211 238 / 0.55));
+    }
+
+    .gh-guru-tab:active {
+        transform: scale(0.94);
+    }
+
+    /* ── Dashboard layout (landing light-zone parity) ── */
+    .gh-guru-dashboard-wrap {
+        @apply relative min-h-full overflow-hidden;
+        font-family: var(--gh-font-ui);
+        color: #0a1a4f;
+    }
+
+    .gh-guru-dashboard-wrap .gh-ref-display {
+        font-family: var(--gh-font-display);
+        letter-spacing: -0.025em;
+        color: #06122e;
+    }
+
+    .gh-guru-dashboard-grid {
+        @apply pointer-events-none absolute inset-0;
+        background-image:
+            linear-gradient(rgb(10 26 79 / 0.045) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(10 26 79 / 0.045) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: radial-gradient(ellipse at center, black 35%, transparent 82%);
+    }
+
+    .gh-guru-dashboard {
+        @apply relative mx-auto max-w-[1440px] space-y-10 px-5 py-6 sm:space-y-12 sm:px-6 sm:py-8 lg:px-10 xl:px-12;
+    }
+
+    .gh-guru-stat-grid {
+        @apply grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5;
+    }
+
+    .gh-guru-stat-tile {
+        @apply p-5 text-center sm:p-6;
+    }
+
+    .gh-guru-stat-tile .gh-ref-stat-num {
+        @apply text-[22px] sm:text-[30px];
+    }
+
+    /* ── Activity list (inside gh-ref-l-card) ── */
+    .gh-guru-activity-item {
+        @apply flex flex-col gap-3 border-b border-[#0A1A4F]/[0.06] p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-5;
+    }
+
+    .gh-guru-activity-item:last-child {
+        @apply border-b-0;
+    }
+
+    .gh-guru-activity-item:hover {
+        background: linear-gradient(90deg, rgb(236 254 255 / 0.45), transparent);
+    }
+
+    .gh-guru-avatar {
+        @apply relative grid h-10 w-10 shrink-0 place-items-center rounded-full text-[11px] font-bold;
+        box-shadow: 0 4px 12px -4px rgb(10 26 79 / 0.15);
+    }
+
+    .gh-guru-avatar--join {
+        @apply text-[#0B4DA2];
+        background: linear-gradient(180deg, #e0f2fe, #dbeafe);
+        border: 1px solid rgb(59 130 246 / 0.15);
+    }
+
+    .gh-guru-avatar--task {
+        @apply text-[#0E7490];
+        background: linear-gradient(180deg, #ecfeff, #ccfbf1);
+        border: 1px solid rgb(34 211 238 / 0.2);
+    }
+
+    .gh-guru-activity-badge--join {
+        color: #059669 !important;
+        background: linear-gradient(135deg, rgb(236 253 245), rgb(209 250 229 / 0.9)) !important;
+        border-color: rgb(16 185 129 / 0.2) !important;
+    }
+
+    .gh-guru-activity-badge--task {
+        color: #0e7490 !important;
+        background: linear-gradient(135deg, rgb(236 254 255), rgb(204 251 241 / 0.8)) !important;
+        border-color: rgb(34 211 238 / 0.25) !important;
+    }
+
+    /* ── Schedule cards ── */
+    .gh-guru-schedule-card {
+        @apply flex items-start gap-3 rounded-2xl p-4;
+        border: 1px solid rgb(10 26 79 / 0.07);
+        background: linear-gradient(180deg, #fff, #f8fafc);
+    }
+
+    .gh-guru-schedule-card--today {
+        border-color: rgb(34 211 238 / 0.35);
+        background: linear-gradient(135deg, rgb(236 254 255 / 0.95), rgb(224 242 254 / 0.55));
+        box-shadow: 0 8px 24px -10px rgb(34 211 238 / 0.2);
+    }
+
+    .gh-guru-schedule-card--upcoming {
+        background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+    }
+
+    .gh-guru-tip-compact {
+        @apply rounded-[20px] p-6 sm:p-8;
+    }
+
+    .gh-guru-tip-compact .gh-ref-btn-light-primary {
+        @apply text-xs;
+    }
+
+    /* ── Empty state ── */
+    .gh-guru-empty {
+        @apply p-8 text-center text-sm leading-relaxed text-[#64748B];
+    }
+
+    .gh-guru-empty-icon {
+        @apply mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl text-[#94A3B8];
+        background: linear-gradient(180deg, #f1f5f9, #e2e8f0);
+        border: 1px solid rgb(10 26 79 / 0.06);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gh-ref-l-card:hover {
+            transform: none;
+        }
+    }
+}

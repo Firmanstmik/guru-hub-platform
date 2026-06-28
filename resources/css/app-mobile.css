@@ -1,0 +1,786 @@
+/* GuruHub Mobile App — shared Guru & Siswa (landing DNA) */
+
+@layer components {
+    /* ── App shell (both roles) ── */
+    .gh-mobile-app,
+    .gh-guru-app {
+        font-family: var(--gh-font-ui);
+        background:
+            radial-gradient(900px 380px at 80% 0%, rgb(34 211 238 / 0.1), transparent 60%),
+            radial-gradient(900px 500px at 0% 40%, rgb(59 130 246 / 0.07), transparent 60%),
+            linear-gradient(180deg, #ffffff 0%, #f6f9fd 60%, #eef3fa 100%);
+        color: #0a1a4f;
+    }
+
+    .gh-mobile-app .gh-layout-content,
+    .gh-guru-app .gh-layout-content {
+        @apply max-w-none px-0 py-0;
+    }
+
+    .gh-mobile-app .gh-layout-main,
+    .gh-guru-app .gh-layout-main {
+        @apply pb-[calc(5.75rem+env(safe-area-inset-bottom,0px))] lg:pb-0;
+    }
+
+    .gh-mobile-app .gh-layout-footer-compact,
+    .gh-guru-app .gh-layout-footer-compact {
+        @apply hidden;
+    }
+
+    /* ── Compact mobile header ── */
+    .gh-app-header {
+        @apply sticky top-0 z-40 border-b border-[#0A1A4F]/[0.06] bg-white/88 backdrop-blur-2xl;
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 0.95),
+            0 8px 32px -16px rgb(10 26 79 / 0.12);
+    }
+
+    .gh-app-header::before {
+        content: '';
+        @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+        background: linear-gradient(90deg, transparent, rgb(34 211 238 / 0.4), rgb(59 130 246 / 0.3), transparent);
+    }
+
+    .gh-app-header-inner {
+        @apply mx-auto flex h-14 max-w-lg items-center gap-3 px-4 lg:h-16 lg:max-w-7xl lg:px-8;
+    }
+
+    .gh-app-header-greeting {
+        @apply min-w-0 flex-1;
+    }
+
+    .gh-app-header-eyebrow {
+        @apply text-[10px] font-bold uppercase tracking-[0.18em] text-[#0E7490];
+    }
+
+    .gh-app-header-title {
+        @apply truncate text-[15px] font-bold leading-tight text-[#0A1A4F];
+        font-family: var(--gh-font-ui);
+    }
+
+    .gh-app-header-actions {
+        @apply flex shrink-0 items-center gap-1.5;
+    }
+
+    .gh-app-icon-btn {
+        @apply relative grid h-9 w-9 place-items-center rounded-xl text-[#64748B] transition-all duration-200;
+        background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+        border: 1px solid rgb(10 26 79 / 0.06);
+    }
+
+    .gh-app-icon-btn:hover {
+        @apply text-[#0E7490];
+        border-color: rgb(34 211 238 / 0.25);
+    }
+
+    .gh-app-icon-btn:active {
+        transform: scale(0.94);
+    }
+
+    .gh-app-avatar {
+        @apply grid h-9 w-9 shrink-0 place-items-center rounded-full text-[10px] font-bold text-white;
+        background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 55%, #14b8a6 100%);
+        box-shadow: 0 4px 16px -4px rgb(34 211 238 / 0.5);
+    }
+
+    .gh-app-avatar--siswa {
+        background: linear-gradient(135deg, #6366f1 0%, #3b82f6 55%, #22d3ee 100%);
+    }
+
+    /* ── Desktop nav (lg+) ── */
+    .gh-app-desktop-nav {
+        @apply hidden lg:flex lg:items-center lg:gap-1;
+    }
+
+    .gh-app-desktop-link {
+        @apply inline-flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-semibold text-[#64748B] transition-all duration-200;
+    }
+
+    .gh-app-desktop-link:hover {
+        @apply text-[#0E7490] bg-[#ecfeff]/60;
+    }
+
+    .gh-app-desktop-link-active {
+        @apply text-[#0A1A4F] bg-[#ecfeff];
+        box-shadow: inset 0 -2px 0 0 #14b8a6;
+    }
+
+    /* ── Slide drawer ── */
+    .gh-app-drawer-backdrop {
+        @apply fixed inset-0 z-[60] bg-[#0A1A4F]/40 backdrop-blur-sm;
+    }
+
+    .gh-app-drawer {
+        @apply fixed inset-y-0 right-0 z-[70] flex w-[min(100%,320px)] flex-col bg-white shadow-2xl;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .gh-app-drawer-header {
+        @apply flex items-center justify-between border-b border-[#0A1A4F]/[0.06] px-5 py-4;
+    }
+
+    .gh-app-drawer-body {
+        @apply flex-1 overflow-y-auto px-3 py-4;
+    }
+
+    .gh-app-drawer-item {
+        @apply flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-[13px] font-semibold text-[#334155] transition-all duration-200;
+    }
+
+    .gh-app-drawer-item:hover {
+        background: linear-gradient(90deg, rgb(236 254 255 / 0.7), transparent);
+        @apply text-[#0A1A4F];
+    }
+
+    .gh-app-drawer-item-active {
+        background: linear-gradient(90deg, rgb(236 254 255 / 0.95), rgb(224 242 254 / 0.4));
+        @apply text-[#0A1A4F];
+        box-shadow: inset 3px 0 0 0 #14b8a6;
+    }
+
+    .gh-app-drawer-icon {
+        @apply grid h-9 w-9 shrink-0 place-items-center rounded-xl text-[#0E7490];
+        background: linear-gradient(180deg, #ecfeff, #e0f2fe);
+        border: 1px solid rgb(34 211 238 / 0.15);
+    }
+
+    .gh-app-drawer-footer {
+        @apply border-t border-[#0A1A4F]/[0.06] p-4;
+    }
+
+    /* ── Bottom navigation (floating dock) ── */
+    .gh-app-bottom-nav {
+        @apply pointer-events-none fixed inset-x-0 bottom-0 z-50 lg:hidden;
+        padding: 0 14px calc(12px + env(safe-area-inset-bottom, 0px));
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+    }
+
+    .gh-app-bottom-nav-dock {
+        @apply pointer-events-auto mx-auto max-w-lg;
+        border-radius: 26px;
+        background: rgb(255 255 255 / 0.78);
+        backdrop-filter: blur(40px) saturate(190%);
+        border: 1px solid rgb(255 255 255 / 0.72);
+        box-shadow:
+            0 0 0 1px rgb(10 26 79 / 0.05),
+            0 22px 48px -18px rgb(6 18 46 / 0.32),
+            inset 0 1px 0 rgb(255 255 255 / 0.95);
+    }
+
+    .gh-app-bottom-nav-inner {
+        @apply grid gap-0 px-1.5 py-1.5;
+    }
+
+    .gh-app-bottom-nav-inner--5 {
+        @apply grid-cols-5;
+    }
+
+    .gh-app-tab {
+        @apply relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-[18px] px-0.5 py-1 text-[9px] font-semibold tracking-[0.04em] text-[#8B9BB4] transition-all duration-300 ease-out;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .gh-app-tab-icon-wrap {
+        @apply grid h-9 w-11 place-items-center rounded-[14px] transition-all duration-350 ease-out;
+    }
+
+    .gh-app-tab-icon {
+        @apply h-[19px] w-[19px] shrink-0 transition-all duration-300;
+    }
+
+    .gh-app-tab-label {
+        @apply max-w-full truncate leading-none transition-all duration-300;
+    }
+
+    .gh-app-tab-active {
+        @apply text-[#06122E];
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .gh-app-tab-active .gh-app-tab-icon-wrap {
+        background: linear-gradient(145deg, #06122e 0%, #0a1a4f 55%, #0c4a6e 100%);
+        box-shadow:
+            0 1px 0 rgb(255 255 255 / 0.12) inset,
+            0 10px 22px -8px rgb(6 18 46 / 0.55);
+        transform: translateY(-1px);
+    }
+
+    .gh-app-tab-active .gh-app-tab-icon {
+        @apply text-white;
+        filter: none;
+    }
+
+    .gh-app-tab-active .gh-app-tab-label {
+        @apply font-bold tracking-[0.02em];
+    }
+
+    .gh-app-tab:not(.gh-app-tab-active):active .gh-app-tab-icon-wrap {
+        @apply bg-[#0A1A4F]/[0.05];
+        transform: scale(0.94);
+    }
+
+    .gh-app-tab-active:active .gh-app-tab-icon-wrap {
+        transform: translateY(0) scale(0.96);
+    }
+
+    /* ── Page shell ── */
+    .gh-app-page {
+        @apply relative mx-auto min-h-full max-w-lg px-4 py-4 sm:max-w-2xl sm:px-5 sm:py-5 lg:max-w-7xl lg:px-8 lg:py-6;
+        font-family: var(--gh-font-ui);
+        color: #0a1a4f;
+    }
+
+    .gh-app-page-grid {
+        @apply pointer-events-none absolute inset-0;
+        background-image:
+            linear-gradient(rgb(10 26 79 / 0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(10 26 79 / 0.035) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    }
+
+    .gh-app-page-inner {
+        @apply relative space-y-5;
+    }
+
+    /* ── Typography (mobile-first, compact) ── */
+    .gh-app-eyebrow {
+        @apply text-[10px] font-bold uppercase tracking-[0.2em] text-[#0E7490];
+    }
+
+    .gh-app-heading {
+        font-family: var(--gh-font-display);
+        @apply text-[17px] font-bold leading-snug tracking-[-0.02em] text-[#06122E];
+    }
+
+    .gh-app-heading-lg {
+        font-family: var(--gh-font-display);
+        @apply text-[18px] font-bold leading-tight tracking-[-0.025em] text-[#06122E] sm:text-[22px];
+    }
+
+    .gh-app-subheading {
+        @apply text-[13px] font-semibold text-[#0A1A4F];
+    }
+
+    .gh-app-body {
+        @apply text-[12px] leading-relaxed text-[#4b5a7a];
+    }
+
+    .gh-app-caption {
+        @apply text-[11px] text-[#94A3B8];
+    }
+
+    .gh-app-accent {
+        @apply italic text-[#0E7490];
+    }
+
+    /* ── Section header ── */
+    .gh-app-section-head {
+        @apply flex items-end justify-between gap-3;
+    }
+
+    .gh-app-section-link {
+        @apply inline-flex shrink-0 items-center gap-1 text-[11px] font-bold text-[#0E7490] transition hover:text-[#0A1A4F];
+    }
+
+    /* ── Cards ── */
+    .gh-app-card {
+        @apply rounded-2xl border border-[#0A1A4F]/[0.07] bg-white p-4;
+        box-shadow:
+            0 1px 2px rgb(10 26 79 / 0.04),
+            0 8px 24px -12px rgb(10 26 79 / 0.1);
+    }
+
+    .gh-app-card-interactive {
+        @apply transition-all duration-300;
+    }
+
+    .gh-app-card-interactive:hover {
+        border-color: rgb(34 211 238 / 0.3);
+        box-shadow:
+            0 4px 20px -8px rgb(34 211 238 / 0.25),
+            0 12px 32px -16px rgb(10 26 79 / 0.12);
+        transform: translateY(-2px);
+    }
+
+    .gh-app-card-interactive:active {
+        transform: scale(0.99);
+    }
+
+    .gh-app-card-flush {
+        @apply overflow-hidden p-0;
+    }
+
+    /* ── Stat tiles ── */
+    .gh-app-stat-grid {
+        @apply grid grid-cols-2 gap-3;
+    }
+
+    .gh-app-stat-grid--3 {
+        @apply grid-cols-3;
+    }
+
+    .gh-app-stat {
+        @apply rounded-2xl border border-[#0A1A4F]/[0.07] bg-white p-3.5 text-center;
+        box-shadow: 0 8px 24px -14px rgb(10 26 79 / 0.12);
+    }
+
+    .gh-app-stat-value {
+        font-family: var(--gh-font-display);
+        @apply text-[16px] font-bold leading-none text-[#06122E] sm:text-[18px];
+        background: linear-gradient(135deg, #0a1a4f, #0e7490);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .gh-app-stat-label {
+        @apply mt-1.5 text-[10px] font-semibold text-[#94A3B8];
+    }
+
+    /* ── Quick actions ── */
+    .gh-app-quick-grid {
+        @apply grid grid-cols-4 gap-2;
+    }
+
+    .gh-app-quick-action {
+        @apply flex flex-col items-center gap-1.5 rounded-2xl border border-[#0A1A4F]/[0.06] bg-white p-3 text-center transition-all duration-200;
+    }
+
+    .gh-app-quick-action:active {
+        transform: scale(0.95);
+        background: linear-gradient(180deg, #ecfeff, #fff);
+    }
+
+    .gh-app-quick-icon {
+        @apply grid h-10 w-10 place-items-center rounded-xl text-[#0E7490];
+        background: linear-gradient(180deg, #ecfeff, #e0f2fe);
+        border: 1px solid rgb(34 211 238 / 0.15);
+    }
+
+    .gh-app-quick-label {
+        @apply text-[10px] font-bold leading-tight text-[#334155];
+    }
+
+    /* ── List items ── */
+    .gh-app-list {
+        @apply space-y-2.5;
+    }
+
+    .gh-app-list-item {
+        @apply flex items-center gap-3 rounded-2xl border border-[#0A1A4F]/[0.07] bg-white p-3.5 transition-all duration-200;
+    }
+
+    .gh-app-list-item:hover {
+        border-color: rgb(34 211 238 / 0.25);
+        background: linear-gradient(90deg, rgb(236 254 255 / 0.4), #fff);
+    }
+
+    .gh-app-list-thumb {
+        @apply relative h-12 w-12 shrink-0 overflow-hidden rounded-xl;
+        background: linear-gradient(135deg, #dbeafe, #ecfeff);
+    }
+
+    .gh-app-list-body {
+        @apply min-w-0 flex-1;
+    }
+
+    .gh-app-list-title {
+        @apply truncate text-[13px] font-bold text-[#06122E];
+    }
+
+    .gh-app-list-meta {
+        @apply mt-0.5 text-[11px] text-[#94A3B8];
+    }
+
+    /* ── Progress ── */
+    .gh-app-progress {
+        @apply h-1.5 overflow-hidden rounded-full bg-[#0A1A4F]/[0.06];
+    }
+
+    .gh-app-progress > i {
+        @apply block h-full rounded-full transition-all duration-500;
+        background: linear-gradient(90deg, #14b8a6, #0e7490);
+    }
+
+    /* ── Chips / tabs ── */
+    .gh-app-chip-row {
+        @apply flex gap-2 overflow-x-auto pb-0.5;
+        scrollbar-width: none;
+    }
+
+    .gh-app-chip-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gh-app-chip {
+        @apply shrink-0 rounded-full border border-[#0A1A4F]/[0.08] bg-white px-3.5 py-1.5 text-[11px] font-semibold text-[#64748B] transition-all duration-200;
+    }
+
+    .gh-app-chip-active {
+        @apply border-transparent text-white;
+        background: linear-gradient(135deg, #3b82f6, #22d3ee, #14b8a6);
+        box-shadow: 0 4px 16px -4px rgb(34 211 238 / 0.45);
+    }
+
+    /* ── Badges ── */
+    .gh-app-badge {
+        @apply inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold;
+    }
+
+    .gh-app-badge--success {
+        @apply bg-emerald-50 text-emerald-700;
+        border: 1px solid rgb(16 185 129 / 0.2);
+    }
+
+    .gh-app-badge--warning {
+        @apply bg-amber-50 text-amber-700;
+        border: 1px solid rgb(245 158 11 / 0.2);
+    }
+
+    .gh-app-badge--danger {
+        @apply bg-red-50 text-red-600;
+        border: 1px solid rgb(239 68 68 / 0.2);
+    }
+
+    .gh-app-badge--info {
+        @apply bg-cyan-50 text-[#0E7490];
+        border: 1px solid rgb(34 211 238 / 0.25);
+    }
+
+    .gh-app-badge--neutral {
+        @apply bg-slate-50 text-slate-600;
+        border: 1px solid rgb(100 116 139 / 0.15);
+    }
+
+    /* ── Buttons ── */
+    .gh-app-btn {
+        @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 text-[13px] font-bold transition-all duration-200;
+    }
+
+    .gh-app-btn:active {
+        transform: scale(0.97);
+    }
+
+    .gh-app-btn-primary {
+        @apply text-white;
+        background: linear-gradient(135deg, #3b82f6, #22d3ee, #14b8a6);
+        box-shadow: 0 8px 24px -8px rgb(34 211 238 / 0.5);
+    }
+
+    .gh-app-btn-primary:hover {
+        box-shadow: 0 12px 32px -8px rgb(34 211 238 / 0.6);
+    }
+
+    .gh-app-btn-secondary {
+        @apply border border-[#0A1A4F]/[0.1] bg-white text-[#0A1A4F];
+    }
+
+    .gh-app-btn-secondary:hover {
+        @apply border-[#14B8A6]/30 bg-[#ecfeff]/50;
+    }
+
+    .gh-app-btn-ghost {
+        @apply min-h-0 bg-transparent px-2 text-[#0E7490];
+    }
+
+    .gh-app-btn-sm {
+        @apply min-h-[36px] rounded-xl px-3 text-[11px];
+    }
+
+    .gh-app-btn-block {
+        @apply w-full;
+    }
+
+    /* ── Forms ── */
+    .gh-app-form-group {
+        @apply space-y-1.5;
+    }
+
+    .gh-app-label {
+        @apply block text-[11px] font-bold uppercase tracking-wide text-[#64748B];
+    }
+
+    .gh-app-input,
+    .gh-app-select,
+    .gh-app-textarea {
+        @apply w-full rounded-xl border border-[#0A1A4F]/[0.1] bg-white px-3.5 py-2.5 text-[13px] text-[#0A1A4F] transition-all duration-200;
+        min-height: 44px;
+    }
+
+    .gh-app-input:focus,
+    .gh-app-select:focus,
+    .gh-app-textarea:focus {
+        @apply outline-none;
+        border-color: rgb(34 211 238 / 0.5);
+        box-shadow: 0 0 0 3px rgb(34 211 238 / 0.12);
+    }
+
+    .gh-app-textarea {
+        min-height: 100px;
+        @apply py-3;
+    }
+
+    .gh-app-search {
+        @apply relative;
+    }
+
+    .gh-app-search input {
+        @apply pl-10;
+    }
+
+    .gh-app-search-icon {
+        @apply pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#94A3B8];
+    }
+
+    /* ── Timeline (schedules) ── */
+    .gh-app-timeline {
+        @apply relative space-y-0 pl-4;
+    }
+
+    .gh-app-timeline::before {
+        content: '';
+        @apply absolute bottom-2 left-[7px] top-2 w-px;
+        background: linear-gradient(180deg, #14b8a6, rgb(34 211 238 / 0.2));
+    }
+
+    .gh-app-timeline-item {
+        @apply relative pb-4 pl-5;
+    }
+
+    .gh-app-timeline-dot {
+        @apply absolute left-0 top-1.5 h-[15px] w-[15px] rounded-full border-2 border-white;
+        background: linear-gradient(135deg, #3b82f6, #14b8a6);
+        box-shadow: 0 0 0 2px rgb(34 211 238 / 0.25);
+    }
+
+    .gh-app-timeline-item--today .gh-app-timeline-dot {
+        box-shadow: 0 0 12px rgb(34 211 238 / 0.6);
+    }
+
+    .gh-app-timeline-card {
+        @apply rounded-2xl border border-[#0A1A4F]/[0.07] bg-white p-3.5;
+    }
+
+    .gh-app-timeline-item--today .gh-app-timeline-card {
+        border-color: rgb(34 211 238 / 0.35);
+        background: linear-gradient(135deg, rgb(236 254 255 / 0.95), rgb(224 242 254 / 0.5));
+    }
+
+    /* ── Course card ── */
+    .gh-app-course-card {
+        @apply overflow-hidden rounded-2xl border border-[#0A1A4F]/[0.07] bg-white;
+        box-shadow: 0 8px 24px -14px rgb(10 26 79 / 0.12);
+    }
+
+    .gh-app-course-thumb {
+        @apply relative h-32 overflow-hidden;
+        background: linear-gradient(135deg, #dbeafe 0%, #ecfeff 50%, #ccfbf1 100%);
+    }
+
+    .gh-app-course-body {
+        @apply space-y-2 p-3.5;
+    }
+
+    /* ── Empty state ── */
+    .gh-app-empty {
+        @apply rounded-2xl border border-dashed border-[#0A1A4F]/[0.12] bg-white/80 p-8 text-center;
+    }
+
+    .gh-app-empty-icon {
+        @apply mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl text-[#94A3B8];
+        background: linear-gradient(180deg, #f1f5f9, #e2e8f0);
+        border: 1px solid rgb(10 26 79 / 0.06);
+    }
+
+    .gh-app-empty-title {
+        @apply text-[13px] font-bold text-[#0A1A4F];
+    }
+
+    .gh-app-empty-text {
+        @apply mx-auto mt-1 max-w-xs text-[11px] leading-relaxed text-[#94A3B8];
+    }
+
+    /* ── Skeleton loading ── */
+    .gh-app-skeleton {
+        @apply animate-pulse rounded-xl bg-[#0A1A4F]/[0.06];
+    }
+
+    .gh-app-skeleton-line {
+        @apply h-3 rounded-lg;
+    }
+
+    .gh-app-skeleton-card {
+        @apply rounded-2xl border border-[#0A1A4F]/[0.05] bg-white p-4;
+    }
+
+    /* ── Payment card ── */
+    .gh-app-payment-card {
+        @apply rounded-2xl border border-[#0A1A4F]/[0.07] bg-white p-4;
+    }
+
+    .gh-app-payment-status {
+        @apply flex items-center justify-between gap-3;
+    }
+
+    /* ── Certificate preview ── */
+    .gh-app-cert-preview {
+        @apply relative overflow-hidden rounded-2xl border border-[#0A1A4F]/[0.1] bg-gradient-to-br from-[#ecfeff] via-white to-[#e0f2fe] p-5;
+        aspect-ratio: 4/3;
+    }
+
+    /* ── Modal (mobile sheet style) ── */
+    .gh-app-modal-backdrop {
+        @apply fixed inset-0 z-[80] flex items-end justify-center bg-[#0A1A4F]/50 backdrop-blur-sm sm:items-center;
+    }
+
+    .gh-app-modal-panel {
+        @apply w-full max-h-[90vh] overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:max-w-lg sm:rounded-2xl;
+        padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0));
+    }
+
+    .gh-app-modal {
+        @apply w-full max-h-[90vh] overflow-y-auto rounded-t-3xl bg-white p-5 sm:max-w-md sm:rounded-2xl;
+        padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0));
+    }
+
+    .gh-app-modal-handle {
+        @apply mx-auto mb-4 h-1 w-10 rounded-full bg-[#0A1A4F]/10 sm:hidden;
+    }
+
+    /* Legacy modal overlay compat */
+    #addScheduleModal .inline-block,
+    #editScheduleModal .inline-block,
+    #addVideoModal .inline-block,
+    #editVideoModal .inline-block,
+    #addMaterialModal .inline-block,
+    #editMaterialModal .inline-block,
+    #addCertificateModal .inline-block,
+    #editCertificateModal .inline-block {
+        @apply rounded-2xl;
+    }
+
+    #addScheduleModal label,
+    #editScheduleModal label,
+    #addVideoModal label,
+    #editVideoModal label,
+    #addMaterialModal label,
+    #editMaterialModal label,
+    #addCertificateModal label,
+    #editCertificateModal label,
+    #addProfileModal label,
+    #editProfileModal label,
+    #uploadMediaModal label {
+        @apply mb-1 block text-[11px] font-bold uppercase tracking-wide text-[#64748B];
+    }
+
+    #addScheduleModal input:not([type="file"]),
+    #addScheduleModal select,
+    #addScheduleModal textarea,
+    #editScheduleModal input:not([type="file"]),
+    #editScheduleModal select,
+    #editScheduleModal textarea,
+    #addVideoModal input,
+    #addVideoModal select,
+    #editVideoModal input,
+    #editVideoModal select,
+    #addMaterialModal input:not([type="file"]),
+    #addMaterialModal select,
+    #editMaterialModal input:not([type="file"]),
+    #editMaterialModal select,
+    #addCertificateModal input,
+    #addCertificateModal select,
+    #editCertificateModal input,
+    #editCertificateModal select,
+    #addProfileModal input:not([type="file"]),
+    #addProfileModal select,
+    #addProfileModal textarea,
+    #editProfileModal input:not([type="file"]),
+    #editProfileModal select,
+    #editProfileModal textarea {
+        @apply w-full rounded-xl border border-[#0A1A4F]/[0.1] bg-white px-3.5 py-2.5 text-[13px] text-[#0A1A4F] transition-all duration-200;
+        min-height: 44px;
+    }
+
+    /* ── Activity feed ── */
+    .gh-app-activity-item {
+        @apply flex items-center gap-3 border-b border-[#0A1A4F]/[0.05] p-3.5 last:border-b-0;
+    }
+
+    .gh-app-activity-avatar {
+        @apply grid h-9 w-9 shrink-0 place-items-center rounded-full text-[10px] font-bold;
+    }
+
+    /* ── Filter bar ── */
+    .gh-app-filter-bar {
+        @apply flex flex-col gap-2 sm:flex-row sm:items-center;
+    }
+
+    /* ── Sticky CTA ── */
+    .gh-app-sticky-cta {
+        @apply fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom,0px))] z-30 border-t border-[#0A1A4F]/[0.06] bg-white/95 p-4 backdrop-blur-xl lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none;
+    }
+
+    @media (min-width: 1024px) {
+        .gh-app-header-inner {
+            @apply gap-6;
+        }
+
+        .gh-app-page {
+            @apply space-y-6;
+        }
+
+        .gh-app-stat-grid {
+            @apply grid-cols-4 gap-4;
+        }
+
+        .gh-app-quick-grid {
+            @apply grid-cols-6 gap-3;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gh-app-card-interactive:hover,
+        .gh-app-tab:active,
+        .gh-app-btn:active {
+            transform: none;
+        }
+    }
+
+    /* Legacy admin/indigo styles → landing DNA (appearance only) */
+    .gh-mobile-app .bg-indigo-600,
+    .gh-guru-app .bg-indigo-600 {
+        background: linear-gradient(135deg, #3b82f6, #22d3ee, #14b8a6) !important;
+    }
+
+    .gh-mobile-app .hover\:bg-indigo-700:hover,
+    .gh-guru-app .hover\:bg-indigo-700:hover {
+        filter: brightness(1.05);
+    }
+
+    .gh-mobile-app .text-indigo-600,
+    .gh-guru-app .text-indigo-600 {
+        color: #0e7490 !important;
+    }
+
+    .gh-mobile-app .bg-indigo-50,
+    .gh-guru-app .bg-indigo-50 {
+        background-color: #ecfeff !important;
+    }
+
+    .gh-mobile-app .border-indigo-100,
+    .gh-guru-app .border-indigo-100 {
+        border-color: rgb(34 211 238 / 0.25) !important;
+    }
+
+    .gh-mobile-app .bg-white.border.border-gray-100,
+    .gh-guru-app .bg-white.border.border-gray-100 {
+        border-color: rgb(10 26 79 / 0.07) !important;
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px -14px rgb(10 26 79 / 0.12);
+    }
+}

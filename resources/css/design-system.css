@@ -1,0 +1,2094 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * GuruHub Premium Design System
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * Direction : Premium Education Platform
+ * References: Coursera · Kajabi · Stripe · Linear
+ *
+ * Fonts     : Instrument Sans (UI) · Fraunces (Display)
+ * Stack     : Laravel Blade · Tailwind CSS v4 · Alpine.js
+ *
+ * Usage     : Imported by resources/css/app.css — do not import in Blade directly.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+/* ───────────────────────────────────────────────────────────────────────────
+   1. COLOR TOKENS
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@theme {
+    /* ── Core palette (authoritative) ── */
+    --color-gh-background: #f8fafc;
+    --color-gh-primary: #0f172a;
+    --color-gh-accent: #d4a853;
+    --color-gh-success: #10b981;
+    --color-gh-danger: #ef4444;
+
+    /* ── Primary scale — navy (Stripe / Linear density) ── */
+    --color-brand-50: #f4f6f9;
+    --color-brand-100: #e8ecf2;
+    --color-brand-200: #c5d0de;
+    --color-brand-300: #94a3b8;
+    --color-brand-400: #64748b;
+    --color-brand-500: #475569;
+    --color-brand-600: #334155;
+    --color-brand-700: #1e293b;
+    --color-brand-800: #0f172a;
+    --color-brand-900: #0b1220;
+    --color-brand-950: #060a12;
+
+    /* ── Accent scale — editorial gold (Kajabi / Coursera warmth) ── */
+    --color-accent-50: #fbf8f0;
+    --color-accent-100: #f5edd8;
+    --color-accent-200: #ebdbaf;
+    --color-accent-300: #dfc57a;
+    --color-accent-400: #d4a853;
+    --color-accent-500: #b88f3f;
+    --color-accent-600: #9a7534;
+    --color-accent-700: #7c5e2a;
+    --color-accent-800: #5e4720;
+    --color-accent-900: #403016;
+
+    /* ── Semantic — success ── */
+    --color-success-50: #ecfdf5;
+    --color-success-100: #d1fae5;
+    --color-success-200: #a7f3d0;
+    --color-success-300: #6ee7b7;
+    --color-success-400: #34d399;
+    --color-success-500: #10b981;
+    --color-success-600: #059669;
+    --color-success-700: #047857;
+    --color-success-800: #065f46;
+    --color-success-900: #064e3b;
+
+    /* ── Semantic — danger ── */
+    --color-danger-50: #fef2f2;
+    --color-danger-100: #fee2e2;
+    --color-danger-200: #fecaca;
+    --color-danger-300: #fca5a5;
+    --color-danger-400: #f87171;
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+    --color-danger-700: #b91c1c;
+    --color-danger-800: #991b1b;
+    --color-danger-900: #7f1d1d;
+
+    /* ── Surfaces & borders ── */
+    --color-surface: #ffffff;
+    --color-surface-muted: #f8fafc;
+    --color-surface-elevated: #ffffff;
+    --color-surface-sunken: #f1f5f9;
+    --color-border-subtle: #e2e8f0;
+    --color-border-strong: #cbd5e1;
+    --color-border-focus: #d4a853;
+
+    /* ── Text ── */
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748b;
+    --color-text-inverse: #ffffff;
+    --color-text-accent: #9a7534;
+
+    /* ─────────────────────────────────────────────────────────────────────────
+       2. TYPOGRAPHY TOKENS
+       ───────────────────────────────────────────────────────────────────────── */
+
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+    --font-mono: ui-monospace, 'Cascadia Code', 'Segoe UI Mono', monospace;
+
+    /* Type scale */
+    --text-xs: 0.75rem;
+    --text-xs--line-height: 1rem;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: 1.25rem;
+    --text-base: 1rem;
+    --text-base--line-height: 1.5rem;
+    --text-lg: 1.125rem;
+    --text-lg--line-height: 1.75rem;
+    --text-xl: 1.25rem;
+    --text-xl--line-height: 1.75rem;
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: 2rem;
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: 2.25rem;
+    --text-4xl: 2.25rem;
+    --text-4xl--line-height: 2.5rem;
+    --text-display: 3rem;
+    --text-display--line-height: 1.1;
+
+    /* Letter spacing */
+    --tracking-tight: -0.025em;
+    --tracking-normal: 0em;
+    --tracking-wide: 0.025em;
+    --tracking-wider: 0.05em;
+    --tracking-widest: 0.1em;
+
+    /* Font weights */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* ─────────────────────────────────────────────────────────────────────────
+       3. RADIUS TOKENS
+       ───────────────────────────────────────────────────────────────────────── */
+
+    --radius-none: 0;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.25rem;
+    --radius-3xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* ─────────────────────────────────────────────────────────────────────────
+       4. SHADOW TOKENS
+       ───────────────────────────────────────────────────────────────────────── */
+
+    --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.03);
+    --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+    --shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+    --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.06), 0 2px 4px -2px rgb(15 23 42 / 0.04);
+    --shadow-elevated: 0 4px 6px -1px rgb(15 23 42 / 0.06), 0 2px 4px -2px rgb(15 23 42 / 0.04);
+    --shadow-lg: 0 10px 15px -3px rgb(15 23 42 / 0.08), 0 4px 6px -4px rgb(15 23 42 / 0.04);
+    --shadow-xl: 0 20px 25px -5px rgb(15 23 42 / 0.08), 0 8px 10px -6px rgb(15 23 42 / 0.04);
+    --shadow-focus: 0 0 0 3px rgb(212 168 83 / 0.35);
+    --shadow-focus-danger: 0 0 0 3px rgb(239 68 68 / 0.25);
+
+    /* ─────────────────────────────────────────────────────────────────────────
+       5. SPACING TOKENS  (4px base grid)
+       ───────────────────────────────────────────────────────────────────────── */
+
+    --spacing-gh-0: 0;
+    --spacing-gh-px: 1px;
+    --spacing-gh-0_5: 0.125rem;
+    --spacing-gh-1: 0.25rem;
+    --spacing-gh-1_5: 0.375rem;
+    --spacing-gh-2: 0.5rem;
+    --spacing-gh-2_5: 0.625rem;
+    --spacing-gh-3: 0.75rem;
+    --spacing-gh-4: 1rem;
+    --spacing-gh-5: 1.25rem;
+    --spacing-gh-6: 1.5rem;
+    --spacing-gh-8: 2rem;
+    --spacing-gh-10: 2.5rem;
+    --spacing-gh-12: 3rem;
+    --spacing-gh-16: 4rem;
+    --spacing-gh-20: 5rem;
+    --spacing-gh-24: 6rem;
+
+    /* Layout widths */
+    --width-container: 80rem;
+    --width-container-narrow: 48rem;
+    --width-container-wide: 90rem;
+    --width-sidebar: 16rem;
+
+    /* ─────────────────────────────────────────────────────────────────────────
+       6. ANIMATION TOKENS
+       ───────────────────────────────────────────────────────────────────────── */
+
+    --duration-instant: 0ms;
+    --duration-fast: 100ms;
+    --duration-normal: 200ms;
+    --duration-slow: 350ms;
+    --duration-slower: 500ms;
+
+    --ease-linear: linear;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out-premium: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    --animate-fade-in: gh-fade-in var(--duration-slow) var(--ease-out-premium) both;
+    --animate-slide-up: gh-slide-up var(--duration-slow) var(--ease-out-premium) both;
+    --animate-scale-in: gh-scale-in var(--duration-normal) var(--ease-out-premium) both;
+}
+
+/* Raw CSS variables for non-Tailwind consumers (JS, inline styles, docs) */
+:root {
+    --gh-color-background: #f8fafc;
+    --gh-color-primary: #0f172a;
+    --gh-color-accent: #d4a853;
+    --gh-color-success: #10b981;
+    --gh-color-danger: #ef4444;
+
+    --gh-font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --gh-font-display: 'Fraunces', ui-serif, Georgia, serif;
+    --gh-font-ui: 'Plus Jakarta Sans', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+
+    --gh-radius-default: 0.75rem;
+    --gh-shadow-card: 0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06);
+    --gh-ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   KEYFRAMES
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@keyframes gh-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes gh-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gh-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes gh-auth-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes gh-auth-glow-pulse {
+    0%,
+    100% {
+        opacity: 0.45;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes gh-auth-shimmer {
+    0% {
+        background-position: 200% center;
+    }
+    100% {
+        background-position: -200% center;
+    }
+}
+
+@keyframes gh-landing-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes gh-landing-float-slow {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-12px) rotate(1deg);
+    }
+}
+
+@keyframes gh-landing-progress {
+    from {
+        stroke-dashoffset: 97.4;
+    }
+    to {
+        stroke-dashoffset: 21.4;
+    }
+}
+
+@keyframes gh-landing-pulse-ring {
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.04);
+    }
+}
+
+@keyframes gh-landing-shimmer-line {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   BASE LAYER
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+    html {
+        @apply scroll-smooth;
+    }
+
+    body {
+        @apply font-sans text-sm leading-relaxed text-brand-800 antialiased;
+        background-color: var(--gh-color-background);
+    }
+
+    h1 {
+        font-family: var(--gh-font-display);
+        font-weight: 700;
+        @apply tracking-tight text-brand-900;
+    }
+
+    h2,
+    h3,
+    h4 {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        @apply tracking-tight text-brand-900;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--gh-color-accent);
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   COMPONENT SYSTEMS  (7–11)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@layer components {
+
+    /* ── 7. CONTAINER SYSTEM ─────────────────────────────────────────────── */
+
+    .gh-container {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .gh-container-narrow {
+        @apply mx-auto w-full max-w-3xl px-4 sm:px-6;
+    }
+
+    .gh-container-wide {
+        @apply mx-auto w-full max-w-[90rem] px-4 sm:px-6 lg:px-8;
+    }
+
+    .gh-section {
+        @apply py-12 sm:py-16 lg:py-20;
+    }
+
+    /* ── Typography scale (Fraunces display · Instrument Sans UI) ── */
+
+    .gh-display-xl {
+        font-family: var(--gh-font-display);
+        font-weight: 700;
+        font-size: clamp(2.75rem, 6vw + 0.5rem, 4.75rem);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        @apply text-brand-900;
+    }
+
+    .gh-display-lg {
+        font-family: var(--gh-font-display);
+        font-weight: 700;
+        font-size: clamp(2.25rem, 4.5vw + 0.25rem, 3.5rem);
+        line-height: 1.08;
+        letter-spacing: -0.025em;
+        @apply text-brand-900;
+    }
+
+    .gh-display-md {
+        font-family: var(--gh-font-display);
+        font-weight: 700;
+        font-size: clamp(1.875rem, 3vw + 0.25rem, 2.625rem);
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        @apply text-brand-900;
+    }
+
+    .gh-heading-xl {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: clamp(1.625rem, 2vw + 0.5rem, 2rem);
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        @apply text-brand-900;
+    }
+
+    .gh-heading-lg {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: clamp(1.375rem, 1.5vw + 0.5rem, 1.625rem);
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+        @apply text-brand-900;
+    }
+
+    .gh-heading-md {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: 1.125rem;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        @apply text-brand-900;
+    }
+
+    .gh-body-lg {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        @apply text-brand-600;
+    }
+
+    .gh-body-md {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 0.9375rem;
+        line-height: 1.55;
+        @apply text-brand-600;
+    }
+
+    .gh-body-sm {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        @apply text-brand-500;
+    }
+
+    .gh-label {
+        font-family: var(--gh-font-sans);
+        font-weight: 500;
+        font-size: 0.75rem;
+        line-height: 1.4;
+        @apply mb-1.5 block text-brand-600;
+    }
+
+    .gh-section-label {
+        font-family: var(--gh-font-sans);
+        font-weight: 500;
+        font-size: 0.6875rem;
+        line-height: 1.35;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        @apply text-brand-400;
+    }
+
+    .gh-stat-value {
+        font-family: var(--gh-font-sans);
+        font-weight: 600;
+        font-size: 1.25rem;
+        line-height: 1.25;
+        @apply text-brand-900;
+    }
+
+    .gh-course-title {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        @apply text-brand-900;
+    }
+
+    .gh-page-header {
+        @apply mb-6 space-y-1;
+    }
+
+    .gh-page-title {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: clamp(1.375rem, 1.5vw + 0.5rem, 1.625rem);
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+        @apply text-brand-900;
+    }
+
+    .gh-page-subtitle {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        @apply mt-1 text-brand-500;
+    }
+
+    .gh-prose-title {
+        font-family: var(--gh-font-display);
+        font-weight: 700;
+        font-size: clamp(1.875rem, 3vw + 0.25rem, 2.625rem);
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        @apply text-brand-900;
+    }
+
+    /* ── 8. BUTTON SYSTEM ────────────────────────────────────────────────── */
+
+    /* Base — shared anatomy */
+    .gh-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold transition-all;
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-btn:disabled,
+    .gh-btn[aria-disabled='true'] {
+        @apply pointer-events-none cursor-not-allowed opacity-50;
+    }
+
+    /* Sizes */
+    .gh-btn-sm {
+        @apply rounded-lg px-3 py-1.5 text-xs;
+    }
+
+    .gh-btn-lg {
+        @apply rounded-xl px-6 py-3 text-base;
+    }
+
+    /* Variants */
+    .gh-btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold text-white transition-all;
+        background-color: var(--gh-color-primary);
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-btn-primary:hover {
+        @apply bg-brand-900;
+    }
+
+    .gh-btn-primary:active {
+        transform: scale(0.98);
+    }
+
+    .gh-btn-accent {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold text-brand-950 transition-all;
+        background-color: var(--gh-color-accent);
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-btn-accent:hover {
+        @apply bg-accent-500;
+    }
+
+    .gh-btn-accent:active {
+        transform: scale(0.98);
+    }
+
+    .gh-btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-border-subtle bg-surface px-4 py-2.5 text-sm font-semibold text-brand-700 transition-all hover:bg-brand-50;
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold text-brand-600 transition-all hover:bg-brand-50;
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold text-white transition-all;
+        background-color: var(--gh-color-danger);
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-btn-danger:hover {
+        @apply bg-danger-600;
+    }
+
+    .gh-btn-success {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold text-white transition-all;
+        background-color: var(--gh-color-success);
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-btn-success:hover {
+        @apply bg-success-600;
+    }
+
+    /* Icon-only */
+    .gh-btn-icon {
+        @apply inline-flex h-9 w-9 items-center justify-center rounded-xl p-0;
+    }
+
+    /* ── 9. CARD SYSTEM ──────────────────────────────────────────────────── */
+
+    .gh-card {
+        @apply rounded-2xl border border-border-subtle bg-surface;
+        box-shadow: var(--gh-shadow-card);
+    }
+
+    .gh-card-elevated {
+        @apply rounded-2xl border border-border-subtle bg-surface-elevated;
+        box-shadow: var(--shadow-elevated);
+    }
+
+    .gh-card-interactive {
+        @apply rounded-2xl border border-border-subtle bg-surface transition-all;
+        box-shadow: var(--gh-shadow-card);
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-card-interactive:hover {
+        @apply border-border-strong;
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    .gh-card-body {
+        @apply p-5 sm:p-6;
+    }
+
+    .gh-card-header {
+        @apply border-b border-border-subtle px-5 py-4 sm:px-6;
+    }
+
+    .gh-card-footer {
+        @apply border-t border-border-subtle px-5 py-4 sm:px-6;
+    }
+
+    .gh-stat-card {
+        @apply flex items-center gap-4 rounded-2xl border border-border-subtle bg-surface p-5 sm:p-6;
+        box-shadow: var(--gh-shadow-card);
+    }
+
+    /* ── 10. FORM SYSTEM ─────────────────────────────────────────────────── */
+
+    .gh-label-required::after {
+        content: ' *';
+        @apply text-danger-500;
+    }
+
+    .gh-input {
+        @apply w-full rounded-xl border border-border-subtle bg-surface px-4 py-2.5 text-sm text-brand-800 transition;
+    }
+
+    .gh-input::placeholder {
+        @apply text-brand-300;
+    }
+
+    .gh-input:focus {
+        @apply border-brand-600 outline-none ring-2 ring-brand-600/10;
+    }
+
+    .gh-input-error {
+        @apply border-danger-400;
+    }
+
+    .gh-input-error:focus {
+        @apply border-danger-500 ring-danger-500/15;
+    }
+
+    .gh-textarea {
+        @apply w-full resize-y rounded-xl border border-border-subtle bg-surface px-4 py-2.5 text-sm text-brand-800 transition;
+        min-height: 6rem;
+    }
+
+    .gh-textarea::placeholder {
+        @apply text-brand-300;
+    }
+
+    .gh-textarea:focus {
+        @apply border-brand-600 outline-none ring-2 ring-brand-600/10;
+    }
+
+    .gh-select {
+        @apply w-full appearance-none rounded-xl border border-border-subtle bg-surface px-4 py-2.5 text-sm text-brand-800 transition;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-position: right 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1rem;
+        padding-right: 2.5rem;
+    }
+
+    .gh-select:focus {
+        @apply border-brand-600 outline-none ring-2 ring-brand-600/10;
+    }
+
+    .gh-checkbox {
+        @apply h-4 w-4 rounded border-border-strong text-brand-800;
+        accent-color: var(--gh-color-primary);
+    }
+
+    .gh-checkbox:focus {
+        @apply ring-2 ring-brand-600/20;
+    }
+
+    .gh-radio {
+        @apply h-4 w-4 border-border-strong text-brand-800;
+        accent-color: var(--gh-color-primary);
+    }
+
+    .gh-radio:focus {
+        @apply ring-2 ring-brand-600/20;
+    }
+
+    .gh-hint {
+        @apply mt-1.5 text-xs text-brand-400;
+    }
+
+    .gh-field-error {
+        @apply mt-1.5 text-xs font-medium text-danger-600;
+    }
+
+    .gh-field-group {
+        @apply space-y-1.5;
+    }
+
+    .gh-form-stack {
+        @apply space-y-5;
+    }
+
+    /* ── 11. BADGE SYSTEM ────────────────────────────────────────────────── */
+
+    .gh-badge {
+        @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium;
+    }
+
+    .gh-badge-brand {
+        @apply inline-flex items-center gap-1 rounded-md bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700;
+    }
+
+    .gh-badge-accent {
+        @apply inline-flex items-center gap-1 rounded-md bg-accent-100 px-2 py-0.5 text-xs font-medium text-accent-600;
+    }
+
+    .gh-badge-success {
+        @apply inline-flex items-center gap-1 rounded-md bg-success-100 px-2 py-0.5 text-xs font-medium text-success-700;
+    }
+
+    .gh-badge-danger {
+        @apply inline-flex items-center gap-1 rounded-md bg-danger-100 px-2 py-0.5 text-xs font-medium text-danger-700;
+    }
+
+    .gh-badge-neutral {
+        @apply inline-flex items-center gap-1 rounded-md bg-surface-sunken px-2 py-0.5 text-xs font-medium text-brand-500;
+    }
+
+    .gh-badge-outline {
+        @apply inline-flex items-center gap-1 rounded-md border border-border-strong bg-transparent px-2 py-0.5 text-xs font-medium text-brand-600;
+    }
+
+    /* Pill variant */
+    .gh-badge-pill {
+        @apply rounded-full px-2.5;
+    }
+
+    /* Dot indicator inside badge */
+    .gh-badge-dot::before {
+        content: '';
+        @apply inline-block h-1.5 w-1.5 rounded-full bg-current;
+    }
+
+    /* ── Navigation primitives (Premium SaaS) ── */
+
+    .gh-nav-brand {
+        @apply flex flex-shrink-0 items-center gap-3 transition-opacity hover:opacity-90;
+    }
+
+    .gh-nav-brand:hover .gh-nav-brand-logo {
+        transform: scale(1.02);
+    }
+
+    .gh-nav-brand-logo {
+        @apply flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-border-subtle bg-surface shadow-card transition-transform;
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-nav-brand-title {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: 1.125rem;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        @apply text-brand-900;
+    }
+
+    .gh-nav-items {
+        @apply hidden items-center gap-0.5 md:flex;
+    }
+
+    .gh-nav-link {
+        @apply inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-brand-500 transition-all duration-200 hover:bg-brand-50 hover:text-brand-800;
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-nav-link-active {
+        @apply bg-brand-100 font-semibold text-brand-900 ring-1 ring-brand-200/70;
+    }
+
+    .gh-nav-icon {
+        @apply h-4 w-4 shrink-0 opacity-80;
+    }
+
+    .gh-nav-link-active .gh-nav-icon {
+        @apply text-brand-800 opacity-100;
+    }
+
+    .gh-nav-actions {
+        @apply hidden items-center gap-3 md:flex;
+    }
+
+    .gh-nav-profile {
+        @apply flex items-center gap-3 rounded-xl border border-transparent px-2 py-1.5 transition-all hover:border-border-subtle hover:bg-brand-50;
+    }
+
+    .gh-nav-profile:hover .gh-nav-profile-name {
+        @apply text-brand-800;
+    }
+
+    .gh-nav-profile-meta {
+        @apply hidden overflow-hidden text-right leading-tight lg:block;
+    }
+
+    .gh-nav-profile-name {
+        @apply truncate text-xs font-semibold text-brand-900;
+    }
+
+    .gh-nav-profile-role {
+        @apply truncate text-[10px] text-brand-400;
+    }
+
+    .gh-nav-logout {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold text-danger-600 transition-all hover:bg-danger-50 hover:text-danger-700;
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-nav-mobile-toggle {
+        @apply inline-flex h-9 w-9 items-center justify-center rounded-xl p-0 text-brand-500 transition-all hover:bg-brand-50 md:hidden;
+        transition-duration: var(--duration-normal);
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-nav-mobile-panel {
+        @apply border-t border-border-subtle bg-surface md:hidden;
+    }
+
+    .gh-nav-mobile-body {
+        @apply mx-auto w-full max-w-7xl space-y-1 px-4 py-4 sm:px-6 lg:px-8;
+    }
+
+    .gh-nav-mobile-footer {
+        @apply border-t border-border-subtle bg-surface-muted px-4 pb-4 pt-4;
+    }
+
+    .gh-nav-shell {
+        @apply sticky top-0 z-50 border-b border-border-subtle bg-surface/95 shadow-card backdrop-blur-md;
+    }
+
+    .gh-nav-shell-public {
+        @apply border-border-subtle/50 bg-surface/75 backdrop-blur-xl;
+        box-shadow:
+            inset 0 1px 0 0 rgb(255 255 255 / 0.85),
+            0 1px 2px rgb(15 23 42 / 0.04);
+    }
+
+    .gh-nav-shell-scrolled {
+        @apply border-border-subtle bg-surface/95;
+        box-shadow:
+            inset 0 1px 0 0 rgb(255 255 255 / 0.9),
+            0 4px 16px -4px rgb(15 23 42 / 0.08),
+            0 1px 2px rgb(15 23 42 / 0.04);
+    }
+
+    .gh-nav-public-inner {
+        @apply h-[4.25rem];
+    }
+
+    .gh-nav-brand-tagline {
+        @apply hidden text-xs font-medium text-brand-400 sm:block;
+    }
+
+    .gh-nav-brand-divider {
+        @apply mx-3 hidden h-6 w-px bg-border-subtle lg:block;
+    }
+
+    .gh-nav-dropdown-end {
+        @apply right-0 left-auto w-64;
+    }
+
+    .gh-nav-dropdown-item-rich {
+        @apply items-start gap-3 rounded-xl px-3 py-2.5;
+    }
+
+    .gh-nav-dropdown-icon {
+        @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 transition-colors;
+    }
+
+    .gh-nav-dropdown-item-rich:hover .gh-nav-dropdown-icon {
+        @apply bg-brand-100 text-brand-900;
+    }
+
+    .gh-nav-dropdown-icon-teal {
+        @apply bg-teal-50 text-teal-700;
+    }
+
+    .gh-nav-dropdown-item-rich:hover .gh-nav-dropdown-icon-teal {
+        @apply bg-teal-100 text-teal-800;
+    }
+
+    .gh-nav-floating-wrap {
+        @apply fixed top-0 right-0 left-0 z-50 px-4 pt-3 sm:px-6 sm:pt-4;
+        pointer-events: none;
+    }
+
+    .gh-nav-floating {
+        @apply pointer-events-auto mx-auto max-w-6xl rounded-2xl border border-white/50 bg-white/72 shadow-lg backdrop-blur-xl;
+        box-shadow:
+            inset 0 1px 0 0 rgb(255 255 255 / 0.9),
+            0 4px 24px -4px rgb(10 26 79 / 0.12);
+    }
+
+    .gh-nav-floating.gh-nav-shell-scrolled {
+        @apply border-white/60 bg-white/88;
+        box-shadow:
+            inset 0 1px 0 0 rgb(255 255 255 / 0.95),
+            0 8px 32px -8px rgb(10 26 79 / 0.16);
+    }
+
+    .gh-nav-floating .gh-nav-link-active {
+        @apply bg-teal-50 font-semibold text-[#0A1A4F] ring-1 ring-teal-200/80;
+        box-shadow: inset 0 -2px 0 0 rgb(20 184 166 / 0.65);
+    }
+
+    .gh-nav-floating .gh-nav-link:hover {
+        @apply text-[#0B4DA2];
+    }
+
+    .gh-nav-dropdown-label {
+        @apply block text-sm font-semibold leading-tight text-brand-900;
+    }
+
+    .gh-nav-dropdown-desc {
+        @apply mt-0.5 block text-xs leading-snug text-brand-400;
+    }
+
+    .gh-nav-mobile-cta {
+        @apply flex flex-col gap-2 pt-2;
+    }
+
+    .gh-avatar {
+        @apply flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700 ring-2 ring-surface;
+    }
+
+    .gh-avatar-accent {
+        @apply bg-accent-100 text-accent-700;
+    }
+
+    /* Dropdown — guru fitur mengajar */
+    .gh-nav-dropdown {
+        @apply absolute left-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-border-subtle bg-surface p-1.5 shadow-elevated;
+    }
+
+    .gh-nav-dropdown-item {
+        @apply flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-brand-600 transition-colors hover:bg-brand-50 hover:text-brand-900;
+    }
+
+    .gh-nav-dropdown-item-active {
+        @apply bg-brand-50 font-semibold text-brand-900;
+    }
+
+    .gh-dropdown-menu {
+        @apply absolute right-0 z-50 mt-2 w-52 rounded-xl border border-border-subtle bg-surface py-1.5 shadow-elevated;
+    }
+
+    .gh-dropdown-item {
+        @apply block px-4 py-2 text-sm font-medium text-brand-700 transition-colors hover:bg-brand-50;
+    }
+
+    /* Sidebar — admin */
+    .gh-sidebar-root {
+        @apply relative;
+    }
+
+    .gh-sidebar-mobile-bar {
+        @apply sticky top-0 z-40 flex items-center justify-between border-b border-brand-800 bg-brand-900 p-4 text-white md:hidden;
+    }
+
+    .gh-sidebar-overlay {
+        @apply fixed inset-0 z-40 bg-brand-950/60 backdrop-blur-sm md:hidden;
+    }
+
+    .gh-sidebar {
+        @apply fixed top-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-brand-800 bg-brand-900 text-brand-200 transition-transform duration-300 md:sticky md:translate-x-0;
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-sidebar-header {
+        @apply hidden flex-shrink-0 items-center gap-3 border-b border-brand-800 px-5 py-5 md:flex;
+    }
+
+    .gh-sidebar-header-title {
+        @apply font-display text-base font-semibold leading-tight text-white;
+    }
+
+    .gh-sidebar-header-subtitle {
+        @apply text-xs text-brand-400;
+    }
+
+    .gh-sidebar-nav {
+        @apply flex-1 space-y-1 overflow-y-auto px-3 py-5;
+    }
+
+    .gh-sidebar-section {
+        @apply mb-2 block px-3 pt-4 text-[10px] font-semibold uppercase tracking-widest text-brand-500;
+    }
+
+    .gh-sidebar-section:first-child {
+        padding-top: 0;
+    }
+
+    .gh-sidebar-link {
+        @apply flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-brand-300 transition-all duration-200 hover:bg-brand-800 hover:text-white;
+        transition-timing-function: var(--ease-out-premium);
+    }
+
+    .gh-sidebar-link-active {
+        @apply bg-accent-400/10 font-semibold text-accent-300 ring-1 ring-inset ring-accent-400/25;
+        box-shadow: inset 3px 0 0 var(--gh-color-accent);
+    }
+
+    .gh-sidebar-icon {
+        @apply h-[18px] w-[18px] shrink-0 opacity-75;
+    }
+
+    .gh-sidebar-link-active .gh-sidebar-icon {
+        @apply text-accent-300 opacity-100;
+    }
+
+    .gh-sidebar-dropdown-trigger {
+        @apply flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-medium text-brand-300 transition-all hover:bg-brand-800 hover:text-white;
+    }
+
+    .gh-sidebar-dropdown-panel {
+        @apply mt-1 space-y-0.5 pl-9 pr-2;
+    }
+
+    .gh-sidebar-dropdown-link {
+        @apply block rounded-lg px-3 py-1.5 text-sm font-medium text-brand-400 transition-colors hover:bg-brand-800 hover:text-white;
+    }
+
+    .gh-sidebar-dropdown-link-active {
+        @apply bg-brand-800 font-semibold text-accent-300;
+    }
+
+    .gh-sidebar-footer {
+        @apply flex flex-shrink-0 items-center justify-between border-t border-brand-800 bg-brand-950/50 p-4;
+    }
+
+    .gh-sidebar-profile {
+        @apply flex min-w-0 items-center gap-2.5;
+    }
+
+    .gh-sidebar-profile-name {
+        @apply truncate text-xs font-semibold text-white;
+    }
+
+    .gh-sidebar-profile-role {
+        @apply truncate text-[10px] text-brand-500;
+    }
+
+    .gh-sidebar-logout {
+        @apply rounded-lg p-2 text-brand-400 transition-colors hover:bg-brand-800 hover:text-danger-400;
+    }
+
+    /* ── Motion utilities ── */
+
+    .gh-animate-in {
+        animation: var(--animate-fade-in);
+    }
+
+    .gh-animate-slide-up {
+        animation: var(--animate-slide-up);
+    }
+
+    .gh-animate-scale-in {
+        animation: var(--animate-scale-in);
+    }
+
+    /* ── Layout shell (master · master-app · template) ── */
+
+    .gh-app-shell {
+        @apply flex min-h-screen flex-col bg-surface-muted text-brand-800 antialiased;
+    }
+
+    .gh-layout-main {
+        @apply flex-1;
+    }
+
+    .gh-layout-content {
+        @apply mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10;
+    }
+
+    .gh-layout-content-wide {
+        @apply mx-auto w-full max-w-[90rem] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10;
+    }
+
+    .gh-layout-footer {
+        @apply mt-auto border-t border-border-subtle bg-surface py-6 sm:py-8;
+    }
+
+    .gh-layout-footer-compact {
+        @apply mt-auto border-t border-border-subtle bg-surface py-5;
+    }
+
+    /* ── Dropdown (public nav) — legacy alias ── */
+
+    /* ── Alert / flash messages ── */
+
+    .gh-alert {
+        @apply mb-4 flex items-start gap-3 rounded-xl border p-4 text-sm shadow-card;
+        transition: opacity var(--duration-slower) var(--ease-out-premium),
+            transform var(--duration-slower) var(--ease-out-premium);
+    }
+
+    .gh-alert-success {
+        @apply border-success-200 bg-success-50 text-success-900;
+    }
+
+    .gh-alert-danger {
+        @apply border-danger-200 bg-danger-50 text-danger-900;
+    }
+
+    .gh-alert-icon {
+        @apply shrink-0 rounded-lg p-1.5 text-white;
+    }
+
+    .gh-alert-icon-success {
+        @apply bg-success-500;
+    }
+
+    .gh-alert-icon-danger {
+        @apply bg-danger-500;
+    }
+
+    .gh-alert-fade-out {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    /* ── Authentication experience V2 (MasterClass · Kajabi · Stripe) ── */
+
+    .gh-auth-shell {
+        @apply min-h-screen bg-surface-muted text-brand-800 antialiased;
+        background-image:
+            radial-gradient(ellipse 70% 50% at 100% 0%, rgb(212 168 83 / 0.06), transparent 50%),
+            radial-gradient(ellipse 50% 40% at 0% 100%, rgb(15 23 42 / 0.04), transparent 45%);
+    }
+
+    .gh-auth-layout {
+        @apply relative flex min-h-screen flex-col lg:flex-row;
+    }
+
+    .gh-auth-brand {
+        @apply relative hidden overflow-hidden bg-brand-900 text-white lg:flex lg:w-[48%] xl:w-[50%];
+    }
+
+    .gh-auth-brand-bg {
+        @apply pointer-events-none absolute inset-0;
+        background:
+            radial-gradient(ellipse 90% 70% at 15% 0%, rgb(212 168 83 / 0.22), transparent 58%),
+            radial-gradient(ellipse 55% 45% at 95% 75%, rgb(148 163 184 / 0.14), transparent 52%),
+            radial-gradient(ellipse 40% 30% at 50% 50%, rgb(255 255 255 / 0.03), transparent 70%),
+            linear-gradient(160deg, #0f172a 0%, #152238 45%, #0b1220 100%);
+    }
+
+    .gh-auth-brand-grid {
+        @apply pointer-events-none absolute inset-0 opacity-[0.035];
+        background-image:
+            linear-gradient(rgb(255 255 255 / 0.8) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(255 255 255 / 0.8) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black, transparent);
+    }
+
+    .gh-auth-brand-shape {
+        @apply pointer-events-none absolute rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-md;
+    }
+
+    .gh-auth-brand-inner {
+        @apply relative z-10 flex h-full min-h-screen flex-col p-10 xl:p-14;
+    }
+
+    .gh-auth-brand-logo {
+        @apply flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/15 bg-white/10 shadow-elevated backdrop-blur-md transition-transform duration-300;
+    }
+
+    a:hover .gh-auth-brand-logo {
+        transform: scale(1.04);
+    }
+
+    .gh-auth-hero-eyebrow {
+        @apply mt-10 inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-300;
+    }
+
+    .gh-auth-headline {
+        font-family: var(--gh-font-display);
+        font-weight: 700;
+        font-size: clamp(2.25rem, 4.5vw + 0.25rem, 3.5rem);
+        line-height: 1.08;
+        letter-spacing: -0.025em;
+        @apply mt-5 max-w-xl text-white;
+    }
+
+    .gh-auth-subline {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        @apply mt-5 max-w-lg text-brand-200/95;
+    }
+
+    .gh-auth-visual-stage {
+        @apply relative mt-10 flex-1;
+    }
+
+    .gh-auth-featured-card {
+        @apply relative z-10 overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] p-4 backdrop-blur-xl transition-all duration-300;
+        box-shadow:
+            0 4px 6px -1px rgb(0 0 0 / 0.2),
+            0 12px 32px -8px rgb(0 0 0 / 0.35),
+            inset 0 1px 0 0 rgb(255 255 255 / 0.12);
+    }
+
+    .gh-auth-featured-card:hover {
+        @apply border-white/20 bg-white/[0.09];
+        transform: translateY(-2px);
+        box-shadow:
+            0 8px 16px -4px rgb(0 0 0 / 0.25),
+            0 20px 40px -12px rgb(0 0 0 / 0.4),
+            inset 0 1px 0 0 rgb(255 255 255 / 0.15);
+    }
+
+    .gh-auth-featured-thumb {
+        @apply relative aspect-[16/9] overflow-hidden rounded-xl bg-brand-800;
+    }
+
+    .gh-auth-featured-thumb-placeholder {
+        @apply flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950;
+    }
+
+    .gh-auth-featured-badge {
+        @apply absolute left-3 top-3 z-10 rounded-md bg-accent-400/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-950;
+    }
+
+    .gh-auth-featured-title {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: 1.125rem;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        @apply mt-3 text-white;
+    }
+
+    .gh-auth-featured-meta {
+        @apply mt-1 text-xs text-brand-300;
+    }
+
+    .gh-auth-featured-progress {
+        @apply mt-3 h-1 overflow-hidden rounded-full bg-white/10;
+    }
+
+    .gh-auth-featured-progress-bar {
+        @apply h-full rounded-full bg-gradient-to-r from-accent-400 to-accent-300;
+    }
+
+    .gh-auth-float {
+        @apply absolute z-20 flex items-center gap-3 rounded-2xl border border-white/15 bg-brand-950/70 p-3.5 shadow-elevated backdrop-blur-xl;
+        box-shadow:
+            0 8px 24px -6px rgb(0 0 0 / 0.45),
+            inset 0 1px 0 0 rgb(255 255 255 / 0.1);
+    }
+
+    .gh-auth-float-achievement {
+        right: -0.5rem;
+        top: 0.5rem;
+    }
+
+    .gh-auth-float-active {
+        bottom: 2rem;
+        left: -1rem;
+    }
+
+    .gh-auth-float-value {
+        @apply font-display text-lg font-semibold leading-none text-white;
+    }
+
+    .gh-auth-float-label {
+        @apply mt-0.5 text-[11px] text-brand-300;
+    }
+
+    .gh-auth-float-icon {
+        @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-400/15 text-accent-300;
+    }
+
+    .gh-auth-pulse-dot {
+        @apply relative flex h-2.5 w-2.5 shrink-0 rounded-full bg-success-400;
+    }
+
+    .gh-auth-pulse-dot::before {
+        content: '';
+        @apply absolute inset-0 rounded-full bg-success-400;
+        animation: gh-auth-glow-pulse 2s ease-in-out infinite;
+    }
+
+    .gh-auth-animate-float {
+        animation: gh-auth-float 7s var(--ease-out-premium) infinite;
+    }
+
+    .gh-auth-animate-float-delayed {
+        animation: gh-auth-float 7s var(--ease-out-premium) 1.2s infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gh-auth-animate-float,
+        .gh-auth-animate-float-delayed,
+        .gh-auth-pulse-dot::before {
+            animation: none;
+        }
+
+        .gh-auth-featured-card:hover {
+            transform: none;
+        }
+    }
+
+    .gh-auth-stats {
+        @apply mt-8 grid grid-cols-3 gap-3;
+    }
+
+    .gh-auth-stat {
+        @apply rounded-xl border border-white/10 bg-white/[0.04] p-3.5 backdrop-blur-md transition-all duration-200;
+    }
+
+    .gh-auth-stat:hover {
+        @apply border-white/20 bg-white/[0.07];
+        transform: translateY(-1px);
+    }
+
+    .gh-auth-stat-value {
+        @apply font-display text-xl font-semibold text-accent-300 xl:text-2xl;
+    }
+
+    .gh-auth-stat-label {
+        @apply mt-0.5 text-[11px] font-medium text-brand-400;
+    }
+
+    .gh-auth-testimonial {
+        @apply mt-8 rounded-2xl border-l-2 border-accent-400/60 bg-white/[0.04] py-4 pl-5 pr-4 backdrop-blur-sm;
+    }
+
+    .gh-auth-testimonial-quote {
+        @apply text-sm italic leading-relaxed text-brand-100/90;
+    }
+
+    .gh-auth-testimonial-author {
+        @apply mt-3 text-xs font-semibold text-white;
+    }
+
+    .gh-auth-testimonial-role {
+        @apply text-[11px] text-brand-400;
+    }
+
+    .gh-auth-main {
+        @apply relative flex flex-1 flex-col justify-center px-4 py-8 sm:px-8 lg:px-10 lg:py-12 xl:px-14;
+    }
+
+    .gh-auth-main-inner {
+        @apply relative mx-auto w-full max-w-[26rem] lg:max-w-md xl:max-w-lg;
+    }
+
+    .gh-auth-mobile-brand {
+        @apply mb-6 flex items-center gap-3 lg:hidden;
+    }
+
+    .gh-auth-mobile-trust {
+        @apply mb-5 flex items-center justify-between gap-2 rounded-xl border border-border-subtle bg-surface/80 px-3 py-2.5 text-center lg:hidden;
+    }
+
+    .gh-auth-mobile-trust-item {
+        @apply min-w-0 flex-1;
+    }
+
+    .gh-auth-mobile-trust-value {
+        @apply text-sm font-semibold text-brand-900;
+    }
+
+    .gh-auth-mobile-trust-label {
+        @apply text-[10px] text-brand-400;
+    }
+
+    .gh-auth-card-wrap {
+        @apply relative;
+    }
+
+    .gh-auth-card-glow {
+        @apply pointer-events-none absolute -inset-px rounded-[1.65rem] opacity-60;
+        background: linear-gradient(135deg, rgb(212 168 83 / 0.22), transparent 40%, rgb(15 23 42 / 0.08));
+        filter: blur(1px);
+    }
+
+    .gh-auth-card {
+        @apply relative overflow-hidden rounded-3xl border border-white/60 bg-surface/75 backdrop-blur-2xl;
+        box-shadow:
+            0 0 0 1px rgb(15 23 42 / 0.04),
+            0 2px 4px rgb(15 23 42 / 0.04),
+            0 8px 16px -4px rgb(15 23 42 / 0.08),
+            0 24px 48px -12px rgb(15 23 42 / 0.12),
+            inset 0 1px 0 0 rgb(255 255 255 / 0.85),
+            inset 0 -1px 0 0 rgb(15 23 42 / 0.03);
+    }
+
+    .gh-auth-card::before {
+        content: '';
+        @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.9), transparent);
+    }
+
+    .gh-auth-card-header {
+        @apply px-6 pb-5 pt-6 sm:px-8 sm:pt-7;
+    }
+
+    .gh-auth-divider {
+        @apply mt-5 flex items-center gap-3;
+    }
+
+    .gh-auth-divider::before,
+    .gh-auth-divider::after {
+        content: '';
+        @apply h-px flex-1;
+        background: linear-gradient(90deg, transparent, var(--color-border-subtle), transparent);
+    }
+
+    .gh-auth-divider span {
+        @apply h-1 w-1 rounded-full bg-accent-400;
+    }
+
+    .gh-auth-card-title {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: clamp(1.625rem, 2vw + 0.5rem, 2rem);
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        @apply text-brand-900;
+    }
+
+    .gh-auth-card-subtitle {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        @apply mt-2 text-brand-500;
+    }
+
+    .gh-auth-card-body {
+        @apply px-6 pb-6 sm:px-8 sm:pb-8;
+    }
+
+    .gh-auth-card-footer {
+        @apply border-t border-border-subtle/80 bg-gradient-to-b from-surface-muted/30 to-surface-muted/60 px-6 py-4 text-center text-sm text-brand-500 sm:px-8;
+    }
+
+    .gh-auth-card .gh-input {
+        @apply transition-all duration-200;
+    }
+
+    .gh-auth-card .gh-input:hover {
+        @apply border-border-strong;
+    }
+
+    .gh-auth-card .gh-btn-primary,
+    .gh-auth-card .gh-btn-accent {
+        @apply relative overflow-hidden transition-all duration-200;
+    }
+
+    .gh-auth-card .gh-btn-primary:hover,
+    .gh-auth-card .gh-btn-accent:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px -6px rgb(15 23 42 / 0.35);
+    }
+
+    .gh-auth-card .gh-btn-primary:active,
+    .gh-auth-card .gh-btn-accent:active {
+        transform: translateY(0) scale(0.99);
+    }
+
+    .gh-auth-back {
+        @apply mb-5 inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-brand-500 transition-all duration-200 hover:bg-brand-50 hover:text-brand-800;
+    }
+
+    .gh-auth-link {
+        @apply font-semibold text-brand-800 underline decoration-accent-400/40 underline-offset-2 transition-colors duration-200 hover:text-accent-600 hover:decoration-accent-500;
+    }
+
+    /* ── Login — European minimal (Coursera · international LMS) ── */
+
+    .gh-login-shell {
+        @apply min-h-screen bg-surface text-brand-800 antialiased;
+    }
+
+    .gh-login-layout {
+        @apply flex min-h-screen flex-col lg:flex-row;
+    }
+
+    .gh-login-brand {
+        @apply relative flex flex-col justify-between bg-brand-900 px-8 py-10 text-white lg:w-[44%] lg:px-14 lg:py-16 xl:w-[42%];
+    }
+
+    .gh-login-brand::after {
+        content: '';
+        @apply absolute bottom-0 left-14 right-14 hidden h-px bg-gradient-to-r from-transparent via-accent-400/40 to-transparent lg:block;
+    }
+
+    .gh-login-brand-logo {
+        @apply flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-white/10;
+    }
+
+    .gh-login-brand-name {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: 1.125rem;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+        @apply text-white;
+    }
+
+    .gh-login-headline {
+        font-family: var(--gh-font-display);
+        font-weight: 700;
+        font-size: clamp(1.875rem, 3vw + 0.25rem, 2.625rem);
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        @apply mt-16 max-w-md text-white lg:mt-20;
+    }
+
+    .gh-login-tagline {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 0.9375rem;
+        line-height: 1.55;
+        @apply mt-4 max-w-sm text-brand-300;
+    }
+
+    .gh-login-metrics {
+        @apply mt-10 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-brand-400;
+    }
+
+    .gh-login-metrics strong {
+        @apply font-medium text-brand-100;
+    }
+
+    .gh-login-metrics-sep {
+        @apply hidden text-brand-600 sm:inline;
+    }
+
+    .gh-login-brand-footer {
+        @apply mt-12 hidden text-xs leading-relaxed text-brand-500 lg:block;
+    }
+
+    .gh-login-main {
+        @apply flex flex-1 flex-col justify-center px-6 py-10 sm:px-10 lg:px-16 xl:px-20;
+    }
+
+    .gh-login-main-inner {
+        @apply mx-auto w-full max-w-[22rem];
+    }
+
+    .gh-login-mobile-header {
+        @apply mb-10 flex items-center justify-between lg:hidden;
+    }
+
+    .gh-login-back {
+        @apply text-sm text-brand-400 transition-colors hover:text-brand-700;
+    }
+
+    .gh-login-title {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: clamp(1.625rem, 2vw + 0.5rem, 2rem);
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        @apply text-brand-900;
+    }
+
+    .gh-login-subtitle {
+        font-family: var(--gh-font-sans);
+        font-weight: 400;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        @apply mt-2 text-brand-500;
+    }
+
+    .gh-login-form {
+        @apply mt-8 space-y-6;
+    }
+
+    .gh-login-field label.gh-label {
+        @apply text-[11px] font-medium uppercase tracking-[0.08em] text-brand-500;
+    }
+
+    .gh-login-form .gh-input {
+        @apply mt-1.5 border-border-subtle bg-surface py-3;
+    }
+
+    .gh-login-form .gh-input:focus {
+        @apply border-brand-700 ring-brand-700/5;
+    }
+
+    .gh-login-actions {
+        @apply pt-2;
+    }
+
+    .gh-login-submit {
+        @apply w-full py-3 text-sm font-semibold tracking-wide;
+    }
+
+    .gh-login-footer {
+        @apply mt-10 border-t border-border-subtle pt-6 text-center text-sm text-brand-400;
+    }
+
+    .gh-login-footer a {
+        @apply font-medium text-brand-800 transition-colors hover:text-brand-600;
+    }
+
+    .gh-login-forgot {
+        @apply text-xs font-medium text-brand-400 transition-colors hover:text-brand-700;
+    }
+
+    /* ── Landing Page V3 — GuruHub identity (Navy · Blue · Teal · Cyan) ── */
+
+    .gh-landing-page {
+        --gh-lp-navy: #0a1a4f;
+        --gh-lp-blue: #0b4da2;
+        --gh-lp-teal: #14b8a6;
+        --gh-lp-cyan: #38bdf8;
+        --gh-lp-bg: #f8fafc;
+        @apply relative text-brand-800;
+        background: var(--gh-lp-bg);
+    }
+
+    .gh-landing-page::before {
+        content: '';
+        @apply pointer-events-none fixed inset-0 -z-10;
+        background:
+            radial-gradient(ellipse 80% 50% at 10% -5%, rgb(11 77 162 / 0.08), transparent 55%),
+            radial-gradient(ellipse 60% 40% at 90% 10%, rgb(20 184 166 / 0.06), transparent 50%),
+            radial-gradient(ellipse 50% 30% at 50% 100%, rgb(56 189 248 / 0.05), transparent 45%),
+            linear-gradient(180deg, #f8fafc 0%, #ffffff 40%, #f8fafc 100%);
+    }
+
+    .gh-landing-btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200;
+        background: linear-gradient(135deg, var(--gh-lp-teal), var(--gh-lp-blue));
+        box-shadow: 0 4px 14px -4px rgb(11 77 162 / 0.45);
+    }
+
+    .gh-landing-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px -6px rgb(11 77 162 / 0.5);
+    }
+
+    .gh-landing-btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-brand-200 bg-white/80 px-4 py-2.5 text-sm font-semibold text-[#0A1A4F] backdrop-blur-sm transition-all duration-200 hover:border-[#0B4DA2]/30 hover:bg-white;
+    }
+
+    .gh-landing-badge {
+        @apply inline-flex items-center gap-2 rounded-full border border-teal-200/60 bg-teal-50/80 px-3 py-1 text-xs font-medium text-[#0B4DA2];
+    }
+
+    .gh-landing-section {
+        @apply relative py-20 lg:py-24;
+    }
+
+    .gh-landing-section-header {
+        @apply mb-12 max-w-2xl;
+    }
+
+    .gh-landing-eyebrow {
+        @apply text-xs font-semibold uppercase tracking-[0.14em] text-[#0B4DA2];
+    }
+
+    .gh-landing-hero {
+        @apply relative overflow-hidden pt-28 pb-20 lg:pt-32 lg:pb-28;
+    }
+
+    .gh-landing-hero-mesh {
+        @apply pointer-events-none absolute inset-0;
+        background:
+            radial-gradient(ellipse 70% 55% at 20% 20%, rgb(56 189 248 / 0.12), transparent 55%),
+            radial-gradient(ellipse 55% 45% at 80% 0%, rgb(20 184 166 / 0.1), transparent 50%),
+            radial-gradient(ellipse 40% 35% at 60% 80%, rgb(11 77 162 / 0.08), transparent 45%);
+    }
+
+    .gh-landing-hero-grid {
+        @apply pointer-events-none absolute inset-0 opacity-20;
+        background-image:
+            linear-gradient(rgb(10 26 79 / 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(10 26 79 / 0.04) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, black 15%, transparent 72%);
+    }
+
+    .gh-landing-hero-noise {
+        @apply pointer-events-none absolute inset-0 opacity-[0.18];
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+        mix-blend-mode: soft-light;
+    }
+
+    .gh-landing-hero-glow {
+        @apply pointer-events-none absolute top-1/4 -left-32 h-96 w-96 rounded-full opacity-40 blur-3xl;
+        background: radial-gradient(circle, rgb(20 184 166 / 0.2), transparent 70%);
+        animation: gh-auth-glow-pulse 10s ease-in-out infinite;
+    }
+
+    .gh-landing-particles {
+        @apply pointer-events-none absolute inset-0 overflow-hidden;
+    }
+
+    .gh-landing-particle {
+        @apply absolute h-1 w-1 rounded-full bg-[#38BDF8]/40;
+        animation: gh-landing-float 8s ease-in-out infinite;
+    }
+
+    .gh-landing-headline-accent {
+        background: linear-gradient(135deg, var(--gh-lp-blue), var(--gh-lp-teal));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .gh-landing-stagger-1 { animation: gh-slide-up 0.75s var(--ease-out-premium) 0.05s both; }
+    .gh-landing-stagger-2 { animation: gh-slide-up 0.75s var(--ease-out-premium) 0.15s both; }
+    .gh-landing-stagger-3 { animation: gh-slide-up 0.75s var(--ease-out-premium) 0.25s both; }
+    .gh-landing-stagger-4 { animation: gh-slide-up 0.75s var(--ease-out-premium) 0.35s both; }
+    .gh-landing-stagger-5 { animation: gh-slide-up 0.75s var(--ease-out-premium) 0.45s both; }
+    .gh-landing-stagger-6 { animation: gh-scale-in 0.9s var(--ease-out-premium) 0.55s both; }
+
+    .gh-landing-mockup-wrap {
+        @apply relative flex justify-center lg:justify-end;
+        perspective: 1200px;
+    }
+
+    .gh-landing-mockup {
+        @apply relative w-full max-w-lg;
+        animation: gh-scale-in 0.9s var(--ease-out-premium) 0.5s both;
+    }
+
+    .gh-landing-mockup-card {
+        @apply relative overflow-hidden rounded-2xl border border-white/60 bg-white/85 backdrop-blur-xl;
+        box-shadow:
+            0 0 0 1px rgb(10 26 79 / 0.05),
+            0 8px 32px -8px rgb(10 26 79 / 0.12),
+            0 32px 64px -16px rgb(10 26 79 / 0.14);
+    }
+
+    .gh-landing-mockup-card::before {
+        content: '';
+        @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.95), transparent);
+    }
+
+    .gh-landing-mockup-chrome {
+        @apply flex items-center gap-2 border-b border-white/10 px-5 py-3;
+        background: linear-gradient(180deg, #0a1a4f, #0b4da2);
+    }
+
+    .gh-landing-mockup-video {
+        @apply relative aspect-video;
+        background: linear-gradient(135deg, #0a1a4f, #0b4da2 60%, #14b8a6);
+    }
+
+    .gh-landing-mockup-body {
+        @apply space-y-4 p-5;
+    }
+
+    .gh-landing-progress-fill {
+        fill: none;
+        stroke: var(--gh-lp-teal);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-dasharray: 97.4;
+        stroke-dashoffset: 97.4;
+        animation: gh-landing-progress 1.8s var(--ease-out-premium) 0.9s forwards;
+    }
+
+    .gh-landing-progress-track {
+        fill: none;
+        stroke: rgb(226 232 240);
+        stroke-width: 2.5;
+    }
+
+    .gh-landing-progress-ring {
+        @apply relative h-14 w-14 shrink-0;
+    }
+
+    .gh-landing-progress-ring svg {
+        @apply h-full w-full -rotate-90;
+    }
+
+    .gh-landing-progress-value {
+        @apply absolute inset-0 flex items-center justify-center text-xs font-semibold text-[#0A1A4F];
+    }
+
+    .gh-landing-progress-bar {
+        @apply h-1.5 overflow-hidden rounded-full bg-slate-100;
+    }
+
+    .gh-landing-progress-bar-fill {
+        @apply h-full rounded-full;
+        background: linear-gradient(90deg, var(--gh-lp-teal), var(--gh-lp-cyan));
+    }
+
+    .gh-landing-float-card {
+        @apply absolute z-20 rounded-xl border border-white/40 bg-white/85 p-3 backdrop-blur-md;
+        box-shadow: 0 8px 28px -6px rgb(10 26 79 / 0.14);
+    }
+
+    .gh-landing-float-live { @apply -left-3 top-6 lg:-left-12; animation: gh-landing-float 5s ease-in-out infinite; }
+    .gh-landing-float-cert { @apply -right-2 bottom-28 lg:-right-10; animation: gh-landing-float-slow 6.5s ease-in-out 0.5s infinite; }
+    .gh-landing-float-students { @apply -left-2 bottom-8 lg:-left-8; animation: gh-landing-float 7s ease-in-out 1s infinite; }
+    .gh-landing-float-analytics { @apply -right-3 top-16 lg:-right-12; animation: gh-landing-float-slow 5.5s ease-in-out 0.3s infinite; }
+
+    .gh-landing-live-dot { @apply relative flex h-2 w-2; }
+    .gh-landing-live-dot::before {
+        content: '';
+        @apply absolute inline-flex h-full w-full animate-ping rounded-full opacity-60;
+        background: var(--gh-lp-teal);
+    }
+    .gh-landing-live-dot::after {
+        content: '';
+        @apply relative inline-flex h-2 w-2 rounded-full;
+        background: var(--gh-lp-teal);
+    }
+
+    .gh-landing-play-btn {
+        @apply flex h-14 w-14 items-center justify-center rounded-full text-white shadow-elevated transition-transform hover:scale-105;
+        background: linear-gradient(135deg, var(--gh-lp-teal), var(--gh-lp-cyan));
+    }
+
+    .gh-landing-trusted {
+        @apply relative py-20 lg:py-24;
+    }
+
+    .gh-landing-partners {
+        @apply flex flex-wrap items-center justify-center gap-x-12 gap-y-6;
+    }
+
+    .gh-landing-partner {
+        @apply text-sm font-bold tracking-tight text-brand-400 opacity-50 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0;
+        font-family: var(--gh-font-display);
+    }
+
+    .gh-landing-course-featured {
+        @apply grid grid-cols-1 gap-6 lg:grid-cols-12;
+    }
+
+    .gh-landing-course-hero {
+        @apply relative overflow-hidden rounded-2xl border border-border-subtle/80 bg-white transition-all duration-300 lg:col-span-7;
+        box-shadow: 0 4px 24px -8px rgb(10 26 79 / 0.1);
+    }
+
+    .gh-landing-course-hero:hover {
+        @apply -translate-y-1;
+        box-shadow: 0 16px 40px -12px rgb(11 77 162 / 0.18);
+    }
+
+    .gh-landing-course-side {
+        @apply flex flex-col gap-6 lg:col-span-5;
+    }
+
+    .gh-landing-course-card {
+        @apply relative flex flex-1 flex-col overflow-hidden rounded-2xl border border-border-subtle/80 bg-white transition-all duration-300;
+        box-shadow: 0 2px 12px -4px rgb(10 26 79 / 0.08);
+    }
+
+    .gh-landing-course-card:hover {
+        @apply -translate-y-1 border-[#0B4DA2]/20;
+        box-shadow: 0 12px 32px -10px rgb(11 77 162 / 0.15);
+    }
+
+    .gh-landing-course-thumb {
+        @apply relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-slate-100 to-teal-50;
+    }
+
+    .gh-landing-course-thumb img {
+        @apply h-full w-full object-cover transition-transform duration-500;
+    }
+
+    .gh-landing-course-hero:hover .gh-landing-course-thumb img,
+    .gh-landing-course-card:hover .gh-landing-course-thumb img {
+        transform: scale(1.04);
+    }
+
+    .gh-landing-course-body {
+        @apply flex flex-1 flex-col gap-3 p-6;
+    }
+
+    .gh-landing-course-tag {
+        @apply inline-flex w-fit rounded-md bg-teal-50 px-2 py-0.5 text-xs font-medium text-[#0B4DA2];
+    }
+
+    .gh-landing-journey-track {
+        @apply relative;
+    }
+
+    .gh-landing-journey-rail {
+        @apply absolute top-8 right-0 left-0 hidden h-0.5 lg:block;
+        background: linear-gradient(90deg, var(--gh-lp-cyan), var(--gh-lp-teal), var(--gh-lp-blue));
+    }
+
+    .gh-landing-journey-steps {
+        @apply grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-6 lg:gap-4;
+    }
+
+    .gh-landing-journey-step {
+        @apply relative text-center lg:text-left;
+    }
+
+    .gh-landing-journey-dot {
+        @apply relative z-10 mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white text-xs font-bold text-white lg:mx-0;
+        background: linear-gradient(135deg, var(--gh-lp-blue), var(--gh-lp-teal));
+        box-shadow: 0 4px 12px -2px rgb(11 77 162 / 0.35);
+    }
+
+    .gh-landing-why-grid {
+        @apply grid grid-cols-1 gap-6 md:grid-cols-3;
+    }
+
+    .gh-landing-why-card {
+        @apply rounded-2xl border border-white/60 bg-white/50 p-6 backdrop-blur-sm transition-all duration-300;
+    }
+
+    .gh-landing-why-card:hover {
+        @apply border-teal-200/50 bg-white/80;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px -12px rgb(11 77 162 / 0.12);
+    }
+
+    .gh-landing-why-icon {
+        @apply mb-4 flex h-11 w-11 items-center justify-center rounded-xl text-white;
+        background: linear-gradient(135deg, var(--gh-lp-blue), var(--gh-lp-teal));
+    }
+
+    .gh-landing-stats-grid {
+        @apply grid grid-cols-2 gap-8 md:grid-cols-4;
+    }
+
+    .gh-landing-stat-value {
+        font-family: var(--gh-font-display);
+        font-weight: 600;
+        font-size: clamp(1.75rem, 3vw, 2.25rem);
+        @apply text-[#0A1A4F];
+    }
+
+    .gh-landing-stat-label {
+        @apply mt-1 text-xs font-medium uppercase tracking-wider text-brand-400;
+    }
+
+    .gh-landing-testimonial-grid {
+        @apply grid grid-cols-1 gap-6 md:grid-cols-3;
+    }
+
+    .gh-landing-testimonial {
+        @apply rounded-2xl border border-white/50 bg-white/60 p-6 backdrop-blur-md transition-all duration-300;
+        box-shadow: 0 4px 20px -6px rgb(10 26 79 / 0.08);
+    }
+
+    .gh-landing-testimonial:hover {
+        @apply bg-white/85;
+        transform: translateY(-2px);
+    }
+
+    .gh-landing-testimonial-avatar {
+        @apply flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white;
+        background: linear-gradient(135deg, var(--gh-lp-navy), var(--gh-lp-blue));
+    }
+
+    .gh-landing-stars {
+        @apply flex gap-0.5 text-[#14B8A6];
+    }
+
+    .gh-landing-cta {
+        @apply relative overflow-hidden py-24 lg:py-28;
+    }
+
+    .gh-landing-cta-bg {
+        @apply pointer-events-none absolute inset-0;
+        background:
+            radial-gradient(ellipse 80% 60% at 50% 50%, rgb(20 184 166 / 0.15), transparent 60%),
+            linear-gradient(135deg, #0a1a4f 0%, #0b4da2 50%, #0a1a4f 100%);
+    }
+
+    .gh-landing-cta-mesh {
+        @apply pointer-events-none absolute inset-0 opacity-30;
+        background-image:
+            linear-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+        background-size: 48px 48px;
+    }
+
+    .gh-reveal {
+        @apply transition-all duration-700;
+        transition-timing-function: var(--ease-out-premium);
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    .gh-reveal.gh-reveal-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .gh-reveal-delay-1 { transition-delay: 0.1s; }
+    .gh-reveal-delay-2 { transition-delay: 0.2s; }
+    .gh-reveal-delay-3 { transition-delay: 0.3s; }
+    .gh-reveal-delay-4 { transition-delay: 0.4s; }
+    .gh-reveal-delay-5 { transition-delay: 0.5s; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gh-landing-stagger-1, .gh-landing-stagger-2, .gh-landing-stagger-3,
+        .gh-landing-stagger-4, .gh-landing-stagger-5, .gh-landing-stagger-6,
+        .gh-landing-mockup, .gh-landing-progress-fill,
+        .gh-landing-float-live, .gh-landing-float-cert,
+        .gh-landing-float-students, .gh-landing-float-analytics,
+        .gh-landing-hero-glow, .gh-landing-particle {
+            animation: none !important;
+        }
+        .gh-reveal { opacity: 1; transform: none; }
+    }
+}

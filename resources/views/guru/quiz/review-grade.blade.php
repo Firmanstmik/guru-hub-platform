@@ -1,6 +1,8 @@
 @extends('layout.master-app')
 @section('content')
-    <div class="p-6 max-w-5xl mx-auto space-y-6">
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner space-y-4">
 
         @if(session('success'))
             <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm">
@@ -13,15 +15,10 @@
             </div>
         @endif
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-xs">
-            <div>
-                <a href="/teacher/quiz/{{ $quiz->id }}/review" class="text-xs font-bold text-indigo-600 hover:underline">
-                    ⬅️ Kembali ke Daftar Siswa
-                </a>
-                <h3 class="text-gray-900 text-xl font-bold mt-1">Koreksi Jawaban: {{ $student->name }}</h3>
-                <p class="text-xs text-gray-500 mt-0.5">Kuis: {{ $quiz->title }}</p>
-            </div>
-            <div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-right">
+        <x-app.page-header title="Koreksi Jawaban: {{ $student->name }}" subtitle="Kuis: {{ $quiz->title }}" back="/teacher/quiz/{{ $quiz->id }}/review" eyebrow="Penilaian" />
+
+        <div class="space-y-4">
+                <div class="gh-app-card px-4 py-3 text-right bg-gray-50/80">
                 <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold block">Total Skor Saat Ini</span>
                 <span class="text-xl font-black text-gray-900">{{ $answers->sum('score_achieved') }} Poin</span>
             </div>
@@ -29,7 +26,7 @@
 
         <div class="space-y-4">
             @foreach($answers as $index => $answer)
-                <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-xs space-y-4">
+                <div class="gh-app-card space-y-4">
                     
                     <div class="flex justify-between items-start gap-4 border-b border-gray-50 pb-3">
                         <div>
@@ -136,5 +133,6 @@
             @endforeach
         </div>
 
+    </div>
     </div>
 @endsection

@@ -1,42 +1,27 @@
 @extends('layout.master-app')
 
 @section('content')
-    <div class="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8">
-        {{-- Header Halaman --}}
-        <div class="max-w-7xl mx-auto mb-8">
-            <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight sm:text-3xl">
-                Profil Siswa
-            </h2>
-            <p class="mt-1.5 text-sm text-gray-600">
-                Pantau detail biodata Anda atau perbarui informasi profil di bawah ini secara berkala.
-            </p>
-        </div>
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner space-y-4">
+            <x-app.page-header title="Profil Siswa" subtitle="Pantau detail biodata Anda atau perbarui informasi profil di bawah ini secara berkala." eyebrow="Akun Siswa" />
 
         {{-- Grid Utama Dashboard --}}
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
             {{-- KOLOM KIRI: Detail Biodata Aktif (Card) --}}
             <div class="space-y-6">
                 {{-- Card Informasi Akun Utama --}}
-                <div
-                    class="bg-white rounded-2xl border border-gray-100 shadow-xs p-6 flex flex-col items-center text-center">
-                    {{-- Preview Avatar Siswa --}}
+                <div class="gh-app-card flex flex-col items-center p-6 text-center">
                     <div class="relative mb-4">
-                        @if ($user->avatar === 'default-avatar.png')
-                            <img src="{{ asset('assets/avatar/' . $user->avatar) }}" alt="Avatar {{ $user->name }}"
-                                class="w-24 h-24 rounded-2xl object-cover border-4 border-gray-50 shadow-xs">
-                        @else
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar {{ $user->name }}"
-                                class="w-24 h-24 rounded-2xl object-cover border-4 border-gray-50 shadow-xs">
-                        @endif
+                        <x-app.user-avatar :user="$user" size="xl" />
                     </div>
 
                     <div class="space-y-1.5 w-full">
-                        <h3 class="text-base font-bold text-gray-900 tracking-tight">{{ $user->name }}</h3>
-                        <p class="text-xs text-gray-500 break-all px-2">{{ $user->email }}</p>
+                        <h3 class="gh-app-subheading">{{ $user->name }}</h3>
+                        <p class="gh-app-caption break-all px-2">{{ $user->email }}</p>
 
-                        <div
-                            class="pt-3 border-t border-gray-50 mt-3 grid grid-cols-1 gap-2 text-left bg-gray-50/50 p-3 rounded-xl">
+                        <div class="gh-app-card mt-3 grid grid-cols-1 gap-2 !p-3 text-left !shadow-none">
                             <div>
                                 <span class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider">Nomor
                                     Telepon</span>
@@ -49,7 +34,7 @@
 
                 {{-- Card Ringkasan Biodata Siswa --}}
                 <div
-                    class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl shadow-md text-white p-6 relative overflow-hidden">
+                    class="gh-app-card gh-app-card--dark relative overflow-hidden !p-6">
                     <div class="absolute -right-6 -bottom-6 text-indigo-800/20 pointer-events-none">
                         <svg class="w-36 h-36" fill="currentColor" viewBox="0 0 24 24">
                             <path
@@ -229,8 +214,7 @@
 
                         {{-- Tombol Submit Dinamis --}}
                         <div class="pt-2">
-                            <button type="submit"
-                                class="w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                            <button type="submit" class="gh-app-btn gh-app-btn-primary gh-app-btn-block">
                                 {{ isset($biodata) ? 'Simpan Perubahan Profil' : 'Simpan & Selesaikan Pendaftaran' }}
                             </button>
                         </div>
@@ -238,6 +222,7 @@
                 </div>
             </div>
 
+        </div>
         </div>
     </div>
 @endsection

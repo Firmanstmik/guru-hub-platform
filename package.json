@@ -4,7 +4,12 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "icons:build": "node scripts/build-iconsax-blade.mjs",
         "dev": "vite"
+    },
+    "dependencies": {
+        "alpinejs": "^3.14.9",
+        "iconsax-reactjs": "^0.0.8"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

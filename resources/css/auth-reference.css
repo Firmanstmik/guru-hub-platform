@@ -1,0 +1,382 @@
+/* Auth pages — landing page DNA (navy · blue · teal · glass) */
+
+@layer components {
+    .gh-ref-brand-logo {
+        @apply relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-2 ring-1 ring-white/25;
+        width: 4.25rem;
+        height: 4.25rem;
+        box-shadow:
+            0 0 0 1px rgb(34 211 238 / 0.15),
+            0 0 40px -8px rgb(34 211 238 / 0.55),
+            0 12px 32px -12px rgb(0 0 0 / 0.45);
+    }
+
+    .gh-ref-brand-logo img {
+        @apply h-full w-full object-contain;
+    }
+
+    .gh-ref-brand-logo-lg {
+        width: 4.75rem;
+        height: 4.75rem;
+    }
+
+    /* ── Shells ── */
+    .gh-auth-shell,
+    .gh-login-shell {
+        @apply min-h-screen antialiased;
+        background:
+            radial-gradient(60% 50% at 85% 10%, rgb(34 211 238 / 0.12), transparent 55%),
+            radial-gradient(50% 45% at 10% 90%, rgb(59 130 246 / 0.1), transparent 50%),
+            linear-gradient(180deg, #04081c 0%, #050b24 50%, #04091f 100%);
+        color: #e5ecfa;
+    }
+
+    .gh-auth-main,
+    .gh-login-main {
+        @apply relative;
+    }
+
+    .gh-auth-main::before,
+    .gh-login-main::before {
+        content: '';
+        @apply pointer-events-none absolute inset-0;
+        background-image:
+            linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+    }
+
+    /* ── Brand panels (left) ── */
+    .gh-auth-brand-bg {
+        background:
+            radial-gradient(60% 50% at 15% 20%, rgb(20 184 166 / 0.22), transparent 60%),
+            radial-gradient(50% 50% at 85% 15%, rgb(14 116 144 / 0.28), transparent 60%),
+            radial-gradient(70% 60% at 70% 90%, rgb(10 26 79 / 0.85), transparent 60%),
+            linear-gradient(180deg, #050b24 0%, #07142f 50%, #04091f 100%) !important;
+    }
+
+    .gh-login-brand {
+        background:
+            radial-gradient(60% 50% at 80% 20%, rgb(34 211 238 / 0.18), transparent 60%),
+            radial-gradient(50% 50% at 10% 30%, rgb(59 130 246 / 0.22), transparent 60%),
+            linear-gradient(180deg, #050b24 0%, #07142f 50%, #04091f 100%) !important;
+    }
+
+    .gh-login-brand::after {
+        background: linear-gradient(90deg, transparent, rgb(34 211 238 / 0.35), transparent) !important;
+    }
+
+    .gh-auth-hero-eyebrow {
+        @apply border-[#22D3EE]/25 bg-[#22D3EE]/10 text-[#5EEAD4];
+    }
+
+    .gh-auth-hero-eyebrow span.rounded-full {
+        @apply bg-[#22D3EE];
+        box-shadow: 0 0 10px #22d3ee;
+    }
+
+    .gh-auth-headline,
+    .gh-login-headline {
+        font-family: var(--gh-font-ui);
+        background: linear-gradient(100deg, #fff 0%, #cffafe 40%, #5eead4 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .gh-auth-subline,
+    .gh-login-tagline {
+        @apply text-white/60;
+        font-family: var(--gh-font-ui);
+    }
+
+    .gh-login-metrics {
+        @apply text-white/45;
+    }
+
+    .gh-login-metrics strong {
+        @apply text-white/90;
+    }
+
+    .gh-login-brand-footer {
+        @apply text-white/40;
+    }
+
+    .gh-auth-featured-badge {
+        @apply text-white;
+        background: linear-gradient(135deg, #3b82f6, #14b8a6) !important;
+    }
+
+    .gh-auth-featured-thumb-placeholder {
+        @apply bg-gradient-to-br from-[#0A1A4F] via-[#0B4DA2] to-[#0E7490];
+    }
+
+    .gh-auth-featured-progress-bar {
+        background: linear-gradient(90deg, #3b82f6, #22d3ee, #14b8a6) !important;
+    }
+
+    .gh-auth-float-icon {
+        @apply bg-[#3B82F6]/15 text-[#22D3EE];
+    }
+
+    .gh-auth-stat-value {
+        @apply text-[#5EEAD4];
+    }
+
+    .gh-auth-testimonial {
+        @apply border-[#22D3EE]/50;
+    }
+
+    .gh-auth-brand-logo {
+        @apply rounded-full border-white/20 bg-white p-2;
+        box-shadow: 0 0 30px -6px rgb(34 211 238 / 0.55);
+    }
+
+    .gh-login-brand-logo {
+        @apply rounded-full border-white/20 bg-white p-1.5;
+        width: 3rem;
+        height: 3rem;
+        box-shadow: 0 0 24px -6px rgb(34 211 238 / 0.5);
+    }
+
+    .gh-login-brand-logo img {
+        @apply object-contain;
+    }
+
+    /* ── Form cards ── */
+    .gh-auth-card-glow {
+        background: linear-gradient(135deg, rgb(59 130 246 / 0.35), transparent 45%, rgb(20 184 166 / 0.25)) !important;
+        opacity: 0.85;
+    }
+
+    .gh-auth-card {
+        @apply border-white/10 bg-white/[0.97] backdrop-blur-2xl;
+        box-shadow:
+            0 0 0 1px rgb(255 255 255 / 0.08),
+            0 24px 60px -20px rgb(0 0 0 / 0.55),
+            inset 0 1px 0 rgb(255 255 255 / 0.9) !important;
+    }
+
+    .gh-auth-card-footer {
+        @apply border-white/10 bg-[#F6F9FD]/80 text-[#4B5A7A];
+    }
+
+    .gh-auth-back,
+    .gh-login-back {
+        @apply text-white/55 hover:bg-white/5 hover:text-white;
+        font-family: var(--gh-font-ui);
+    }
+
+    .gh-auth-link,
+    .gh-login-footer a {
+        @apply font-semibold text-[#0E7490] decoration-[#22D3EE]/40 hover:text-[#0A1A4F] hover:decoration-[#14B8A6];
+    }
+
+    .gh-auth-mobile-brand .gh-nav-brand-title {
+        @apply text-white;
+    }
+
+    .gh-auth-mobile-trust {
+        @apply border-white/10 bg-white/5;
+    }
+
+    .gh-auth-mobile-trust-value {
+        @apply text-white;
+    }
+
+    .gh-auth-mobile-trust-label {
+        @apply text-white/45;
+    }
+
+    .gh-login-title,
+    .gh-auth-card-title {
+        font-family: var(--gh-font-ui);
+        @apply text-[#06122E];
+    }
+
+    .gh-login-subtitle,
+    .gh-auth-card-subtitle {
+        @apply text-[#4B5A7A];
+        font-family: var(--gh-font-ui);
+    }
+
+    .gh-login-footer {
+        @apply border-white/10 text-[#4B5A7A];
+    }
+
+    .gh-login-forgot {
+        @apply text-[#0E7490] hover:text-[#0A1A4F];
+    }
+
+    .gh-login-form {
+        @apply mt-0 space-y-6;
+    }
+
+    .gh-auth-card .gh-input,
+    .gh-login-form .gh-input {
+        @apply border-[#0A1A4F]/10 bg-white text-[#06122E];
+    }
+
+    .gh-auth-card .gh-input:focus,
+    .gh-login-form .gh-input:focus {
+        @apply border-[#0E7490] ring-[#22D3EE]/20;
+    }
+
+    /* ── Primary CTA (shared) ── */
+    .gh-ref-btn-submit {
+        font-family: var(--gh-font-ui);
+        @apply inline-flex w-full items-center justify-center rounded-xl border border-transparent px-4 py-3 text-sm font-semibold text-white transition;
+        background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 60%, #14b8a6 100%);
+        box-shadow:
+            0 14px 40px -12px rgb(59 130 246 / 0.55),
+            inset 0 1px 0 rgb(255 255 255 / 0.25);
+    }
+
+    .gh-ref-btn-submit:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+    }
+
+    .gh-ref-btn-submit:active {
+        transform: translateY(0) scale(0.99);
+    }
+
+    .gh-auth-card .gh-btn-primary,
+    .gh-auth-card .gh-btn-accent,
+    .gh-login-submit {
+        font-family: var(--gh-font-ui);
+        @apply inline-flex items-center justify-center rounded-xl border border-transparent text-sm font-semibold text-white transition;
+        background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 60%, #14b8a6 100%) !important;
+        box-shadow:
+            0 14px 40px -12px rgb(59 130 246 / 0.55),
+            inset 0 1px 0 rgb(255 255 255 / 0.25) !important;
+    }
+
+    .gh-auth-card .gh-btn-primary:hover,
+    .gh-auth-card .gh-btn-accent:hover,
+    .gh-login-submit:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+    }
+
+    /* ── Register (simple · premium) ── */
+    .gh-auth-brand--simple .gh-auth-brand-inner--simple {
+        @apply flex min-h-screen items-center justify-center p-10 xl:p-14;
+    }
+
+    .gh-auth-simple-content {
+        @apply max-w-md;
+    }
+
+    .gh-auth-hero-eyebrow--simple {
+        @apply mt-8;
+    }
+
+    .gh-auth-headline--simple {
+        @apply mt-5 text-[2rem] leading-[1.12] xl:text-[2.5rem];
+    }
+
+    .gh-auth-subline--simple {
+        @apply mt-4 max-w-sm text-[15px] leading-relaxed;
+    }
+
+    .gh-auth-simple-metrics {
+        font-family: var(--gh-font-ui);
+        @apply mt-10 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/45;
+    }
+
+    .gh-auth-simple-metrics span:not([aria-hidden]) {
+        @apply text-white/70;
+    }
+
+    .gh-auth-main--register {
+        @apply justify-center py-10 lg:py-12;
+    }
+
+    .gh-auth-main-inner--register {
+        @apply max-w-[24rem] lg:max-w-[26rem];
+    }
+
+    .gh-auth-card-wrap--register .gh-auth-card-glow {
+        opacity: 0.65;
+    }
+
+    .gh-auth-card--register {
+        @apply rounded-2xl;
+        box-shadow:
+            0 0 0 1px rgb(255 255 255 / 0.1),
+            0 20px 50px -24px rgb(0 0 0 / 0.55),
+            inset 0 1px 0 rgb(255 255 255 / 0.95) !important;
+    }
+
+    .gh-auth-card-header--register {
+        @apply space-y-3 px-6 pb-0 pt-6 sm:px-7 sm:pt-7;
+    }
+
+    .gh-auth-card-body--register {
+        @apply px-6 pb-7 pt-5 sm:px-7 sm:pb-8;
+    }
+
+    .gh-auth-card-title--register {
+        @apply text-[1.375rem] font-bold tracking-tight;
+    }
+
+    .gh-auth-card-subtitle--register {
+        @apply mt-0 text-sm;
+    }
+
+    .gh-auth-role-tabs {
+        @apply mb-1 grid grid-cols-2 gap-1 rounded-xl border border-[#0A1A4F]/8 bg-[#F1F5FA] p-1;
+    }
+
+    .gh-auth-role-tab {
+        font-family: var(--gh-font-ui);
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-[#4B5A7A] transition;
+    }
+
+    .gh-auth-role-tab:hover {
+        @apply text-[#0A1A4F];
+    }
+
+    .gh-auth-role-tab-active {
+        @apply bg-white font-semibold text-[#0A1A4F] shadow-sm;
+        box-shadow: 0 1px 3px rgb(10 26 79 / 0.08);
+    }
+
+    .gh-auth-role-tab-active svg {
+        @apply text-[#0E7490];
+    }
+
+    .gh-auth-form-register {
+        @apply gap-4;
+    }
+
+    .gh-auth-form-register .gh-label {
+        font-family: var(--gh-font-ui);
+        @apply mb-1.5 text-xs font-semibold tracking-wide text-[#4B5A7A];
+    }
+
+    .gh-input--register {
+        @apply rounded-xl border-[#0A1A4F]/10 bg-[#FAFBFD] py-2.5;
+    }
+
+    .gh-input--register:focus {
+        @apply border-[#0E7490] bg-white ring-2 ring-[#22D3EE]/15;
+    }
+
+    .gh-auth-register-foot {
+        font-family: var(--gh-font-ui);
+        @apply pt-1 text-center text-sm text-[#4B5A7A];
+    }
+
+    @media (max-width: 1023px) {
+        .gh-auth-register-mode .gh-auth-back {
+            @apply mb-4;
+        }
+
+        .gh-auth-main-inner--register {
+            @apply max-w-md;
+        }
+    }
+}

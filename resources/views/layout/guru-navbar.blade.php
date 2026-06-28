@@ -1,185 +1,191 @@
-<nav x-data="{ openMobile: false, openDropdown: false }" class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+<nav x-data="{ openMobile: false, openDropdown: false }" class="gh-nav-shell gh-guru-nav" aria-label="Navigasi pengajar">
+    <div class="gh-container-wide flex h-16 items-center justify-between lg:px-10">
+        <div class="flex items-center gap-8">
+            <a href="/guru-dashboard" class="gh-nav-brand">
+                <div class="gh-nav-brand-logo">
+                    <img src="{{ asset('assets') }}/logo-app/guru_hub_logo.jpeg" alt="Guru Hub Logo"
+                        class="h-full w-full object-contain">
+                </div>
+                <span class="gh-nav-brand-title hidden sm:inline">GuruHub</span>
+            </a>
 
-            <div class="flex items-center space-x-8">
-                <a href="/guru-dashboard" class="flex items-center space-x-3 flex-shrink-0">
-                    <div class="h-12 flex items-center justify-center">
-                        <img src="{{ asset('assets') }}/logo-app/guru_hub_logo.jpeg" alt="Guru Hub Logo"
-                            class="h-full rounded-full w-auto object-contain">
-                    </div>
-                    <div class="leading-none">
-                        <span class="text-xl font-black text-gray-900 tracking-wide block">Guru Hub</span>
-                    </div>
+            <div class="gh-nav-items" role="menubar">
+                <a href="/guru-dashboard" role="menuitem"
+                    class="gh-nav-link {{ request()->is('guru-dashboard*') ? 'gh-nav-link-active' : '' }}">
+                    <x-ui.lucide name="layout-dashboard" class="gh-nav-icon" />
+                    <span>Dashboard</span>
                 </a>
 
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="/guru-dashboard"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-all {{ request()->is('guru-dashboard*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
-                        <span>Dashboard</span>
-                    </a>
+                <a href="/categories" role="menuitem"
+                    class="gh-nav-link {{ request()->is('guru/kelas') ? 'gh-nav-link-active' : '' }}">
+                    <x-ui.lucide name="folder" class="gh-nav-icon" />
+                    <span>Kelas</span>
+                </a>
 
-                    <a href="/categories"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/kelas') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
-                        <span>Kelas</span>
-                    </a>
+                <a href="/courses" role="menuitem"
+                    class="gh-nav-link {{ request()->is('guru/kelola-kelas*') ? 'gh-nav-link-active' : '' }}">
+                    <x-ui.lucide name="layers" class="gh-nav-icon" />
+                    <span>Kelola Kelas</span>
+                </a>
 
-                    <a href="/courses"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/kelola-kelas*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' }}">
-                        <span>Kelola Kelas</span>
-                    </a>
+                <div class="relative">
+                    <button type="button" @click="openDropdown = !openDropdown" @click.away="openDropdown = false"
+                        class="gh-nav-link inline-flex items-center gap-1 focus:outline-none"
+                        :aria-expanded="openDropdown">
+                        <x-ui.lucide name="book-open" class="gh-nav-icon" />
+                        <span>Fitur Mengajar</span>
+                        <svg class="h-3.5 w-3.5 shrink-0 transition-transform duration-200" :class="openDropdown ? 'rotate-180' : ''"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </button>
 
-                    <div class="relative">
-                        <button @click="openDropdown = !openDropdown" @click.away="openDropdown = false"
-                            class="flex items-center space-x-1 px-3 py-2 rounded-xl text-xs font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-900 transition-all focus:outline-none">
-                            <span>Fitur Mengajar</span>
-                            <svg class="w-3 h-3 transition-transform duration-200"
-                                :class="openDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor"
-                                stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-
-                        <div x-show="openDropdown" x-cloak x-transition:enter="transition ease-out duration-100"
-                            x-transition:enter-start="opacity-0 transform scale-95"
-                            x-transition:enter-end="opacity-100 transform scale-100"
-                            x-transition:leave="transition ease-in duration-75"
-                            x-transition:leave-start="opacity-100 transform scale-100"
-                            x-transition:leave-end="opacity-0 transform scale-95"
-                            class="absolute left-0 mt-2 w-48 rounded-2xl bg-white border border-gray-100 shadow-xl p-2 space-y-0.5 z-50">
-
-                            <a href="materials"
-                                class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Materi</a>
-
-                            <a href="videos"
-                                class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Video
-                                Pembelajaran</a>
-
-                            <a href="schedules"
-                                class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Jadwal
-                                Kelas</a>
-
-                            <a href="earnings"
-                                class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900 flex justify-between items-center">
+                    <div x-show="openDropdown" x-cloak
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 transform scale-95"
+                        x-transition:enter-end="opacity-100 transform scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="opacity-100 transform scale-100"
+                        x-transition:leave-end="opacity-0 transform scale-95"
+                        class="gh-nav-dropdown">
+                        <a href="materials" class="gh-nav-dropdown-item">
+                            <x-ui.lucide name="file-text" class="gh-nav-icon" />
+                            <span>Materi</span>
+                        </a>
+                        <a href="videos" class="gh-nav-dropdown-item">
+                            <x-ui.lucide name="video" class="gh-nav-icon" />
+                            <span>Video Pembelajaran</span>
+                        </a>
+                        <a href="schedules" class="gh-nav-dropdown-item">
+                            <x-ui.lucide name="calendar" class="gh-nav-icon" />
+                            <span>Jadwal Kelas</span>
+                        </a>
+                        <a href="earnings" class="gh-nav-dropdown-item justify-between">
+                            <span class="flex items-center gap-2.5">
+                                <x-ui.lucide name="circle-dollar-sign" class="gh-nav-icon" />
                                 <span>Pendapatan</span>
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            </a>
-
-                            <a href="certificates"
-                                class="block px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-gray-900">Sertifikat</a>
-                        </div>
+                            </span>
+                            <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-success-500"></span>
+                        </a>
+                        <a href="certificates" class="gh-nav-dropdown-item">
+                            <x-ui.lucide name="award" class="gh-nav-icon" />
+                            <span>Sertifikat</span>
+                        </a>
                     </div>
                 </div>
             </div>
-
-            <div class="hidden md:flex items-center space-x-4">
-                <a href="/teachers" class="flex items-center space-x-3 border-r border-gray-100 pr-4 group"
-                    title="9. Profil Pengajar">
-                    <div class="overflow-hidden leading-tight text-right">
-                        <h4
-                            class="text-xs font-bold text-gray-900 group-hover:text-indigo-600 transition-colors truncate">
-                            {{ Auth::user()->name ?? 'Nama Mentor' }}</h4>
-                        <p class="text-[10px] text-gray-400 truncate">Instructor Account</p>
-                    </div>
-                    <div
-                        class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center font-bold text-xs text-indigo-600 flex-shrink-0 shadow-sm">
-                        {{ strtoupper(substr(Auth::user()->name ?? 'Mentor', 0, 2)) }}
-                    </div>
-                </a>
-
-                <a href="{{ url('/logout') }}"
-                    class="flex items-center space-x-2 p-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-all group"
-                    title="Keluar Aplikasi">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span class="hidden lg:inline">Keluar</span>
-                </a>
-            </div>
-
-            <div class="flex items-center md:hidden">
-                <button type="button" @click="openMobile = !openMobile"
-                    class="inline-flex items-center justify-center p-2 rounded-xl text-gray-400 hover:text-gray-500 hover:bg-gray-50 focus:outline-none transition-all">
-                    <svg x-show="!openMobile" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    <svg x-show="openMobile" x-cloak class="h-6 w-6" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
         </div>
+
+        <div class="gh-nav-actions">
+            <a href="/teachers" class="gh-nav-profile" title="Profil Pengajar">
+                <div class="gh-nav-profile-meta">
+                    <p class="gh-nav-profile-name">{{ Auth::user()->name ?? 'Nama Mentor' }}</p>
+                    <p class="gh-nav-profile-role">Akun Pengajar</p>
+                </div>
+                <div class="gh-avatar gh-avatar-accent">
+                    {{ strtoupper(substr(Auth::user()->name ?? 'Mentor', 0, 2)) }}
+                </div>
+            </a>
+
+            <a href="{{ url('/logout') }}" class="gh-nav-logout p-2" title="Keluar">
+                <x-ui.lucide name="log-out" class="h-5 w-5" />
+                <span class="hidden lg:inline">Keluar</span>
+            </a>
+        </div>
+
+        <div class="gh-guru-nav-mobile-actions">
+            <a href="/teachers" class="gh-avatar gh-avatar-accent text-xs" title="Profil">
+                {{ strtoupper(substr(Auth::user()->name ?? 'GU', 0, 2)) }}
+            </a>
+        </div>
+
+        <button type="button" class="gh-nav-mobile-toggle hidden" @click="openMobile = !openMobile"
+            :aria-expanded="openMobile" aria-label="Menu navigasi">
+            <span x-show="!openMobile"><x-ui.lucide name="menu" class="h-6 w-6" /></span>
+            <span x-show="openMobile" x-cloak><x-ui.lucide name="x" class="h-6 w-6" /></span>
+        </button>
     </div>
 
-    <div x-show="openMobile"  x-transition:enter="transition ease-out duration-200"
+    <div x-show="openMobile"
+        x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 transform -translate-y-2"
         x-transition:enter-end="opacity-100 transform translate-y-0"
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 transform translate-y-0"
-        x-transition:leave-end="opacity-0 transform -translate-y-2" x-cloak
-        class="md:hidden border-t border-gray-100 bg-white max-h-[calc(100vh-4rem)] overflow-y-auto">
+        x-transition:leave-end="opacity-0 transform -translate-y-2"
+        x-cloak
+        class="gh-nav-mobile-panel max-h-[calc(100vh-4rem)] overflow-y-auto">
 
-        <div class="pt-2 pb-3 space-y-1 px-4">
+        <div class="gh-nav-mobile-body">
             <a href="/guru-dashboard"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru-dashboard*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Dashboard</a>
+                class="gh-nav-link w-full {{ request()->is('guru-dashboard*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="layout-dashboard" class="gh-nav-icon" />
+                <span>Dashboard</span>
+            </a>
 
             <a href="/guru/kelas"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/kelas') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Kelas</a>
+                class="gh-nav-link w-full {{ request()->is('guru/kelas') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="folder" class="gh-nav-icon" />
+                <span>Kelas</span>
+            </a>
 
             <a href="/guru/kelola-kelas"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/kelola-kelas*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Kelola
-                Kelas</a>
+                class="gh-nav-link w-full {{ request()->is('guru/kelola-kelas*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="layers" class="gh-nav-icon" />
+                <span>Kelola Kelas</span>
+            </a>
 
             <a href="/guru/materi"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/materi*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Materi</a>
+                class="gh-nav-link w-full {{ request()->is('guru/materi*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="file-text" class="gh-nav-icon" />
+                <span>Materi</span>
+            </a>
 
             <a href="/guru/video"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/video*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Video
-                Pembelajaran</a>
+                class="gh-nav-link w-full {{ request()->is('guru/video*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="video" class="gh-nav-icon" />
+                <span>Video Pembelajaran</span>
+            </a>
 
             <a href="/guru/jadwal"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/jadwal*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Jadwal
-                Kelas</a>
+                class="gh-nav-link w-full {{ request()->is('guru/jadwal*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="calendar" class="gh-nav-icon" />
+                <span>Jadwal Kelas</span>
+            </a>
 
             <a href="/guru/profil"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/profil*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Profil
-                Pengajar</a>
+                class="gh-nav-link w-full {{ request()->is('guru/profil*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="user" class="gh-nav-icon" />
+                <span>Profil Pengajar</span>
+            </a>
 
             <a href="/guru/pendapatan"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/pendapatan*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Pendapatan
-                Guru</a>
+                class="gh-nav-link w-full {{ request()->is('guru/pendapatan*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="circle-dollar-sign" class="gh-nav-icon" />
+                <span>Pendapatan Guru</span>
+            </a>
 
             <a href="/guru/sertifikat"
-                class="flex items-center px-3 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->is('guru/sertifikat*') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-500 hover:bg-gray-50' }}">Sertifikat</a>
+                class="gh-nav-link w-full {{ request()->is('guru/sertifikat*') ? 'gh-nav-link-active' : '' }}">
+                <x-ui.lucide name="award" class="gh-nav-icon" />
+                <span>Sertifikat</span>
+            </a>
         </div>
 
-        <div class="pt-4 pb-3 border-t border-gray-100 bg-gray-50 px-4">
-            <div class="flex items-center space-x-3 px-3 py-1">
-                <div
-                    class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
+        <div class="gh-nav-mobile-footer">
+            <div class="flex items-center gap-3 px-2 py-1">
+                <div class="gh-avatar gh-avatar-accent">
                     {{ strtoupper(substr(Auth::user()->name ?? 'Mentor', 0, 2)) }}
                 </div>
-                <div class="overflow-hidden leading-tight">
-                    <h4 class="text-xs font-bold text-gray-900 truncate">{{ Auth::user()->name ?? 'Nama Mentor' }}
-                    </h4>
-                    <p class="text-[10px] text-gray-400 truncate">instructor@email.com</p>
+                <div class="min-w-0 flex-1">
+                    <p class="gh-nav-profile-name truncate">{{ Auth::user()->name ?? 'Nama Mentor' }}</p>
+                    <p class="gh-nav-profile-role truncate">instructor@email.com</p>
                 </div>
             </div>
-            <div class="mt-3 px-2">
-                <a href="{{ url('/logout') }}"
-                    class="flex items-center space-x-3 w-full px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-all">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span>Keluar</span>
-                </a>
-            </div>
+            <a href="{{ url('/logout') }}" class="gh-nav-logout mt-3 w-full">
+                <x-ui.lucide name="log-out" class="h-5 w-5" />
+                <span>Keluar</span>
+            </a>
         </div>
     </div>
 </nav>

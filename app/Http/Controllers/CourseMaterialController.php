@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesCourseOwnership;
+use App\Http\Controllers\Concerns\RethrowsAuthorizationFailures;
 use App\Http\Controllers\Controller;
 use App\Models\CourseMaterial;
 use App\Models\Course;
 use App\Models\UserProgress;
+use App\Support\ProgressMorphType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +18,9 @@ use Illuminate\Support\Facades\Log;
 
 class CourseMaterialController extends Controller
 {
+    use AuthorizesCourseOwnership;
+    use RethrowsAuthorizationFailures;
+
     public function index(Request $request)
     {
         try {
@@ -46,7 +52,7 @@ class CourseMaterialController extends Controller
             // Hitung progress untuk setiap materi yang tampil di halaman ini
             $materialIds = $materials->pluck('id')->toArray();
 
-            $progressCounts = UserProgress::where('progressable_type', 'App\Models\Material')
+            $progressCounts = UserProgress::where('progressable_type', ProgressMorphType::MATERIAL)
                 ->whereIn('progressable_id', $materialIds)
                 ->select('progressable_id', DB::raw('count(*) as total'))
                 ->groupBy('progressable_id')
@@ -95,6 +101,8 @@ class CourseMaterialController extends Controller
             'course_id.required' => 'Kelas/Kursus wajib dipilih.'
         ]);
 
+        $this->authorizeOwnsCourseId((int) $validated['course_id']);
+
         $uploadedPath = null;
         try {
             if ($request->hasFile('file')) {
@@ -105,6 +113,7 @@ class CourseMaterialController extends Controller
             CourseMaterial::create($validated);
             return redirect()->back()->with('success', 'Materi pembelajaran baru berhasil diunggah!');
         } catch (Exception $e) {
+            $this->rethrowAuthorizationFailures($e);
             if ($uploadedPath && Storage::disk('public')->exists($uploadedPath)) {
                 Storage::disk('public')->delete($uploadedPath);
             }
@@ -130,6 +139,10 @@ class CourseMaterialController extends Controller
         $newUploadedPath = null;
         $oldFilePath = $material->file_path;
 
+        $material->loadMissing('course');
+        $this->authorizeOwnsCourse($material->course);
+        $this->authorizeOwnsCourseId((int) $validated['course_id']);
+
         try {
             if ($request->hasFile('file')) {
                 // Upload berkas baru terlebih dahulu
@@ -146,7 +159,7 @@ class CourseMaterialController extends Controller
 
             return redirect()->back()->with('success', 'Data materi belajar berhasil diperbarui!');
         } catch (Exception $e) {
-            // Rollback: Hapus berkas baru jika kueri database gagal dieksekusi
+            $this->rethrowAuthorizationFailures($e);
             if ($newUploadedPath && Storage::disk('public')->exists($newUploadedPath)) {
                 Storage::disk('public')->delete($newUploadedPath);
             }
@@ -158,6 +171,9 @@ class CourseMaterialController extends Controller
 
     public function destroy(CourseMaterial $material)
     {
+        $material->loadMissing('course');
+        $this->authorizeOwnsCourse($material->course);
+
         try {
             $filePath = $material->file_path;
 
@@ -169,8 +185,9 @@ class CourseMaterialController extends Controller
                 Storage::disk('public')->delete($filePath);
             }
 
-            return redirect()->back()->with('with', 'Berkas materi berhasil dihapus dari sistem!');
+            return redirect()->back()->with('success', 'Berkas materi berhasil dihapus dari sistem!');
         } catch (Exception $e) {
+            $this->rethrowAuthorizationFailures($e);
             Log::error('Gagal menghapus materi ID ' . $material->id . ': ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus berkas materi dari sistem.');
         }
@@ -178,18 +195,19 @@ class CourseMaterialController extends Controller
 
     public function show($id)
     {
-        try {
-            // Mengambil data materi dan me-load relasi quiz beserta hitungan (count) pertanyaannya
-            $material = CourseMaterial::with(['quiz' => function($query) {
+        $material = CourseMaterial::with([
+            'course',
+            'quiz' => function ($query) {
                 $query->withCount('questions');
-            }])->findOrFail($id);
+            },
+        ])->findOrFail($id);
 
-            // Arahkan ke file blade detail materi guru tempat Anda menaruh komponen form kuis tadi
-            return view('guru.material-show', compact('material'));
-
-        } catch (Exception $e) {
-            Log::error('Gagal memuat detail materi guru: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Materi tidak ditemukan atau terjadi kesalahan sistem.');
+        if (!$material->course) {
+            abort(404, 'Kelas untuk materi ini tidak ditemukan.');
         }
+
+        $this->authorizeOwnsCourse($material->course);
+
+        return view('guru.material-show', compact('material'));
     }
 }

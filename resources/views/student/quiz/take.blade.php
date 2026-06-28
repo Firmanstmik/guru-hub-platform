@@ -1,51 +1,45 @@
 @extends('layout.master-app')
 @section('content')
-<div class="p-6 max-w-4xl mx-auto space-y-6">
-
-    <div class="sticky top-4 z-40 bg-white/95 backdrop-blur-md p-5 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center gap-4">
-        <div>
-            <h3 class="text-gray-900 text-lg font-bold">{{ $quiz->title }}</h3>
-            <p class="text-xs text-gray-400">Materi: {{ $quiz->material->title }}</p>
+<div class="gh-app-page">
+    <div class="gh-app-page-grid" aria-hidden="true"></div>
+    <div class="gh-app-page-inner space-y-4">
+        <div class="gh-app-card sticky top-16 z-30 flex items-center justify-between gap-3">
+            <div>
+                <h3 class="gh-app-subheading">{{ $quiz->title }}</h3>
+                <p class="gh-app-caption">Materi: {{ $quiz->material->title }}</p>
+            </div>
+            <div class="gh-app-badge gh-app-badge--danger font-mono text-[14px] px-3 py-2">⏳ <span id="quiz-timer">--:--</span></div>
         </div>
-        <div class="bg-rose-50 border border-rose-100 text-rose-700 font-mono font-black text-lg px-4 py-2 rounded-xl flex items-center gap-2 shrink-0">
-            ⏳ <span id="quiz-timer">--:--</span>
-        </div>
-    </div>
 
-    <form id="quiz-form" action="{{ url('/quiz/'.$quiz->id.'/submit') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+    <form id="quiz-form" action="{{ url('/quiz/'.$quiz->id.'/submit') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
         @csrf
 
         @foreach($quiz->questions as $index => $question)
-            <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-xs space-y-4">
-                
+            <div class="gh-app-card space-y-4">
                 <div class="flex items-start gap-3">
-                    <span class="w-7 h-7 rounded-lg bg-gray-100 text-gray-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                        {{ $index + 1 }}
-                    </span>
-                    <div class="space-y-1">
-                        <p class="text-sm font-semibold text-gray-900 leading-relaxed">{{ $question->question_text }}</p>
-                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Bobot: {{ $question->points }} Poin</span>
+                    <span class="gh-app-quick-icon text-[11px] font-bold">{{ $index + 1 }}</span>
+                    <div>
+                        <p class="gh-app-subheading leading-relaxed">{{ $question->question_text }}</p>
+                        <span class="gh-app-caption font-bold uppercase">Bobot: {{ $question->points }} Poin</span>
                     </div>
                 </div>
-
-                <div class="pl-10 text-sm">
+                <div class="text-sm">
                     
                     {{-- TIPE 1: PILIHAN GANDA --}}
                     @if($question->type === 'multiple_choice')
                         <div class="grid grid-cols-1 gap-2.5">
                             @foreach($question->options as $option)
-                                <label class="p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-indigo-50/30 hover:border-indigo-200 transition flex items-center gap-3 cursor-pointer">
-                                    <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}" required
-                                           class="text-indigo-600 focus:ring-indigo-500 w-4 h-4">
-                                    <span class="text-gray-700 text-xs">{{ $option->option_text }}</span>
+                                <label class="gh-app-card flex cursor-pointer items-center gap-3 p-3 transition hover:border-[#14B8A6]/30">
+                                    <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option->id }}" required class="text-[#0E7490]">
+                                    <span class="gh-app-body">{{ $option->option_text }}</span>
                                 </label>
                             @endforeach
                         </div>
 
                     {{-- TIPE 2: ESSAY / JAWABAN TEKS --}}
                     @elseif($question->type === 'essay')
-                        <textarea name="answers[{{ $question->id }}]" rows="4" required placeholder="Ketik lembar jawaban Anda di sini dengan lengkap..."
-                                  class="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl p-3 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden leading-relaxed"></textarea>
+                        <textarea name="answers[{{ $question->id }}]" rows="4" required placeholder="Ketik jawaban Anda di sini..."
+                                  class="gh-app-textarea"></textarea>
 
                     {{-- TIPE 3: PDF ATTACHMENT (UPLOAD FILE) --}}
                     @elseif($question->type === 'pdf_attachment')
@@ -71,11 +65,12 @@
 
         <div class="pt-4">
             <button type="submit" onclick="return confirm('Apakah Anda yakin semua jawaban sudah terisi dan ingin mengirimkan kuis sekarang?')"
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl text-sm transition shadow-xs text-center">
+                    class="gh-app-btn gh-app-btn-primary gh-app-btn-block">
                 🔒 Selesai & Kirim Semua Jawaban
             </button>
         </div>
     </form>
+    </div>
 </div>
 
 <script>

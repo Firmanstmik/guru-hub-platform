@@ -7,6 +7,7 @@ use App\Models\Categori;
 use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\User;
+use App\Support\ProgressMorphType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -229,16 +230,15 @@ class StudentCourseController extends Controller
             }])->findOrFail($course_id);
 
             // ================== LOGIKA BARU: MAPPING CHECKBOX PROGRESS ==================
-            // Ambil semua daftar ID materi yang sudah diselesaikan oleh user aktif saat ini
             $completedVideoIds = DB::table('user_progress')
                 ->where('user_id', $userId)
-                ->where('progressable_type', 'App\Models\Video')
+                ->where('progressable_type', ProgressMorphType::VIDEO)
                 ->pluck('progressable_id')
                 ->toArray();
 
             $completedMaterialIds = DB::table('user_progress')
                 ->where('user_id', $userId)
-                ->where('progressable_type', 'App\Models\Material')
+                ->where('progressable_type', ProgressMorphType::MATERIAL)
                 ->pluck('progressable_id')
                 ->toArray();
 

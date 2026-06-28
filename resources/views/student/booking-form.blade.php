@@ -1,8 +1,11 @@
 @extends('layout.master-app')
 @section('content')
-    <div class="p-6 max-w-5xl mx-auto space-y-6">
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner space-y-4">
+            <x-app.page-header title="Booking Kelas" subtitle="Konfirmasi program dan selesaikan pembayaran." back="/tampil-kursus" />
 
-        <div class="max-w-3xl mx-auto pb-4">
+        <div class="max-w-3xl mx-auto pb-2">
             <div class="flex items-center justify-between relative">
                 <div class="absolute left-0 right-0 top-1/3 -translate-y-1/2 h-0.5 bg-gray-200 z-0"></div>
                 <div id="wizard-progress-bar"
@@ -30,7 +33,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
             <div class="lg:col-span-2">
-                <div class="bg-white p-6 rounded-2xl shadow-2xs border border-gray-100 min-h-[380px] flex flex-col justify-between">
+                <div class="gh-app-card min-h-[380px] flex flex-col justify-between">
 
                     <form action="/bookings" method="POST" id="wizard-form" class="space-y-5 my-auto">
                         @csrf
@@ -168,6 +171,7 @@
             </div>
 
         </div>
+    </div>
     </div>
 
     <script>

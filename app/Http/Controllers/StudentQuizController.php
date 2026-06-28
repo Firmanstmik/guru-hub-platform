@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesStudentCourseAccess;
 use App\Models\CourseMaterial;
 use App\Models\Quiz;
 use App\Models\Question;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 class StudentQuizController extends Controller
 {
+    use AuthorizesStudentCourseAccess;
+
     /**
      * 1. Halaman Transisi sebelum mulai Kuis (Landing Page Kuis)
      */
@@ -20,6 +23,8 @@ class StudentQuizController extends Controller
     {
         // Ambil materi beserta kuisnya
         $material = CourseMaterial::with('quiz')->findOrFail($materialId);
+
+        $this->assertStudentEnrolledInCourse((int) $material->course_id);
 
         if (!$material->quiz) {
             return redirect()->back()->with('error', 'Kuis untuk materi ini belum diaktifkan oleh guru.');
@@ -47,6 +52,8 @@ class StudentQuizController extends Controller
             $query->inRandomOrder()->with('options');
         }])->findOrFail($quizId);
 
+        $this->assertStudentEnrolledInCourse((int) $quiz->material->course_id);
+
         $userId = auth()->id();
 
         // Keamanan: Jika sudah pernah mengerjakan, tendang balik agar tidak bisa ujian ulang
@@ -56,7 +63,7 @@ class StudentQuizController extends Controller
             })->exists();
 
         if ($alreadyTaken) {
-            return redirect('/materials/' . $quiz->material_id . 'quiz')
+            return redirect('/materials/' . $quiz->material_id . '/quiz')
                 ->with('error', 'Anda sudah mengerjakan kuis ini sebelumnya.');
         }
 
@@ -72,6 +79,9 @@ class StudentQuizController extends Controller
         $request->validate([
             'answers' => 'required|array',
         ]);
+
+        $quiz = Quizze::with('material')->findOrFail($quizId);
+        $this->assertStudentEnrolledInCourse((int) $quiz->material->course_id);
 
         $userId = auth()->id();
         $answers = $request->input('answers'); // Berisi array: [question_id => jawaban_siswa]

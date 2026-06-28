@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ClassSchedule;
 use App\Models\CourseMaterial;
 use App\Models\UserProgress;
+use App\Support\ProgressMorphType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -29,7 +30,7 @@ class GuruScheduleController extends Controller
             abort(403, 'Anda tidak memiliki hak akses untuk materi di kelas ini.');
         }
 
-        $completedCount = UserProgress::where('progressable_type', 'App\Models\Material')
+        $completedCount = UserProgress::where('progressable_type', ProgressMorphType::MATERIAL)
             ->where('progressable_id', $materialId)
             ->count();
 
@@ -66,7 +67,7 @@ class GuruScheduleController extends Controller
         try {
             $material = CourseMaterial::findOrFail($request->material_id);
 
-            $completedCount = UserProgress::where('progressable_type', 'App\Models\Material')
+            $completedCount = UserProgress::where('progressable_type', ProgressMorphType::MATERIAL)
                 ->where('progressable_id', $request->material_id)
                 ->count();
 

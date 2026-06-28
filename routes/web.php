@@ -62,7 +62,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/akses', [AksesController::class, 'index'])->name('akses.index');
 });
 
-Route::get('/biodata', [StudentBiodataController::class, 'siswaForm']);
+// Route /biodata hanya didaftarkan via PermissionRouteServiceProvider (auth + permission).
 
 // ==========================================
 // 1. Courses (Index, Store, Update, Destroy)

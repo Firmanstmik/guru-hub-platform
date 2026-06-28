@@ -1,35 +1,16 @@
 @extends('layout.master-app')
 @section('content')
-    <div class="p-6 max-w-5xl mx-auto space-y-6">
-
-        <div>
-            <h1 class="text-xl font-bold text-gray-900">Riwayat Pendaftaran Kelas</h1>
-            <p class="text-xs text-gray-500">Pantau status pembayaran dan akses program kelas premium Anda di sini.</p>
-        </div>
+    <div class="gh-app-page">
+        <div class="gh-app-page-grid" aria-hidden="true"></div>
+        <div class="gh-app-page-inner">
+            <x-app.page-header title="Riwayat Pembayaran" subtitle="Pantau status pendaftaran dan pembayaran kelas." />
 
         @if ($bookings->isEmpty())
-            <div class="bg-white border border-gray-100 rounded-2xl p-12 text-center space-y-3">
-                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                </div>
-                <div class="space-y-1">
-                    <h3 class="text-sm font-bold text-gray-900">Belum Ada Transaksi</h3>
-                    <p class="text-xs text-gray-400 max-w-xs mx-auto">Anda belum pernah melakukan pendaftaran atau pemesanan program kelas premium kami.</p>
-                </div>
-                <div class="pt-2">
-                    <a href="/tampil-kursus"
-                        class="inline-flex text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl shadow-2xs transition">
-                        Cari Program Kelas
-                    </a>
-                </div>
-            </div>
+            <x-app.empty-state icon="receipt-text" title="Belum ada transaksi" description="Anda belum mendaftar program kelas." action-label="Cari Kursus" action-href="/tampil-kursus" />
         @else
-            <div class="space-y-4">
+            <div class="gh-app-list">
                 @foreach ($bookings as $booking)
-                    <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-5 transition hover:border-gray-200">
+                    <div class="gh-app-payment-card">
 
                         <div class="space-y-3">
                             <div class="flex flex-wrap items-center gap-2">
@@ -180,11 +161,10 @@
                     </div>
                 @endforeach
 
-                <div class="pt-2">
-                    {{ $bookings->links() }}
-                </div>
+                <div class="gh-app-card mt-4">{{ $bookings->links() }}</div>
             </div>
         @endif
+        </div>
     </div>
 
     <script>

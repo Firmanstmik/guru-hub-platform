@@ -22,3 +22,11 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Internal development reports (not for distribution)
+*_REPORT.md
+AUDIT_REPORT.md
+BUG_REPORT.md
+FRONTEND_ARCHITECTURE.md
+LANDING_REDESIGN_PLAN.md
+UI_UX_PREMIUM_AUDIT.md

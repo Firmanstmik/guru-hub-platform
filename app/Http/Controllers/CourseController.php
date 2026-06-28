@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\AuthorizesCourseOwnership;
 use App\Http\Controllers\Controller;
 use App\Models\Categori; // Tetap menggunakan model Categori sesuai dengan relasi index Anda
 use App\Models\Course;
@@ -14,6 +15,8 @@ use Exception;
 
 class CourseController extends Controller
 {
+    use AuthorizesCourseOwnership;
+
     /**
      * INDEX (Admin & Guru)
      */
@@ -101,6 +104,10 @@ class CourseController extends Controller
         $uploadedPath = null;
 
         try {
+            if (Auth::user()->hasRole('guru') && !Auth::user()->hasRole('admin')) {
+                $validated['teacher_id'] = Auth::id();
+            }
+
             if ($request->hasFile('cover_image')) {
                 $uploadedPath = $request->file('cover_image')->store('courses/covers', 'public');
                 $validated['cover_image'] = $uploadedPath;
@@ -152,6 +159,8 @@ class CourseController extends Controller
         $newUploadedPath = null;
         $oldFilePath = $course->cover_image;
 
+        $this->authorizeOwnsCourse($course);
+
         try {
             if ($request->hasFile('cover_image')) {
                 // Simpan berkas baru terlebih dahulu
@@ -184,6 +193,8 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
+        $this->authorizeOwnsCourse($course);
+
         try {
             // Proteksi: Jika sudah ada siswa aktif di dalam kelas ini, batalkan proses hapus demi integritas data
             if ($course->students()->count() > 0) {

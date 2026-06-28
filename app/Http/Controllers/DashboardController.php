@@ -70,6 +70,7 @@ class DashboardController extends Controller
             ));
         } catch (Exception $e) {
             Log::error('Gagal memuat halaman Dashboard Admin: ' . $e->getMessage());
+            return redirect('/login')->with('error', 'Terjadi kesalahan sistem saat memuat dashboard admin.');
         }
     }
 
@@ -197,12 +198,7 @@ class DashboardController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Gagal memuat halaman Dashboard Guru: ' . $e->getMessage());
-            dd([
-                'Pesan Error' => $e->getMessage(),
-                'File Lokasi' => $e->getFile(),
-                'Baris Kode'  => $e->getLine()
-            ]);
-            abort(500, 'Terjadi kegagalan sistem saat memuat data dashboard guru: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kegagalan sistem saat memuat data dashboard guru.');
         }
     }
 
@@ -307,7 +303,7 @@ class DashboardController extends Controller
             ));
         } catch (\Exception $e) {
             Log::error('Gagal memuat halaman Dashboard Siswa: ' . $e->getMessage());
-            dd($e->getMessage(), $e->getFile(), $e->getLine());
+            return redirect()->back()->with('error', 'Terjadi kegagalan sistem saat memuat data dashboard siswa.');
         }
     }
 }
