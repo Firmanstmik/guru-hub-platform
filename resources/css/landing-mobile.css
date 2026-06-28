@@ -1,4 +1,4 @@
-/* GuruHub Landing — mobile app experience (not responsive website) */
+/* GuruHub Landing — compact mobile app layout */
 
 @layer components {
     @media (max-width: 767px) {
@@ -8,7 +8,7 @@
         }
 
         .gh-landing-mode .gh-layout-main {
-            padding-bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+            padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
         }
 
         .gh-landing-page {
@@ -16,55 +16,48 @@
             overflow-x: hidden;
         }
 
-        /* ── App-style top bar ── */
+        /* ── Top bar ── */
         .gh-ref-nav-bar {
-            background: rgb(5 11 36 / 0.92);
-            backdrop-filter: blur(28px) saturate(180%);
+            background: rgb(5 11 36 / 0.94);
+            backdrop-filter: blur(20px) saturate(160%);
             border-bottom: 1px solid rgb(255 255 255 / 0.06);
-            box-shadow: 0 16px 48px -24px rgb(0 0 0 / 0.7);
+            box-shadow: 0 8px 32px -20px rgb(0 0 0 / 0.6);
         }
 
         .gh-ref-nav-inner {
-            @apply h-[4.25rem] max-w-lg gap-3 px-4;
+            @apply h-14 max-w-lg gap-2.5 px-4;
         }
 
         .gh-ref-nav-brand-wrap {
-            @apply flex min-w-0 flex-1 items-center gap-3;
-        }
-
-        .gh-ref-nav-brand-text {
-            @apply min-w-0 leading-tight;
+            @apply flex min-w-0 flex-1 items-center gap-2.5;
         }
 
         .gh-ref-nav-brand-name {
             font-family: var(--gh-font-ui);
-            @apply block text-[1.125rem] font-extrabold tracking-[-0.03em] text-white;
+            @apply block text-[0.9375rem] font-bold tracking-[-0.02em] text-white;
         }
 
         .gh-ref-nav-brand-tag {
-            @apply block text-[0.6875rem] font-semibold text-[#5eead4]/85;
+            @apply block text-[0.625rem] font-medium text-[#5eead4]/80;
         }
 
         .gh-ref-nav-logo {
-            width: 2.875rem;
-            height: 2.875rem;
-            @apply shrink-0 rounded-[0.875rem] p-1.5;
-            box-shadow:
-                0 0 0 1px rgb(34 211 238 / 0.15),
-                0 8px 24px -8px rgb(34 211 238 / 0.45);
+            width: 2.125rem;
+            height: 2.125rem;
+            @apply shrink-0 rounded-lg p-1;
+            box-shadow: 0 0 0 1px rgb(34 211 238 / 0.12);
         }
 
         .gh-ref-nav-actions {
-            @apply shrink-0 gap-2;
+            @apply shrink-0 gap-1.5;
         }
 
         .gh-ref-btn-primary {
-            @apply h-11 px-5 text-[0.9375rem] font-bold;
-            min-width: 5.5rem;
+            @apply h-9 min-w-[4.5rem] px-3.5 text-[0.8125rem] font-semibold;
         }
 
         .gh-ref-btn-ghost-nav {
-            @apply inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/12 bg-white/[0.05] p-0;
+            @apply inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] p-0;
         }
 
         .gh-ref-btn-ghost-nav span:not(.sr-only) {
@@ -76,321 +69,341 @@
         }
 
         .gh-ref-nav-mobile-panel {
-            @apply border-t border-white/10 bg-[#050b24]/98 px-4 py-5 backdrop-blur-2xl;
+            @apply border-t border-white/10 bg-[#050b24]/98 px-4 py-3 backdrop-blur-xl;
         }
 
         .gh-ref-nav-mobile-panel a {
-            @apply flex items-center gap-3 rounded-2xl px-4 py-3.5 text-[1rem] font-semibold text-white/90;
+            @apply flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[0.875rem] font-semibold text-white/88;
         }
 
         .gh-ref-nav-mobile-panel .gh-ref-btn-primary {
-            @apply mt-3 h-[3.25rem] w-full text-base;
+            @apply mt-2 h-10 w-full text-[0.875rem];
         }
 
         /* ── Hero ── */
         .gh-ref-hero {
-            @apply pt-[5.75rem] pb-8;
+            @apply pb-6 pt-[4.5rem];
         }
 
         .gh-ref-container-wide,
         .gh-ref-container {
-            @apply max-w-lg px-5;
+            @apply max-w-lg px-4;
         }
 
         .gh-ref-glass-badge {
-            @apply px-4 py-2 text-[0.8125rem] font-medium;
+            @apply px-3 py-1 text-[0.6875rem] font-medium;
         }
 
         .gh-ref-hero-title {
-            @apply mt-5 text-[2.375rem] leading-[1.04] tracking-[-0.04em];
+            @apply mt-4 text-[1.625rem] leading-[1.08] tracking-[-0.03em];
         }
 
         .gh-ref-hero-lead {
-            @apply mt-5 max-w-none text-[1.0625rem] leading-[1.65] text-white/72;
+            @apply mt-3.5 max-w-none text-[0.875rem] leading-[1.6] text-white/68;
         }
 
         .gh-ref-hero-ctas {
-            @apply mt-7 flex flex-col gap-3;
+            @apply mt-5 flex flex-col gap-2;
         }
 
         .gh-ref-btn-hero-primary,
         .gh-ref-btn-hero-outline {
-            @apply h-14 w-full justify-center rounded-2xl text-[1.0625rem] font-bold;
+            @apply h-10 w-full justify-center rounded-xl text-[0.8125rem] font-semibold;
         }
 
         .gh-ref-btn-hero-primary svg,
         .gh-ref-btn-hero-outline svg {
-            @apply h-5 w-5;
+            @apply h-3.5 w-3.5;
         }
 
-        /* Mobile app preview cards (replaces 3D mockup) */
+        /* Preview stat cards */
         .gh-landing-mobile-preview {
-            @apply mt-8 grid grid-cols-2 gap-3;
+            @apply mt-6 grid grid-cols-2 gap-2.5;
         }
 
         .gh-landing-mobile-preview-card {
-            @apply relative overflow-hidden rounded-[1.25rem] p-4;
-            background: linear-gradient(160deg, rgb(255 255 255 / 0.09), rgb(255 255 255 / 0.03));
-            border: 1px solid rgb(255 255 255 / 0.1);
-            backdrop-filter: blur(20px);
-            box-shadow: 0 20px 48px -28px rgb(0 0 0 / 0.65);
+            @apply relative overflow-hidden rounded-xl p-3;
+            background: linear-gradient(160deg, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.02));
+            border: 1px solid rgb(255 255 255 / 0.08);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 12px 32px -24px rgb(0 0 0 / 0.55);
         }
 
         .gh-landing-mobile-preview-card--wide {
-            @apply col-span-2 flex items-center gap-4 p-5;
+            @apply col-span-2 flex items-center gap-3 p-3.5;
         }
 
         .gh-landing-mobile-preview-icon {
-            @apply grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-white;
+            @apply grid h-9 w-9 shrink-0 place-items-center rounded-xl text-white;
             background: linear-gradient(135deg, #3b82f6, #22d3ee);
-            box-shadow: 0 12px 28px -12px rgb(34 211 238 / 0.65);
+        }
+
+        .gh-landing-mobile-preview-icon svg {
+            @apply h-4 w-4;
         }
 
         .gh-landing-mobile-preview-value {
             font-family: var(--gh-font-ui);
-            @apply text-[1.75rem] font-extrabold leading-none text-white;
+            @apply text-[1.25rem] font-bold leading-none text-white;
         }
 
         .gh-landing-mobile-preview-label {
-            @apply mt-1.5 text-[0.8125rem] font-semibold leading-snug text-white/55;
+            @apply mt-1 text-[0.6875rem] font-medium leading-snug text-white/50;
+        }
+
+        .gh-landing-mobile-preview-title {
+            @apply text-[0.875rem] font-semibold text-white;
+        }
+
+        .gh-landing-mobile-preview-desc {
+            @apply mt-0.5 text-[0.75rem] leading-snug text-white/50;
         }
 
         .gh-landing-mobile-preview-ring {
-            @apply relative mx-auto h-[4.5rem] w-[4.5rem];
+            @apply relative mx-auto h-12 w-12;
+        }
+
+        .gh-landing-mobile-preview-ring > div {
+            @apply text-[0.6875rem];
         }
 
         .gh-ref-topo-wrap {
-            @apply h-[140px];
+            @apply h-[100px];
         }
 
-        /* ── Partners & stats band ── */
+        /* ── Partners ── */
         .gh-ref-partners {
-            @apply py-12;
+            @apply py-8;
         }
 
         .gh-ref-partners h2 {
-            @apply text-[1.625rem] leading-[1.12] sm:text-[1.625rem];
+            @apply text-[1.25rem] leading-[1.15];
         }
 
         .gh-ref-partners > .gh-ref-container > p {
-            @apply text-[1rem] leading-relaxed;
+            @apply text-[0.8125rem] leading-relaxed;
         }
 
         .gh-ref-eyebrow {
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
         }
 
         .gh-ref-partner-tile {
-            @apply flex-col gap-3 rounded-[1.25rem] px-4 py-5 text-center;
+            @apply flex-col gap-2 rounded-xl px-3 py-3.5 text-center;
         }
 
         .gh-ref-partner-tile span:first-child {
-            @apply h-12 w-12;
+            @apply h-9 w-9;
         }
 
         .gh-ref-partner-tile span:last-child {
-            @apply text-[0.9375rem] font-bold;
+            @apply text-[0.75rem] font-semibold;
         }
 
         .gh-ref-stat-gradient {
-            @apply text-[2rem];
+            @apply text-[1.375rem];
         }
 
         .gh-ref-partners .mt-14 {
-            @apply mt-10 gap-4;
+            @apply mt-8 gap-3;
         }
 
         .gh-ref-partners .mt-14 p:last-child {
-            @apply text-[0.875rem] font-medium;
+            @apply text-[0.75rem];
         }
 
-        /* ── Light zone sections ── */
+        /* ── Sections ── */
         .gh-ref-section {
-            @apply py-14;
+            @apply py-10;
         }
 
         .gh-ref-display {
-            font-size: 1.875rem !important;
-            line-height: 1.08 !important;
+            font-size: 1.375rem !important;
+            line-height: 1.12 !important;
         }
 
         .gh-ref-muted {
-            @apply text-[1rem] leading-relaxed;
+            @apply text-[0.8125rem] leading-relaxed;
         }
 
         .gh-ref-section .gh-ref-muted.mt-4 {
-            @apply text-[0.9375rem];
+            @apply text-[0.8125rem];
         }
 
-        /* Chips — larger touch targets */
         .gh-ref-chip-row {
-            @apply -mx-5 gap-2.5 px-5 pb-2;
+            @apply -mx-4 gap-2 px-4 pb-1.5;
         }
 
         .gh-ref-chip {
-            @apply px-5 py-3 text-[0.9375rem] font-semibold;
-            min-height: 2.75rem;
+            @apply px-3.5 py-1.5 text-[0.75rem] font-semibold;
+            min-height: 2rem;
         }
 
-        /* Course cards — app carousel */
         .gh-ref-course-row {
-            @apply -mx-5 gap-4 px-5 pb-5;
+            @apply -mx-4 gap-3 px-4 pb-3;
         }
 
         .gh-ref-course-row > * {
-            flex: 0 0 88%;
+            flex: 0 0 76%;
         }
 
         .gh-ref-l-card {
-            @apply rounded-[1.35rem];
-            box-shadow:
-                0 1px 0 #fff inset,
-                0 24px 56px -32px rgb(10 26 79 / 0.28);
+            @apply rounded-xl;
+            box-shadow: 0 16px 40px -28px rgb(10 26 79 / 0.22);
         }
 
         .gh-ref-thumb {
-            @apply h-52;
+            @apply h-36;
         }
 
         .gh-ref-l-card .p-5 {
-            @apply p-5;
+            @apply p-3.5;
         }
 
         .gh-ref-l-card h3 {
-            @apply text-[1.25rem] leading-snug;
+            @apply text-[0.9375rem] leading-snug;
         }
 
         .gh-ref-l-card .gh-ref-muted {
-            @apply text-[0.875rem];
+            @apply text-[0.6875rem];
         }
 
         .gh-ref-tag,
         .gh-ref-tag-best {
-            @apply px-3 py-1.5 text-[0.75rem];
+            @apply px-2 py-0.5 text-[0.625rem];
         }
 
         .gh-ref-progress {
-            @apply mt-4 h-2;
+            @apply mt-2.5 h-1.5;
         }
 
-        /* Journey steps — vertical app timeline */
         .gh-ref-tl-line {
             @apply hidden;
         }
 
         .gh-ref-step-num {
-            @apply h-16 w-16 text-[1.25rem];
+            @apply h-11 w-11 text-[0.875rem];
         }
 
         .gh-ref-section ol li h3 {
-            @apply text-[1.25rem];
-        }
-
-        .gh-ref-section ol li p {
             @apply text-[0.9375rem];
         }
 
-        /* Audience cards */
+        .gh-ref-section ol li p {
+            @apply text-[0.8125rem];
+        }
+
         .gh-ref-icon-bubble {
-            @apply h-14 w-14 rounded-2xl;
+            @apply h-10 w-10 rounded-xl;
         }
 
         .gh-ref-icon-bubble svg {
-            @apply h-6 w-6;
+            @apply h-4 w-4;
+        }
+
+        .gh-ref-l-card.p-6 {
+            @apply p-4;
         }
 
         .gh-ref-l-card.p-6 h3 {
-            @apply text-[1.25rem];
+            @apply text-[0.9375rem];
+        }
+
+        .gh-ref-l-card.p-6 p {
+            @apply text-[0.8125rem];
         }
 
         .gh-ref-stat-num {
-            @apply text-[2rem];
+            @apply text-[1.375rem];
         }
 
-        /* Testimonials — horizontal snap */
         .gh-ref-section .mt-10.grid {
-            @apply -mx-5 mt-8 flex gap-4 overflow-x-auto px-5 pb-4 md:grid;
+            @apply -mx-4 mt-6 flex gap-3 overflow-x-auto px-4 pb-3 md:grid;
             scroll-snap-type: x mandatory;
         }
 
         .gh-ref-section .mt-10.grid > figure {
-            flex: 0 0 88%;
+            flex: 0 0 76%;
             scroll-snap-align: start;
         }
 
+        .gh-ref-section figure {
+            @apply p-5;
+        }
+
         .gh-ref-section figure blockquote {
-            @apply text-[1rem] leading-relaxed;
+            @apply text-[0.8125rem] leading-relaxed;
         }
 
         .gh-ref-quote-mark {
-            @apply h-9 w-9;
+            @apply h-6 w-6;
         }
 
-        /* CTA block */
         .gh-ref-cta-wrap {
-            @apply rounded-[1.5rem] p-6;
+            @apply rounded-2xl p-5;
         }
 
         .gh-ref-cta-wrap h2 {
-            font-size: 1.75rem !important;
+            font-size: 1.25rem !important;
         }
 
         .gh-ref-cta-wrap p {
-            @apply text-[1rem];
+            @apply text-[0.8125rem];
         }
 
         .gh-ref-btn-light-primary,
         .gh-ref-btn-light-ghost {
-            @apply h-14 w-full rounded-2xl py-0 text-[1.0625rem] font-bold;
+            @apply h-10 w-full rounded-xl py-0 text-[0.8125rem] font-semibold;
         }
 
-        /* Footer — compact app style */
         .gh-landing-page footer {
-            @apply py-10;
+            @apply py-8;
         }
 
         .gh-landing-page footer .gh-ref-display {
-            font-size: 1.25rem !important;
+            font-size: 1rem !important;
         }
 
         .gh-landing-page footer ul {
-            @apply text-[0.9375rem];
+            @apply text-[0.8125rem];
         }
 
         .gh-landing-page footer input {
-            @apply py-3.5 text-[0.9375rem];
+            @apply py-2.5 text-[0.8125rem];
         }
 
         .gh-landing-page footer .gh-ref-btn-light-primary {
-            @apply h-12 w-auto px-5 text-base;
+            @apply h-9 w-auto px-4 text-[0.8125rem];
         }
 
-        /* ── Sticky bottom dock ── */
+        /* ── Bottom dock ── */
         .gh-landing-mobile-dock {
-            @apply fixed inset-x-0 bottom-0 z-[60] px-4 pt-2;
-            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-            background: linear-gradient(180deg, transparent 0%, rgb(4 8 28 / 0.55) 28%, rgb(4 8 28 / 0.96) 100%);
+            @apply fixed inset-x-0 bottom-0 z-[60] px-3 pt-1.5;
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+            background: linear-gradient(180deg, transparent 0%, rgb(4 8 28 / 0.5) 30%, rgb(4 8 28 / 0.96) 100%);
             pointer-events: none;
         }
 
         .gh-landing-mobile-dock-inner {
-            @apply pointer-events-auto mx-auto flex max-w-lg gap-3 rounded-[1.35rem] border border-white/10 p-2;
+            @apply pointer-events-auto mx-auto flex max-w-lg gap-2 rounded-2xl border border-white/10 p-1.5;
             background: linear-gradient(180deg, rgb(15 28 68 / 0.96), rgb(8 16 42 / 0.98));
-            backdrop-filter: blur(24px) saturate(160%);
-            box-shadow:
-                0 24px 64px -20px rgb(0 0 0 / 0.75),
-                inset 0 1px 0 rgb(255 255 255 / 0.08);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 16px 48px -20px rgb(0 0 0 / 0.7);
         }
 
         .gh-landing-dock-secondary {
-            @apply flex h-14 flex-1 items-center justify-center rounded-xl border border-white/12 bg-white/[0.04] text-[1rem] font-bold text-white;
+            @apply flex h-10 flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[0.8125rem] font-semibold text-white;
         }
 
         .gh-landing-dock-primary {
-            @apply flex h-14 flex-[1.35] items-center justify-center gap-2 rounded-xl text-[1rem] font-bold text-white;
+            @apply flex h-10 flex-[1.25] items-center justify-center gap-1.5 rounded-lg text-[0.8125rem] font-semibold text-white;
             background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 55%, #14b8a6 100%);
-            box-shadow: 0 14px 36px -12px rgb(59 130 246 / 0.55);
+            box-shadow: 0 10px 28px -12px rgb(59 130 246 / 0.5);
+        }
+
+        .gh-landing-dock-primary svg {
+            @apply h-3.5 w-3.5;
         }
 
         .gh-landing-dock-primary:active,

@@ -1,5 +1,7 @@
 @extends('layout.master')
 @section('title', 'GuruHub — Mengajar • Berbagi Ilmu • Membangun Masa Depan')
+@section('meta_description', 'GuruHub menghubungkan siswa, pengajar, dan institusi dalam satu platform pembelajaran modern. Kursus terkurasi, kelas live, quiz, dan sertifikat terverifikasi.')
+@section('meta_image', asset('assets/logo-app/guru_hub_logo.jpeg'))
 
 @php
     $fallbackStats = ['students' => 120000, 'teachers' => 8500, 'courses' => 320, 'certificates' => 520, 'rating' => '4.9'];
@@ -137,8 +139,8 @@
                             <x-ui.lucide name="award" class="h-6 w-6" />
                         </span>
                         <div class="min-w-0">
-                            <p class="text-[1.0625rem] font-bold text-white">Sertifikat terverifikasi</p>
-                            <p class="mt-1 text-[0.875rem] leading-snug text-white/55">Dari penemuan kursus hingga sertifikasi — semua dalam satu aplikasi.</p>
+                            <p class="gh-landing-mobile-preview-title">Sertifikat terverifikasi</p>
+                            <p class="gh-landing-mobile-preview-desc">Dari penemuan kursus hingga sertifikasi — semua dalam satu aplikasi.</p>
                         </div>
                     </div>
                 </div>

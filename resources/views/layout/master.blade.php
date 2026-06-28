@@ -2,7 +2,11 @@
 <html lang="id">
 
 <head>
-    <x-layout.head :title="trim($__env->yieldContent('title')) ?: 'Guru Hub — Platform Pembelajaran Profesional'" />
+    <x-layout.head
+        :title="trim($__env->yieldContent('title')) ?: 'GuruHub — Platform Pembelajaran Digital Indonesia'"
+        :description="trim($__env->yieldContent('meta_description')) ?: null"
+        :image="trim($__env->yieldContent('meta_image')) ?: null"
+    />
 </head>
 
 <body @class(['gh-app-shell', 'gh-landing-mode' => View::hasSection('flush')])
