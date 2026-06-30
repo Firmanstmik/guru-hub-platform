@@ -13,8 +13,20 @@
             <div class="space-y-6">
                 {{-- Card Informasi Akun Utama --}}
                 <div class="gh-app-card flex flex-col items-center p-6 text-center">
-                    <div class="relative mb-4">
-                        <x-app.user-avatar :user="$user" size="xl" />
+                    <div class="relative mb-4" id="siswa-avatar-preview"
+                        data-has-custom="{{ $user->hasCustomAvatar() ? '1' : '0' }}"
+                        data-neutral="{{ asset('assets/avatar/default-neutral.avif') }}"
+                        data-male="{{ asset('assets/avatar/default-siswa-l.avif') }}"
+                        data-female="{{ asset('assets/avatar/default-siswa-p.avif') }}">
+                        @if ($user->hasCustomAvatar())
+                            <img src="{{ $user->avatarUrl() }}" alt="Foto {{ $user->name }}"
+                                class="gh-app-user-photo gh-app-user-photo--xl gh-app-user-photo--ring gh-app-user-photo--siswa"
+                                id="siswa-avatar-img">
+                        @else
+                            <img src="{{ $user->avatarUrl() }}" alt="Foto {{ $user->name }}"
+                                class="gh-app-user-photo gh-app-user-photo--xl gh-app-user-photo--ring gh-app-user-photo--siswa"
+                                id="siswa-avatar-img">
+                        @endif
                     </div>
 
                     <div class="space-y-1.5 w-full">
@@ -225,4 +237,39 @@
         </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrap = document.getElementById('siswa-avatar-preview');
+            const img = document.getElementById('siswa-avatar-img');
+            const gender = document.getElementById('gender');
+            const avatarInput = document.getElementById('avatar');
+
+            if (!wrap || !img || !gender) return;
+
+            const defaults = {
+                '': wrap.dataset.neutral,
+                L: wrap.dataset.male,
+                P: wrap.dataset.female,
+            };
+
+            const applyDefault = () => {
+                if (wrap.dataset.hasCustom === '1') return;
+                img.src = defaults[gender.value] || defaults[''];
+            };
+
+            gender.addEventListener('change', applyDefault);
+
+            avatarInput?.addEventListener('change', (e) => {
+                const file = e.target.files?.[0];
+                if (!file) {
+                    wrap.dataset.hasCustom = '0';
+                    applyDefault();
+                    return;
+                }
+                wrap.dataset.hasCustom = '1';
+                img.src = URL.createObjectURL(file);
+            });
+        });
+    </script>
 @endsection

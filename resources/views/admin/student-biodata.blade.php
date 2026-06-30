@@ -38,9 +38,9 @@
                             {{-- Kolom Info User --}}
                             <td class="py-3.5 px-6">
                                 <div class="flex items-center gap-3">
-                                    @if($student->user && $student->user->avatar)
-                                        <img src="{{ asset('storage/' . $student->user->avatar) }}" 
-                                            class="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-xs">
+                                    @if($student->user)
+                                        <img src="{{ $student->user->avatarUrl() }}" 
+                                            class="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-xs" alt="">
                                     @else
                                         <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs uppercase">
                                             {{ substr($student->user->name ?? 'NN', 0, 2) }}

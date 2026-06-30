@@ -3,12 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\AvatarDefaults;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -82,11 +84,47 @@ class User extends Authenticatable
             return false;
         }
 
-        if (in_array($this->avatar, ['default-avatar.png', 'default-guru.png', 'default-siswa.png'], true)) {
+        $legacyDefaults = [
+            'default-avatar.png',
+            'default-guru.png',
+            'default-siswa.png',
+            'default-neutral.avif',
+            'default-guru-l.avif',
+            'default-guru-p.avif',
+            'default-siswa-l.avif',
+            'default-siswa-p.avif',
+        ];
+
+        if (in_array($this->avatar, $legacyDefaults, true)) {
             return false;
         }
 
-        return \Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar);
+        if (str_starts_with($this->avatar, 'assets/avatar/')) {
+            return false;
+        }
+
+        return Storage::disk('public')->exists($this->avatar);
+    }
+
+    public function profileGender(): ?string
+    {
+        if ($this->hasRole('siswa')) {
+            $biodata = $this->relationLoaded('studentBiodata')
+                ? $this->studentBiodata
+                : $this->studentBiodata()->first(['gender']);
+
+            return $biodata?->gender;
+        }
+
+        if ($this->hasRole('guru')) {
+            $profile = $this->relationLoaded('teacherProfile')
+                ? $this->teacherProfile
+                : $this->teacherProfile()->first(['gender']);
+
+            return $profile?->gender;
+        }
+
+        return null;
     }
 
     public function avatarUrl(): string
@@ -95,14 +133,6 @@ class User extends Authenticatable
             return asset('storage/' . $this->avatar);
         }
 
-        if ($this->hasRole('guru')) {
-            return asset('assets/avatar/default-guru.png');
-        }
-
-        if ($this->hasRole('siswa')) {
-            return asset('assets/avatar/default-siswa.png');
-        }
-
-        return asset('assets/avatar/default-avatar.png');
+        return AvatarDefaults::urlFor($this);
     }
 }

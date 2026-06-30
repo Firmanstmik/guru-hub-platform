@@ -215,6 +215,16 @@
                         <input type="hidden" name="verification_status" value="pending">
 
                         <div class="space-y-1">
+                            <label class="text-xs font-black text-gray-600">Jenis Kelamin</label>
+                            <select name="gender"
+                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
+                                <option value="">Pilih jenis kelamin</option>
+                                <option value="L" {{ old('gender') === 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="P" {{ old('gender') === 'P' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-1">
                             <label class="text-xs font-black text-gray-600">Judul Profesional / Headline</label>
                             <input type="text" name="title" value="{{ old('title') }}"
                                 placeholder="Contoh: Senior Fullstack Engineer & Informatics Educator"
@@ -293,7 +303,7 @@
                             @csrf
                             @method('PUT')
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label class="text-xs font-black text-gray-600">Nama Lengkap & Gelar</label>
                                     <input type="text" name="name" value="{{ old('name', $user->name) }}"
@@ -304,6 +314,15 @@
                                     <input type="text" name="phone_number"
                                         value="{{ old('phone_number', $user->phone_number) }}"
                                         class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-xs font-black text-gray-600">Jenis Kelamin</label>
+                                    <select name="gender"
+                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
+                                        <option value="">Pilih jenis kelamin</option>
+                                        <option value="L" {{ old('gender', $profile->gender ?? '') === 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                        <option value="P" {{ old('gender', $profile->gender ?? '') === 'P' ? 'selected' : '' }}>Perempuan</option>
+                                    </select>
                                 </div>
                             </div>
 

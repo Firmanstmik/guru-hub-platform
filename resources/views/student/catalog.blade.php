@@ -49,7 +49,7 @@
                                 @if ($course->teacher)
                                     <x-app.user-avatar :user="$course->teacher" size="sm" />
                                 @else
-                                    <img src="{{ asset('assets/avatar/default-guru.png') }}" alt="Instruktur"
+                                    <img src="{{ asset('assets/avatar/default-guru-l.avif') }}" alt="Instruktur"
                                         class="gh-app-user-photo gh-app-user-photo--sm gh-app-user-photo--ring gh-app-user-photo--guru">
                                 @endif
                                 <span class="gh-app-caption">{{ $course->teacher->name ?? 'Instruktur' }}</span>

@@ -68,6 +68,7 @@ class TeacherProfileController extends Controller
     {
         $request->validate([
             'user_id'             => 'required|exists:users,id|unique:teacher_profiles,user_id',
+            'gender'              => 'nullable|in:L,P',
             'title'               => 'required|string|max:255',
             'bio'                 => 'nullable|string',
             'skills_tags'         => 'required|string',
@@ -149,6 +150,7 @@ class TeacherProfileController extends Controller
             $request->validate([
                 'name'                => 'required|string|max:255',
                 'phone_number'        => 'nullable|string|max:20',
+                'gender'              => 'nullable|in:L,P',
                 'avatar'              => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'title'               => 'required|string|max:100',
                 'bio'                 => 'nullable|string|max:1000',
@@ -197,6 +199,10 @@ class TeacherProfileController extends Controller
                     'bank_account_number' => $request->bank_account_number,
                     'bank_account_name'   => $request->bank_account_name,
                 ];
+
+                if ($request->filled('gender')) {
+                    $profileData['gender'] = $request->gender;
+                }
 
                 if ($request->hasFile('cv_file')) {
                     $uploadedCv = $request->file('cv_file')->store('cv_teachers', 'public');
