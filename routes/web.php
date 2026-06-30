@@ -40,7 +40,7 @@ Route::prefix('register')->group(function () {
     Route::post('/teacher', [RegisterController::class, 'storeGuruRegister']);
 });
 
-Route::prefix('belajar')->name('browse.')->group(function () {
+Route::prefix('belajar')->name('browse.')->withoutScopedBindings()->group(function () {
     Route::get('/{category:slug}', [BrowseController::class, 'category'])->name('category');
     Route::get('/{category:slug}/{level:slug}', [BrowseController::class, 'subjects'])->name('subjects');
     Route::get('/{category:slug}/{level:slug}/{subject:slug}', [BrowseController::class, 'teachers'])->name('teachers');
