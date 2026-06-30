@@ -113,13 +113,10 @@
         </div>
     </div>
 
-    <div id="addScheduleModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+    <div id="addScheduleModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="toggleModal('addScheduleModal')" aria-hidden="true"></div>
+        <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
+            <div class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-xl border border-gray-100 bg-white shadow-xl" onclick="event.stopPropagation()">
                 <form action="/schedules" method="POST">
                     @csrf
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 max-h-[80vh] overflow-y-auto">
@@ -206,13 +203,10 @@
         </div>
     </div>
 
-    <div id="editScheduleModal" class="fixed inset-0 z-50 overflow-y-auto hidden">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+    <div id="editScheduleModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="toggleModal('editScheduleModal')" aria-hidden="true"></div>
+        <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
+            <div class="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-xl border border-gray-100 bg-white shadow-xl" onclick="event.stopPropagation()">
                 <form id="editForm" method="POST">
                     @csrf
                     @method('PUT')
