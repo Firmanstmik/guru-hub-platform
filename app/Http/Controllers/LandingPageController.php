@@ -12,6 +12,7 @@ use App\Models\Review;
 use App\Models\User;
 use App\Support\CategoryIcons;
 use App\Support\MediaDefaults;
+use App\Support\StudentJenjang;
 use Illuminate\Support\Facades\DB;
 
 class LandingPageController extends Controller
@@ -24,6 +25,7 @@ class LandingPageController extends Controller
         $dashboard = $this->buildDashboardPreview();
         $testimonials = $this->buildTestimonials();
         $featuredCategories = $this->buildFeaturedCategories();
+        $studentJenjangSlug = StudentJenjang::slug();
 
         return view('landingpage.home', compact(
             'stats',
@@ -32,6 +34,7 @@ class LandingPageController extends Controller
             'dashboard',
             'testimonials',
             'featuredCategories',
+            'studentJenjangSlug',
         ));
     }
 
@@ -268,12 +271,17 @@ class LandingPageController extends Controller
 
             $levels = [];
             if ($categoryId) {
-                $levels = EducationLevel::query()
+                $levelQuery = EducationLevel::query()
                     ->active()
                     ->ordered()
                     ->whereHas('subjects', fn ($q) => $q->active()->where('category_id', $categoryId))
-                    ->withCount(['subjects as subjects_count' => fn ($q) => $q->active()->where('category_id', $categoryId)])
-                    ->get()
+                    ->withCount(['subjects as subjects_count' => fn ($q) => $q->active()->where('category_id', $categoryId)]);
+
+                if ($studentLevel = StudentJenjang::forUser()) {
+                    $levelQuery->where('id', $studentLevel->id);
+                }
+
+                $levels = $levelQuery->get()
                     ->map(fn (EducationLevel $level) => [
                         'name' => $level->name,
                         'slug' => $level->slug,

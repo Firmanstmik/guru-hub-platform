@@ -73,6 +73,12 @@
                                 <span class="block text-indigo-300 font-medium mb-0.5">Asal Sekolah / Kampus</span>
                                 <span class="text-sm font-semibold">{{ $biodata->institution_name }}</span>
                             </div>
+                            @if ($biodata->educationLevel)
+                            <div>
+                                <span class="block text-indigo-300 font-medium mb-0.5">Jenjang Kelas</span>
+                                <span class="text-sm font-semibold">{{ $biodata->educationLevel->name }}</span>
+                            </div>
+                            @endif
                             <div>
                                 <span class="block text-indigo-300 font-medium mb-0.5">Tanggal Lahir</span>
                                 <span
@@ -171,6 +177,27 @@
                                     placeholder="Contoh: SMAN 1 Mataram"
                                     class="w-full px-4 py-2.5 text-sm bg-white border @error('institution_name') border-rose-500 @else border-gray-200 @enderror rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-gray-700">
                                 @error('institution_name')
+                                    <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="sm:col-span-2">
+                                <label for="education_level_id"
+                                    class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">
+                                    Jenjang Kelas <span class="text-rose-500">*</span>
+                                </label>
+                                <select id="education_level_id" name="education_level_id" required
+                                    class="w-full px-4 py-2.5 text-sm bg-white border @error('education_level_id') border-rose-500 @else border-gray-200 @enderror rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-gray-700">
+                                    <option value="">Pilih jenjang kamu</option>
+                                    @foreach ($educationLevels as $level)
+                                        <option value="{{ $level->id }}"
+                                            @selected(old('education_level_id', $biodata->education_level_id ?? '') == $level->id)>
+                                            {{ $level->icon }} {{ $level->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-[10px] text-gray-400 mt-1">Katalog kursus akan disesuaikan dengan jenjang ini (SD, SMP, SMA, dll).</p>
+                                @error('education_level_id')
                                     <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                                 @enderror
                             </div>

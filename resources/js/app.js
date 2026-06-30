@@ -24,8 +24,9 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    Alpine.data('ghCategoryPicker', (categories = []) => ({
+    Alpine.data('ghCategoryPicker', (categories = [], studentLevelSlug = null) => ({
         categories,
+        studentLevelSlug,
         sheetOpen: false,
         activeSlug: null,
 
@@ -33,16 +34,26 @@ document.addEventListener('alpine:init', () => {
             return this.categories.find((c) => c.slug === this.activeSlug) ?? null;
         },
 
+        levelsForCategory(cat) {
+            if (!this.studentLevelSlug) {
+                return cat.levels;
+            }
+
+            return cat.levels.filter((level) => level.slug === this.studentLevelSlug);
+        },
+
         openCategory(slug) {
             const cat = this.categories.find((c) => c.slug === slug);
             if (!cat) return;
 
-            if (cat.levels.length === 1) {
-                window.location.href = cat.levels[0].url;
+            const levels = this.levelsForCategory(cat);
+
+            if (levels.length === 1) {
+                window.location.href = levels[0].url;
                 return;
             }
 
-            if (cat.levels.length === 0) {
+            if (levels.length === 0) {
                 window.location.href = cat.browse_url;
                 return;
             }

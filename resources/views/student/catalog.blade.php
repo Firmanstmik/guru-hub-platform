@@ -3,7 +3,7 @@
     <div class="gh-app-page">
         <div class="gh-app-page-grid" aria-hidden="true"></div>
         <div class="gh-app-page-inner">
-            <x-app.page-header title="Katalog Kursus" subtitle="Temukan kelas dari pengajar terbaik.">
+            <x-app.page-header title="Katalog Kursus" :subtitle="$studentLevelName ? 'Menampilkan kursus untuk jenjang ' . $studentLevelName . '.' : 'Temukan kelas dari pengajar terbaik.'">
                 <x-slot:action>
                     <a href="/tampil-kursus" class="gh-app-btn gh-app-btn-ghost gh-app-btn-sm hidden">Filter</a>
                 </x-slot:action>
@@ -22,13 +22,19 @@
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
-                    <select id="js-teacher-filter" class="gh-app-select">
-                        <option value="">Semua Guru</option>
-                        @foreach ($teachers as $teacher)
-                            <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                    <select id="js-subject-filter" class="gh-app-select">
+                        <option value="">Semua Mapel</option>
+                        @foreach ($subjects as $subject)
+                            <option value="{{ $subject->id }}">{{ $subject->name }}</option>
                         @endforeach
                     </select>
                 </div>
+                <select id="js-teacher-filter" class="gh-app-select">
+                    <option value="">Semua Guru</option>
+                    @foreach ($teachers as $teacher)
+                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                    @endforeach
+                </select>
             </div>
 
             <div id="course-container" class="space-y-3">
@@ -36,6 +42,7 @@
                     <div class="course-card gh-app-course-card"
                         data-title="{{ strtolower($course->title) }}"
                         data-category-id="{{ $course->category_id ?? '' }}"
+                        data-subject-id="{{ $course->subject_id ?? '' }}"
                         data-teacher-id="{{ $course->teacher_id ?? '' }}"
                         data-teacher-name="{{ strtolower($course->teacher->name ?? '') }}">
                         <div class="gh-app-course-thumb">
@@ -86,6 +93,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('js-search-input');
             const categoryFilter = document.getElementById('js-category-filter');
+            const subjectFilter = document.getElementById('js-subject-filter');
             const teacherFilter = document.getElementById('js-teacher-filter');
             const courseCards = document.querySelectorAll('.course-card');
             const clientEmptyState = document.getElementById('js-empty-state-client');
@@ -93,19 +101,22 @@
             function filterCourses() {
                 const searchValue = searchInput.value.toLowerCase().trim();
                 const selectedCategoryId = categoryFilter.value;
+                const selectedSubjectId = subjectFilter.value;
                 const selectedTeacherId = teacherFilter.value;
                 let visibleCount = 0;
 
                 courseCards.forEach(card => {
                     const cardTitle = card.getAttribute('data-title');
                     const cardCategoryId = card.getAttribute('data-category-id');
+                    const cardSubjectId = card.getAttribute('data-subject-id');
                     const cardTeacherId = card.getAttribute('data-teacher-id');
                     const cardTeacherName = card.getAttribute('data-teacher-name');
                     const matchesSearch = cardTitle.includes(searchValue) || cardTeacherName.includes(searchValue);
                     const matchesCategory = selectedCategoryId === "" || cardCategoryId === selectedCategoryId;
+                    const matchesSubject = selectedSubjectId === "" || cardSubjectId === selectedSubjectId;
                     const matchesTeacher = selectedTeacherId === "" || cardTeacherId === selectedTeacherId;
 
-                    if (matchesSearch && matchesCategory && matchesTeacher) {
+                    if (matchesSearch && matchesCategory && matchesSubject && matchesTeacher) {
                         card.style.display = 'block';
                         visibleCount++;
                     } else {
@@ -122,6 +133,7 @@
 
             searchInput.addEventListener('input', filterCourses);
             categoryFilter.addEventListener('change', filterCourses);
+            subjectFilter.addEventListener('change', filterCourses);
             teacherFilter.addEventListener('change', filterCourses);
         });
     </script>

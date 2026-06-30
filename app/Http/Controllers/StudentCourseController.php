@@ -6,8 +6,11 @@ use App\Models\Booking;
 use App\Models\Categori;
 use App\Models\Certificate;
 use App\Models\Course;
+use App\Models\EducationLevel;
+use App\Models\Subject;
 use App\Models\User;
 use App\Support\ProgressMorphType;
+use App\Support\StudentJenjang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,9 +26,13 @@ class StudentCourseController extends Controller
     {
         try {
             // 1. Eager loading data guru pengajar dan kategori, serta menghitung jumlah siswa dan materi
-            $query = Course::with(['teacher', 'category'])
+            $query = Course::with(['teacher', 'category', 'subject', 'educationLevel'])
                 ->withCount(['students', 'materials'])
                 ->where('status', 'published');
+
+            if ($studentLevel = StudentJenjang::forUser()) {
+                $query->where('education_level_id', $studentLevel->id);
+            }
 
             // 2. Filter INPUT PENCARIAN (Bisa mencari Judul Kelas ATAU Nama Guru)
             if ($request->has('search') && $request->search != '') {
@@ -49,17 +56,33 @@ class StudentCourseController extends Controller
                 $query->where('category_id', $request->category_id);
             }
 
+            if ($request->has('subject_id') && $request->subject_id != '') {
+                $query->where('subject_id', $request->subject_id);
+            }
+
             // 4. Eksekusi query dengan pagination agar halaman tidak berat
             $courses = $query->latest()->paginate(9)->withQueryString();
 
             // 5. Data pendukung untuk mengisi opsi list dropdown filter Guru (Spatie Peran)
             $teachers = User::role('guru')->where('is_active', true)->orderBy('name')->get();
 
-            // [TAMBAHAN] Ambil data seluruh kategori untuk dropdown filter di Blade
-            $categories = Categori::orderBy('name')->get();
+            $categories = Categori::query()
+                ->when($studentLevel, function ($q) use ($studentLevel) {
+                    $q->whereHas('subjects', fn ($sq) => $sq->active()->where('education_level_id', $studentLevel->id));
+                })
+                ->orderBy('name')
+                ->get();
 
-            // Tambahkan $categories ke dalam compact()
-            return view('student.catalog', compact('courses', 'teachers', 'categories'));
+            $subjects = Subject::query()
+                ->active()
+                ->when($studentLevel, fn ($q) => $q->where('education_level_id', $studentLevel->id))
+                ->with('category:id,name')
+                ->ordered()
+                ->get();
+
+            $studentLevelName = $studentLevel?->name;
+
+            return view('student.catalog', compact('courses', 'teachers', 'categories', 'subjects', 'studentLevelName'));
         } catch (Exception $e) {
             Log::error('Gagal memuat katalog kelas siswa: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat katalog kelas.');

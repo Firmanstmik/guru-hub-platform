@@ -22,6 +22,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentBiodataController;
 use App\Http\Controllers\TeacherEarningController;
 use App\Http\Controllers\TeacherProfileController;
+use App\Http\Controllers\TaxonomyController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManajemenController;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,12 @@ Route::prefix('belajar')->name('browse.')->withoutScopedBindings()->group(functi
     Route::get('/{category:slug}/{level:slug}', [BrowseController::class, 'subjects'])->name('subjects');
     Route::get('/{category:slug}/{level:slug}/{subject:slug}', [BrowseController::class, 'teachers'])->name('teachers');
     Route::get('/{category:slug}/{level:slug}/{subject:slug}/guru/{teacher}', [BrowseController::class, 'teacherDetail'])->name('teacher');
+});
+
+Route::prefix('taxonomy')->name('taxonomy.')->group(function () {
+    Route::get('/levels/{level:slug}/subjects', [TaxonomyController::class, 'subjectsByLevel'])->name('subjects.level');
+    Route::get('/teachers/{teacher}/subjects', [TaxonomyController::class, 'subjectsByTeacher'])->name('subjects.teacher');
+    Route::get('/subjects/grouped', [TaxonomyController::class, 'groupedSubjects'])->name('subjects.grouped');
 });
 
 // PRIVATE ROUTES FOR ADMIN

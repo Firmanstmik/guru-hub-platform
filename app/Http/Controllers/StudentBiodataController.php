@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categori;
+use App\Models\EducationLevel;
 use App\Models\StudentBiodata;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,7 +19,7 @@ class StudentBiodataController extends Controller
     public function index()
     {
         // Menggunakan eager loading (with) agar tidak terkena masalah N+1 Query pada relasi user
-        $students = StudentBiodata::with('user')->latest()->get();
+        $students = StudentBiodata::with(['user', 'educationLevel'])->latest()->get();
 
         return view('admin.student-biodata', compact('students'));
     }
@@ -70,7 +72,9 @@ class StudentBiodataController extends Controller
 
         $user = Auth::user();
         $biodata = $user->studentBiodata;
-        return view('student.biodata-form', compact('user', 'biodata'));
+        $educationLevels = EducationLevel::active()->ordered()->get();
+
+        return view('student.biodata-form', compact('user', 'biodata', 'educationLevels'));
     }
 
     public function store(Request $request)
@@ -89,6 +93,7 @@ class StudentBiodataController extends Controller
             // Validasi untuk tabel Student Biodatas
             'nisn' => ['required', 'string', 'max:20', 'unique:student_biodatas,nisn,' . $biodataId],
             'institution_name' => ['required', 'string', 'max:255'],
+            'education_level_id' => ['required', 'exists:education_levels,id'],
             'birth_date' => ['required', 'date'],
             'gender' => ['required', 'in:L,P'],
             'address' => ['required', 'string'],
@@ -117,6 +122,7 @@ class StudentBiodataController extends Controller
                 [
                     'nisn' => $request->nisn,
                     'institution_name' => $request->institution_name,
+                    'education_level_id' => $request->education_level_id,
                     'birth_date' => $request->birth_date,
                     'gender' => $request->gender,
                     'address' => $request->address,

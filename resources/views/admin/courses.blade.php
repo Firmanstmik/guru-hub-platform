@@ -137,12 +137,19 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Buat Program Kelas Baru</h3>
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Pilih Kategori</label>
-                                    <select name="category_id" required
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Mata Pelajaran & Jenjang</label>
+                                    <select name="subject_id" id="add_course_subject_id" required
                                         class="w-full border-gray-300 rounded-lg text-sm p-2 border">
-                                        @foreach ($categories as $cat)
-                                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                        <option value="">Pilih mapel sesuai jenjang</option>
+                                        @foreach ($subjects->groupBy(fn ($s) => $s->educationLevel?->name ?? 'Lainnya') as $levelName => $levelSubjects)
+                                            <optgroup label="{{ $levelName }}">
+                                                @foreach ($levelSubjects as $subject)
+                                                    <option value="{{ $subject->id }}" data-teacher-filter="1">
+                                                        {{ $subject->name }} ({{ $subject->category?->name }})
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
                                         @endforeach
                                     </select>
                                 </div>
@@ -218,12 +225,18 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Edit Data Kursus / Kelas</h3>
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Pilih Kategori</label>
-                                    <select id="edit_category_id" name="category_id" required
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Mata Pelajaran & Jenjang</label>
+                                    <select id="edit_subject_id" name="subject_id" required
                                         class="w-full border-gray-300 rounded-lg text-sm p-2 border">
-                                        @foreach ($categories as $cat)
-                                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                        @foreach ($subjects->groupBy(fn ($s) => $s->educationLevel?->name ?? 'Lainnya') as $levelName => $levelSubjects)
+                                            <optgroup label="{{ $levelName }}">
+                                                @foreach ($levelSubjects as $subject)
+                                                    <option value="{{ $subject->id }}">
+                                                        {{ $subject->name }} ({{ $subject->category?->name }})
+                                                    </option>
+                                                @endforeach
+                                            </optgroup>
                                         @endforeach
                                     </select>
                                 </div>
@@ -294,7 +307,7 @@
         }
 
         function openEditModal(course) {
-            document.getElementById('edit_category_id').value = course.category_id;
+            document.getElementById('edit_subject_id').value = course.subject_id || '';
             document.getElementById('edit_teacher_id').value = course.teacher_id;
             document.getElementById('edit_title').value = course.title;
             document.getElementById('edit_description').value = course.description;

@@ -59,46 +59,68 @@ class EducationTaxonomySeeder extends Seeder
             $categoryIds[$cat['name']] = $model->id;
         }
 
+        // [category_name, subject_name] per jenjang
         $taxonomy = [
             'sd' => [
-                'Matematika' => ['Matematika'],
-                'Bahasa Indonesia' => ['Bahasa Indonesia', 'Calistung (Kelas 1–3)', 'Tematik SD'],
-                'Bahasa Inggris' => ['Bahasa Inggris'],
-                'IPA' => ['IPA'],
-                'IPS' => ['IPS'],
-                'Mengaji' => ['Pendidikan Agama', 'Mengaji'],
+                ['Matematika', 'Matematika'],
+                ['Bahasa Indonesia', 'Bahasa Indonesia'],
+                ['Bahasa Inggris', 'Bahasa Inggris'],
+                ['IPA', 'IPA'],
+                ['IPS', 'IPS'],
+                ['Mengaji', 'Pendidikan Agama'],
+                ['Mengaji', 'Mengaji'],
+                ['Bahasa Indonesia', 'Calistung (Kelas 1–3)'],
+                ['Bahasa Indonesia', 'Tematik SD'],
             ],
             'smp' => [
-                'Matematika' => ['Matematika'],
-                'Bahasa Indonesia' => ['Bahasa Indonesia'],
-                'Bahasa Inggris' => ['Bahasa Inggris'],
-                'IPA' => ['IPA'],
-                'IPS' => ['IPS'],
-                'Bahasa Jepang' => ['Bahasa Jepang', 'Bahasa Arab'],
-                'Informatika' => ['Informatika'],
+                ['Matematika', 'Matematika'],
+                ['Bahasa Indonesia', 'Bahasa Indonesia'],
+                ['Bahasa Inggris', 'Bahasa Inggris'],
+                ['IPA', 'IPA'],
+                ['IPS', 'IPS'],
+                ['Bahasa Jepang', 'Bahasa Jepang'],
+                ['Bahasa Arab', 'Bahasa Arab'],
+                ['Informatika', 'Informatika'],
             ],
             'sma-smk' => [
-                'Matematika' => ['Matematika'],
-                'Bahasa Indonesia' => ['Bahasa Indonesia'],
-                'Bahasa Inggris' => ['Bahasa Inggris'],
-                'IPA' => ['Fisika', 'Kimia', 'Biologi'],
-                'IPS' => ['Ekonomi', 'Akuntansi', 'Sejarah', 'Geografi', 'Sosiologi'],
-                'Informatika' => ['Informatika'],
-                'Bahasa Jepang' => ['Bahasa Jepang', 'Bahasa Korea', 'Bahasa Mandarin'],
+                ['Matematika', 'Matematika'],
+                ['Bahasa Indonesia', 'Bahasa Indonesia'],
+                ['Bahasa Inggris', 'Bahasa Inggris'],
+                ['IPA', 'Fisika'],
+                ['IPA', 'Kimia'],
+                ['IPA', 'Biologi'],
+                ['IPS', 'Ekonomi'],
+                ['IPS', 'Akuntansi'],
+                ['IPS', 'Sejarah'],
+                ['IPS', 'Geografi'],
+                ['IPS', 'Sosiologi'],
+                ['Informatika', 'Informatika'],
+                ['Bahasa Jepang', 'Bahasa Jepang'],
+                ['Bahasa Korea', 'Bahasa Korea'],
+                ['Bahasa Mandarin', 'Bahasa Mandarin'],
             ],
             'persiapan-ujian' => [
-                'Persiapan UTBK' => ['UTBK SNBT', 'Persiapan ANBK', 'Persiapan Ujian Sekolah'],
-                'Olimpiade' => ['Olimpiade Sains', 'OSN'],
+                ['Persiapan UTBK', 'UTBK SNBT'],
+                ['Olimpiade', 'Olimpiade Sains'],
+                ['Olimpiade', 'OSN'],
+                ['Persiapan UTBK', 'Persiapan ANBK'],
+                ['Persiapan UTBK', 'Persiapan Ujian Sekolah'],
             ],
             'minat-bakat' => [
-                'Musik / Vokal' => ['Musik / Vokal', 'Piano', 'Gitar'],
-                'Seni & Menggambar' => ['Menggambar', 'Tari', 'Public Speaking'],
+                ['Musik / Vokal', 'Musik / Vokal'],
+                ['Musik / Vokal', 'Piano'],
+                ['Musik / Vokal', 'Gitar'],
+                ['Seni & Menggambar', 'Menggambar'],
+                ['Seni & Menggambar', 'Tari'],
+                ['Seni & Menggambar', 'Public Speaking'],
             ],
         ];
 
         $sort = 0;
-        foreach ($taxonomy as $levelSlug => $groups) {
-            foreach ($groups as $categoryName => $subjectNames) {
+        $activeSubjectKeys = [];
+
+        foreach ($taxonomy as $levelSlug => $rows) {
+            foreach ($rows as [$categoryName, $subjectName]) {
                 if (! isset($categoryIds[$categoryName])) {
                     $model = Categori::updateOrCreate(
                         ['slug' => Str::slug($categoryName)],
@@ -112,27 +134,26 @@ class EducationTaxonomySeeder extends Seeder
                     $categoryIds[$categoryName] = $model->id;
                 }
 
-                foreach ($subjectNames as $subjectName) {
-                    $sort++;
-                    Subject::updateOrCreate(
-                        [
-                            'category_id' => $categoryIds[$categoryName],
-                            'education_level_id' => $levelIds[$levelSlug],
-                            'slug' => Str::slug($subjectName),
-                        ],
-                        [
-                            'name' => $subjectName,
-                            'sort_order' => $sort,
-                            'is_active' => true,
-                        ]
-                    );
-                }
+                $sort++;
+                $subject = Subject::updateOrCreate(
+                    [
+                        'category_id' => $categoryIds[$categoryName],
+                        'education_level_id' => $levelIds[$levelSlug],
+                        'slug' => Str::slug($subjectName),
+                    ],
+                    [
+                        'name' => $subjectName,
+                        'sort_order' => $sort,
+                        'is_active' => true,
+                    ]
+                );
+
+                $activeSubjectKeys[] = $subject->id;
             }
         }
 
-        Categori::query()
-            ->whereNotIn('id', array_values($categoryIds))
-            ->where('is_featured', false)
+        Subject::query()
+            ->whereNotIn('id', $activeSubjectKeys)
             ->update(['is_active' => false]);
     }
 }

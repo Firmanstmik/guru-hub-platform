@@ -7,27 +7,33 @@ use App\Models\Course;
 use App\Models\EducationLevel;
 use App\Models\Subject;
 use App\Models\User;
+use App\Support\StudentJenjang;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class BrowseController extends Controller
 {
-    public function category(Categori $category): View|\Illuminate\Http\RedirectResponse
+    public function category(Categori $category): View|RedirectResponse
     {
         abort_unless($category->is_active, 404);
 
-        $levels = EducationLevel::active()
-            ->ordered()
-            ->whereHas('subjects', function ($q) use ($category) {
-                $q->active()->where('category_id', $category->id);
-            })
-            ->get();
+        $levels = $this->levelsForCategory($category);
 
         if ($levels->isEmpty()) {
             return view('browse.empty', [
                 'title' => $category->name,
-                'message' => 'Kursus untuk mapel ini segera hadir. Daftar dulu untuk mendapat kabar terbaru.',
+                'message' => $this->jenjangMismatchMessage() ?? 'Kursus untuk mapel ini segera hadir. Daftar dulu untuk mendapat kabar terbaru.',
                 'category' => $category,
             ]);
+        }
+
+        if ($studentLevel = StudentJenjang::forUser()) {
+            if ($levels->contains('id', $studentLevel->id)) {
+                return redirect()->route('browse.subjects', [
+                    'category' => $category->slug,
+                    'level' => $studentLevel->slug,
+                ]);
+            }
         }
 
         if ($levels->count() === 1) {
@@ -40,9 +46,10 @@ class BrowseController extends Controller
         return view('browse.levels', compact('category', 'levels'));
     }
 
-    public function subjects(Categori $category, EducationLevel $level): View|\Illuminate\Http\RedirectResponse
+    public function subjects(Categori $category, EducationLevel $level): View|RedirectResponse
     {
         abort_unless($category->is_active && $level->is_active, 404);
+        $this->assertStudentJenjang($level);
 
         $subjects = Subject::active()
             ->ordered()
@@ -65,15 +72,23 @@ class BrowseController extends Controller
     public function teachers(Categori $category, EducationLevel $level, Subject $subject): View
     {
         abort_unless($category->is_active && $level->is_active && $subject->is_active, 404);
+        $this->assertStudentJenjang($level);
 
         $courses = Course::query()
             ->where('status', 'published')
             ->whereNotNull('teacher_id')
+            ->where('education_level_id', $level->id)
             ->where(function ($q) use ($subject, $category) {
                 $q->where('subject_id', $subject->id)
                     ->orWhere(function ($q2) use ($category) {
                         $q2->whereNull('subject_id')->where('category_id', $category->id);
                     });
+            })
+            ->whereHas('teacher', function ($q) use ($subject) {
+                $q->where(function ($inner) use ($subject) {
+                    $inner->whereHas('teachingSubjects', fn ($tq) => $tq->where('subjects.id', $subject->id))
+                        ->orWhereDoesntHave('teachingSubjects');
+                });
             })
             ->with(['teacher:id,name', 'category:id,name'])
             ->withCount(['students', 'reviews'])
@@ -104,10 +119,12 @@ class BrowseController extends Controller
     {
         abort_unless($teacher->hasRole('guru'), 404);
         abort_unless($category->is_active && $level->is_active && $subject->is_active, 404);
+        $this->assertStudentJenjang($level);
 
         $courses = Course::query()
             ->where('status', 'published')
             ->where('teacher_id', $teacher->id)
+            ->where('education_level_id', $level->id)
             ->where(function ($q) use ($subject, $category) {
                 $q->where('subject_id', $subject->id)
                     ->orWhere(function ($q2) use ($category) {
@@ -125,5 +142,41 @@ class BrowseController extends Controller
         $teacher->loadMissing('teacherProfile');
 
         return view('browse.teacher-detail', compact('category', 'level', 'subject', 'teacher', 'courses'));
+    }
+
+    private function levelsForCategory(Categori $category)
+    {
+        $levels = EducationLevel::active()
+            ->ordered()
+            ->whereHas('subjects', function ($q) use ($category) {
+                $q->active()->where('category_id', $category->id);
+            })
+            ->get();
+
+        if ($studentLevel = StudentJenjang::forUser()) {
+            return $levels->where('id', $studentLevel->id)->values();
+        }
+
+        return $levels;
+    }
+
+    private function assertStudentJenjang(EducationLevel $level): void
+    {
+        $studentLevel = StudentJenjang::forUser();
+
+        if ($studentLevel && $studentLevel->id !== $level->id) {
+            abort(404);
+        }
+    }
+
+    private function jenjangMismatchMessage(): ?string
+    {
+        $studentLevel = StudentJenjang::forUser();
+
+        if (! $studentLevel) {
+            return null;
+        }
+
+        return "Mapel ini tidak tersedia untuk jenjang {$studentLevel->name}. Silakan pilih mata pelajaran sesuai jenjang kamu.";
     }
 }

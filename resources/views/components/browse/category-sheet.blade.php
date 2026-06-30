@@ -28,7 +28,7 @@
 
                     <p class="mt-5 text-left text-[11px] font-semibold tracking-[0.14em] text-[#0A1A4F]/45 uppercase">Pilih jenjang kamu</p>
                     <div class="mt-2 space-y-2">
-                        <template x-for="level in current.levels" :key="level.slug">
+                        <template x-for="level in levelsForCategory(current)" :key="level.slug">
                             <button type="button" class="gh-cat-sheet-level" @click="go(level.url)">
                                 <span class="gh-cat-sheet-level-badge" x-text="levelBadge(level)"></span>
                                 <span class="min-w-0 flex-1 text-left">

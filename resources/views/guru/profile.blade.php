@@ -238,6 +238,8 @@
                                 class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none">
                         </div>
 
+                        <x-education.subject-picker :levels="$educationLevels ?? collect()" :selected="$selectedSubjectIds ?? []" />
+
                         <div class="space-y-1">
                             <label class="text-xs font-black text-gray-600">Biografi Singkat</label>
                             <textarea name="bio" rows="3" placeholder="Jelaskan pengalaman industri Anda..."
@@ -339,6 +341,8 @@
                                     value="{{ old('skills_tags', $profile->skills_tags ? implode(', ', json_decode($profile->skills_tags, true)) : '') }}"
                                     class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none">
                             </div>
+
+                            <x-education.subject-picker :levels="$educationLevels ?? collect()" :selected="$selectedSubjectIds ?? []" />
 
                             <div class="space-y-1">
                                 <label class="text-xs font-black text-gray-600">Biografi Singkat</label>

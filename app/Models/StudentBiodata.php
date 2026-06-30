@@ -13,6 +13,7 @@ class StudentBiodata extends Model
         'user_id',
         'nisn',
         'institution_name',
+        'education_level_id',
         'birth_date',
         'gender',
         'address',
@@ -22,5 +23,10 @@ class StudentBiodata extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function educationLevel(): BelongsTo
+    {
+        return $this->belongsTo(EducationLevel::class);
     }
 }

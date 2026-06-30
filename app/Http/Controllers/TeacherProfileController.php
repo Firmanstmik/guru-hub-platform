@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\EducationLevel;
 use App\Models\User;
 use App\Models\TeacherProfile;
 use Illuminate\Http\Request;
@@ -24,11 +25,16 @@ class TeacherProfileController extends Controller
 
             // Menggunakan Spatie hasRole() / Deteksi rute Guru
             if ($user->hasRole('guru') || $request->is('guru*')) {
-                $user->load('teacherProfile');
+                $user->load(['teacherProfile', 'teachingSubjects']);
                 $profile = $user->teacherProfile ?? new TeacherProfile();
                 $skills = $profile->skills_tags ? json_decode($profile->skills_tags, true) : [];
+                $educationLevels = EducationLevel::active()
+                    ->ordered()
+                    ->with(['subjects' => fn ($q) => $q->active()->with('category:id,name')->ordered()])
+                    ->get();
+                $selectedSubjectIds = $user->teachingSubjects()->pluck('subjects.id')->all();
 
-                return view('guru.profile', compact('user', 'profile', 'skills'));
+                return view('guru.profile', compact('user', 'profile', 'skills', 'educationLevels', 'selectedSubjectIds'));
             }
 
             // JIKA YANG AKSES ADALAH ADMIN
@@ -71,7 +77,9 @@ class TeacherProfileController extends Controller
             'gender'              => 'nullable|in:L,P',
             'title'               => 'required|string|max:255',
             'bio'                 => 'nullable|string',
-            'skills_tags'         => 'required|string',
+            'skills_tags'         => 'nullable|string',
+            'subject_ids'         => 'nullable|array',
+            'subject_ids.*'       => 'exists:subjects,id',
             'verification_status' => 'required|in:pending,approved,rejected',
             'cv_file'             => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'bank_name'           => 'required|string|max:100',
@@ -95,7 +103,7 @@ class TeacherProfileController extends Controller
 
         try {
             // Mengubah string tags menjadi JSON array sebelum disimpan
-            $tagsArray = array_map('trim', explode(',', $request->skills_tags));
+            $tagsArray = $request->skills_tags ? array_map('trim', explode(',', $request->skills_tags)) : [];
 
             $data = $request->except('cv_file');
             $data['skills_tags'] = json_encode($tagsArray);
@@ -107,6 +115,7 @@ class TeacherProfileController extends Controller
             }
 
             $profile = TeacherProfile::create($data);
+            $profile->user->teachingSubjects()->sync($request->input('subject_ids', []));
 
             // Spatie: Mengubah role user jika status disetujui
             if ($request->verification_status === 'approved') {
@@ -155,6 +164,8 @@ class TeacherProfileController extends Controller
                 'title'               => 'required|string|max:100',
                 'bio'                 => 'nullable|string|max:1000',
                 'skills_tags'         => 'nullable|string',
+                'subject_ids'         => 'nullable|array',
+                'subject_ids.*'       => 'exists:subjects,id',
                 'cv_file'             => 'nullable|mimes:pdf|max:3072',
                 'bank_name'           => 'required|string|max:50',
                 'bank_account_number' => 'required|string|max:50',
@@ -214,12 +225,14 @@ class TeacherProfileController extends Controller
 
                 // FITUR UTAMA: Jika data belum ada, dia jalankan Create. Jika sudah ada, langsung melakukan Update.
                 $user->teacherProfile()->updateOrCreate(
-                    ['user_id' => $user->id], // Kolom pencari identitas unik pemilik profil
+                    ['user_id' => $user->id],
                     array_merge($profileData, [
                         'verification_status' => $user->teacherProfile->verification_status ?? 'pending',
                         'average_rating'      => $user->teacherProfile->average_rating ?? 0
                     ])
                 );
+
+                $user->teachingSubjects()->sync($request->input('subject_ids', []));
 
                 DB::commit();
 
@@ -256,7 +269,9 @@ class TeacherProfileController extends Controller
         $request->validate([
             'title'               => 'required|string|max:255',
             'bio'                 => 'nullable|string',
-            'skills_tags'         => 'required|string',
+            'skills_tags'         => 'nullable|string',
+            'subject_ids'         => 'nullable|array',
+            'subject_ids.*'       => 'exists:subjects,id',
             'verification_status' => 'required|in:pending,approved,rejected',
             'cv_file'             => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'bank_name'           => 'required|string|max:100',
@@ -268,7 +283,7 @@ class TeacherProfileController extends Controller
         DB::beginTransaction();
 
         try {
-            $tagsArray = array_map('trim', explode(',', $request->skills_tags));
+            $tagsArray = array_map('trim', explode(',', $request->skills_tags ?? ''));
 
             $data = [
                 'title'               => $request->title,
@@ -288,6 +303,8 @@ class TeacherProfileController extends Controller
             }
 
             $profile->update($data);
+            $profile->user->teachingSubjects()->sync($request->input('subject_ids', []));
+            $profile->user->teachingSubjects()->sync($request->input('subject_ids', []));
 
             $profileUser = $profile->user;
             if ($request->verification_status === 'approved' && $profileUser) {

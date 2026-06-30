@@ -133,7 +133,7 @@
             @if (count($featuredCategories))
             <div class="gh-reveal sm:mt-10" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
                 <div class="gh-ref-category-grid mt-8"
-                    x-data="ghCategoryPicker(@js($featuredCategories))"
+                    x-data="ghCategoryPicker(@js($featuredCategories), @js($studentJenjangSlug))"
                     @keydown.escape.window="closeSheet()">
                     @foreach ($featuredCategories as $p)
                         <button type="button"

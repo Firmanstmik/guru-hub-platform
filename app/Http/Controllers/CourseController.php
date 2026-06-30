@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\AuthorizesCourseOwnership;
 use App\Http\Controllers\Controller;
 use App\Models\Categori; // Tetap menggunakan model Categori sesuai dengan relasi index Anda
 use App\Models\Course;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class CourseController extends Controller
             $user = Auth::user(); 
 
             // Eager loading relasi utama dan menghitung total siswa terdaftar
-            $query = Course::with(['teacher', 'category'])->withCount('students');
+            $query = Course::with(['teacher', 'category', 'subject', 'educationLevel'])->withCount('students');
 
             // Spatie: Jika bukan admin (berarti guru), batasi data hanya miliknya sendiri
             if (!$user->hasRole('admin')) {
@@ -47,6 +48,7 @@ class CourseController extends Controller
 
             // Data pendukung untuk modal Tambah/Edit Kelas
             $categories = Categori::orderBy('name')->get();
+            $subjects = Subject::active()->with(['category:id,name', 'educationLevel:id,name'])->ordered()->get();
 
             // Spatie: Efisiensi dropdown select guru di modal
             if ($user->hasRole('admin')) {
@@ -56,9 +58,9 @@ class CourseController extends Controller
             }
 
             if ($user->hasRole('admin')) {
-                return view('admin.courses', compact('courses', 'categories', 'teachers'));
+                return view('admin.courses', compact('courses', 'categories', 'teachers', 'subjects'));
             } elseif ($user->hasRole('guru')) {
-                return view('guru.courses', compact('courses', 'categories', 'teachers'));
+                return view('guru.courses', compact('courses', 'categories', 'teachers', 'subjects'));
             } else {
                 abort(403, 'Anda tidak memiliki hak akses untuk halaman ini.');
             }
@@ -77,17 +79,17 @@ class CourseController extends Controller
         // Validasi dengan custom pesan Bahasa Indonesia
         $validated = $request->validate([
             'teacher_id'  => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id',
+            'subject_id'  => 'required|exists:subjects,id',
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
             'status'      => 'required|in:draft,published,archived',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // Batas aman 5MB sesuai konfigurasi Docker
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ], [
             'teacher_id.required'  => 'Pengajar wajib dipilih.',
             'teacher_id.exists'    => 'Pengajar tidak valid atau tidak terdaftar di sistem.',
-            'category_id.required' => 'Kategori kelas wajib dipilih.',
-            'category_id.exists'   => 'Kategori yang dipilih tidak valid.',
+            'subject_id.required' => 'Mata pelajaran & jenjang wajib dipilih.',
+            'subject_id.exists'   => 'Mata pelajaran yang dipilih tidak valid.',
             'title.required'       => 'Judul kelas tidak boleh dikosongkan.',
             'title.max'            => 'Judul kelas terlalu panjang, maksimal 255 karakter.',
             'description.required' => 'Deskripsi kelas wajib diisi.',
@@ -113,6 +115,10 @@ class CourseController extends Controller
                 $validated['cover_image'] = $uploadedPath;
             }
 
+            $subject = Subject::findOrFail($validated['subject_id']);
+            $validated['category_id'] = $subject->category_id;
+            $validated['education_level_id'] = $subject->education_level_id;
+
             Course::create($validated);
 
             return redirect()->back()->with('success', 'Kelas baru berhasil ditambahkan oleh sistem!');
@@ -136,15 +142,15 @@ class CourseController extends Controller
         // Validasi dengan custom pesan Bahasa Indonesia
         $validated = $request->validate([
             'teacher_id'  => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id',
+            'subject_id'  => 'required|exists:subjects,id',
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
             'status'      => 'required|in:draft,published,archived',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120', // Batas aman 5MB sesuai konfigurasi Docker
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ], [
             'teacher_id.required'  => 'Pengajar wajib ditentukan.',
-            'category_id.required' => 'Kategori kelas wajib ditentukan.',
+            'subject_id.required' => 'Mata pelajaran & jenjang wajib ditentukan.',
             'title.required'       => 'Judul kelas tidak boleh kosong.',
             'description.required' => 'Deskripsi kelas tidak boleh kosong.',
             'price.required'       => 'Harga kelas wajib diisi.',
@@ -167,6 +173,10 @@ class CourseController extends Controller
                 $newUploadedPath = $request->file('cover_image')->store('courses/covers', 'public');
                 $validated['cover_image'] = $newUploadedPath;
             }
+
+            $subject = Subject::findOrFail($validated['subject_id']);
+            $validated['category_id'] = $subject->category_id;
+            $validated['education_level_id'] = $subject->education_level_id;
 
             $course->update($validated);
 
