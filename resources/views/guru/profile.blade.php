@@ -83,6 +83,19 @@
                     </div>
                 </div>
 
+                @if (($user->teachingSubjects ?? collect())->isNotEmpty())
+                <div class="space-y-2 text-left">
+                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mapel & Jenjang</h4>
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach ($user->teachingSubjects as $ts)
+                            <span class="px-2 py-1 bg-indigo-50 text-indigo-700 font-bold border border-indigo-100 rounded-lg text-[10px]">
+                                {{ $ts->educationLevel?->name }} · {{ $ts->name }}
+                            </span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 <div class="pt-2 text-left border-t border-gray-50">
                     <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Berkas Pendukung</h4>
                     @if (isset($profile) && $profile->cv_file)
