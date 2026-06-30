@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Course extends Model
 {
-    protected $fillable = ['teacher_id', 'category_id', 'title', 'description', 'cover_image', 'price', 'status'];
+    protected $fillable = ['teacher_id', 'category_id', 'subject_id', 'education_level_id', 'title', 'description', 'cover_image', 'price', 'status'];
 
     public function teacher(): BelongsTo
     {
@@ -19,6 +19,16 @@ class Course extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Categori::class, 'category_id');
+    }
+
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    public function educationLevel(): BelongsTo
+    {
+        return $this->belongsTo(EducationLevel::class);
     }
 
     public function materials(): HasMany

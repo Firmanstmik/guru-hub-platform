@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HomepageTestimonial;
 use App\Models\Certificate;
 use App\Models\Categori;
 use App\Models\ClassSchedule;
 use App\Models\Course;
+use App\Models\EducationLevel;
 use App\Models\Review;
 use App\Models\User;
+use App\Support\CategoryIcons;
 use App\Support\MediaDefaults;
 use Illuminate\Support\Facades\DB;
 
@@ -20,7 +23,7 @@ class LandingPageController extends Controller
         $categories = Categori::orderBy('name')->pluck('name')->prepend('Semua')->values();
         $dashboard = $this->buildDashboardPreview();
         $testimonials = $this->buildTestimonials();
-        $partners = $this->buildLearningDomains();
+        $featuredCategories = $this->buildFeaturedCategories();
 
         return view('landingpage.home', compact(
             'stats',
@@ -28,7 +31,7 @@ class LandingPageController extends Controller
             'categories',
             'dashboard',
             'testimonials',
-            'partners',
+            'featuredCategories',
         ));
     }
 
@@ -190,6 +193,19 @@ class LandingPageController extends Controller
 
     private function buildTestimonials()
     {
+        $curated = HomepageTestimonial::active()->ordered()->take(8)->get();
+
+        if ($curated->isNotEmpty()) {
+            return $curated->map(fn (HomepageTestimonial $item) => [
+                'name' => $item->name,
+                'role' => $item->role_title,
+                'quote' => $item->quote,
+                'rating' => (int) $item->rating,
+                'from' => $item->gradient_from,
+                'to' => $item->gradient_to,
+            ]);
+        }
+
         return Review::query()
             ->whereNotNull('comment')
             ->where('comment', '!=', '')
@@ -211,33 +227,73 @@ class LandingPageController extends Controller
                         ? 'Siswa · ' . $review->course->title
                         : 'Pengguna GuruHub',
                     'quote' => $review->comment,
+                    'rating' => (int) ($review->rating ?? 5),
                     'from' => $g['from'],
                     'to' => $g['to'],
                 ];
             });
     }
 
-    private function buildLearningDomains(): array
+    private function buildFeaturedCategories(): array
     {
-        $palette = [
-            ['from' => '#3B82F6', 'to' => '#0E7490'],
-            ['from' => '#1E40AF', 'to' => '#22D3EE'],
-            ['from' => '#14B8A6', 'to' => '#0E7490'],
-            ['from' => '#3B82F6', 'to' => '#22D3EE'],
-            ['from' => '#0E7490', 'to' => '#14B8A6'],
-        ];
-
-        $categories = Categori::orderBy('name')->take(5)->get();
+        $categories = Categori::query()
+            ->active()
+            ->featured()
+            ->ordered()
+            ->take(12)
+            ->get();
 
         if ($categories->isEmpty()) {
-            return [];
+            $categories = collect([
+                ['name' => 'Matematika', 'slug' => 'matematika'],
+                ['name' => 'Bahasa Indonesia', 'slug' => 'bahasa-indonesia'],
+                ['name' => 'Bahasa Inggris', 'slug' => 'bahasa-inggris'],
+                ['name' => 'Bahasa Jepang', 'slug' => 'bahasa-jepang'],
+                ['name' => 'IPA', 'slug' => 'ipa'],
+                ['name' => 'IPS', 'slug' => 'ips'],
+                ['name' => 'Informatika', 'slug' => 'informatika'],
+                ['name' => 'Mengaji', 'slug' => 'mengaji'],
+                ['name' => 'Musik / Vokal', 'slug' => 'musik-vokal'],
+                ['name' => 'Seni & Menggambar', 'slug' => 'seni-menggambar'],
+                ['name' => 'Persiapan UTBK', 'slug' => 'persiapan-utbk'],
+                ['name' => 'Olimpiade', 'slug' => 'olimpiade'],
+            ])->map(fn (array $row) => (object) $row);
         }
 
-        return $categories->values()->map(function ($cat, int $i) use ($palette) {
+        return $categories->map(function ($cat) {
+            $meta = CategoryIcons::meta($cat->slug);
+            $categoryId = $cat instanceof Categori
+                ? $cat->id
+                : Categori::where('slug', $cat->slug)->value('id');
+
+            $levels = [];
+            if ($categoryId) {
+                $levels = EducationLevel::query()
+                    ->active()
+                    ->ordered()
+                    ->whereHas('subjects', fn ($q) => $q->active()->where('category_id', $categoryId))
+                    ->withCount(['subjects as subjects_count' => fn ($q) => $q->active()->where('category_id', $categoryId)])
+                    ->get()
+                    ->map(fn (EducationLevel $level) => [
+                        'name' => $level->name,
+                        'slug' => $level->slug,
+                        'icon' => CategoryIcons::levelIcon($level->slug),
+                        'subjects_count' => (int) $level->subjects_count,
+                        'url' => route('browse.subjects', ['category' => $cat->slug, 'level' => $level->slug]),
+                    ])
+                    ->values()
+                    ->all();
+            }
+
             return [
                 'name' => $cat->name,
-                'from' => $palette[$i % count($palette)]['from'],
-                'to' => $palette[$i % count($palette)]['to'],
+                'slug' => $cat->slug,
+                'icon' => $meta['icon'],
+                'from' => $meta['from'],
+                'to' => $meta['to'],
+                'tagline' => $meta['tagline'],
+                'levels' => $levels,
+                'browse_url' => route('browse.category', $cat->slug),
             ];
         })->all();
     }

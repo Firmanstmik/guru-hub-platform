@@ -82,47 +82,79 @@
 
         /* ── Hero ── */
         .gh-ref-hero {
-            @apply pb-6 pt-[4.5rem];
+            @apply isolate pb-8 pt-[4.5rem];
+        }
+
+        .gh-ref-hero-bg,
+        .gh-ref-hero-grid,
+        .gh-ref-topo-wrap {
+            z-index: 0 !important;
+        }
+
+        .gh-ref-topo-wrap {
+            @apply hidden;
+        }
+
+        .gh-ref-hero-grid {
+            opacity: 0.22;
         }
 
         .gh-ref-container-wide,
         .gh-ref-container {
-            @apply max-w-lg px-4;
+            @apply max-w-lg px-5;
+        }
+
+        .gh-ref-container-wide.relative {
+            @apply relative z-10;
         }
 
         .gh-ref-glass-badge {
-            @apply px-3 py-1 text-[0.6875rem] font-medium;
+            @apply mx-auto inline-flex justify-center px-3 py-1 text-[0.6875rem] font-medium;
+        }
+
+        .gh-ref-hero-copy {
+            @apply mx-auto w-full max-w-[17.5rem] text-center;
         }
 
         .gh-ref-hero-title {
-            @apply mt-4 text-[1.625rem] leading-[1.08] tracking-[-0.03em];
+            @apply mt-4 text-center text-[1.625rem] leading-[1.08] tracking-[-0.03em];
         }
 
         .gh-ref-hero-lead {
-            @apply mt-3.5 max-w-none text-[0.875rem] leading-[1.6] text-white/68;
+            @apply mx-auto mt-3.5 max-w-none text-center text-[0.875rem] leading-[1.6] text-white/68;
         }
 
         .gh-ref-hero-ctas {
-            @apply mt-5 flex flex-col gap-2;
+            @apply mx-auto mt-4 flex w-full max-w-[17.5rem] flex-col gap-2;
         }
 
         .gh-ref-btn-hero-primary,
         .gh-ref-btn-hero-outline {
-            @apply h-10 w-full justify-center rounded-xl text-[0.8125rem] font-semibold;
+            @apply h-9 w-full justify-center gap-1.5 rounded-xl px-3 text-[0.75rem] font-semibold leading-tight;
         }
 
         .gh-ref-btn-hero-primary svg,
         .gh-ref-btn-hero-outline svg {
-            @apply h-3.5 w-3.5;
+            @apply h-3 w-3 shrink-0;
         }
 
-        /* Dashboard mockup — scaled premium on mobile */
+        /* Dashboard mockup — centered compact app card */
         .gh-landing-dash-wrap {
-            @apply mt-5 w-full;
+            position: relative;
+            z-index: 20;
+            isolation: isolate;
+            width: 100%;
+            max-width: 17.5rem;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1rem;
         }
 
         .gh-landing-dash-wrap .gh-ref-scene-3d {
             perspective: none;
+            width: 100%;
+            max-width: 100%;
+            align-items: center;
         }
 
         .gh-landing-dash-wrap .gh-ref-tilt-main {
@@ -130,28 +162,312 @@
         }
 
         .gh-landing-dash-wrap .gh-ref-dash-card {
-            @apply rounded-2xl p-2;
+            @apply relative z-10 rounded-xl p-1.5;
+            background: linear-gradient(180deg, rgb(15 28 68 / 0.98), rgb(8 16 42 / 0.99));
             box-shadow:
-                0 24px 56px -28px rgb(0 0 0 / 0.65),
+                0 16px 40px -24px rgb(0 0 0 / 0.6),
                 inset 0 1px 0 rgb(255 255 255 / 0.05);
         }
 
-        .gh-landing-dash-side-stack .gh-ref-glass-side {
+        .gh-dash-mobile-tabs {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .gh-dash-mobile-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gh-landing-dash-side-stack {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            max-width: 17.5rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .gh-landing-dash-side-stack > p {
+            text-align: center;
+            font-size: 0.625rem;
+            line-height: 1.3;
+        }
+
+        .gh-landing-dash-widgets {
+            display: flex;
+            width: 100%;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .gh-landing-dash-widgets::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gh-landing-dash-widgets .gh-ref-glass-side {
+            flex: 0 0 100%;
+            width: 100%;
+            max-width: 100%;
+            scroll-snap-align: center;
             transform: none !important;
             animation: none !important;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(180deg, rgb(18 32 74 / 0.99), rgb(10 18 48 / 1));
+            border: 1px solid rgb(255 255 255 / 0.14);
+            box-shadow: 0 12px 32px -20px rgb(0 0 0 / 0.55);
         }
 
-        .gh-ref-hero .gh-ref-container-wide {
-            @apply gap-6;
+        @media (min-width: 1024px) {
+            .gh-landing-dash-wrap {
+                max-width: none;
+            }
+
+            .gh-landing-dash-side-stack {
+                max-width: none;
+            }
+
+            .gh-landing-dash-widgets {
+                @apply flex-col overflow-visible;
+            }
+
+            .gh-landing-dash-widgets .gh-ref-glass-side {
+                flex: 1 1 auto;
+            }
         }
 
-        .gh-ref-topo-wrap {
-            @apply h-[100px];
+        /* ── Perjalanan belajar — horizontal app carousel ── */
+        #perjalanan .gh-ref-journey-list {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            gap: 0.625rem;
+            margin-left: -0.25rem;
+            margin-right: -0.25rem;
+            margin-top: 0;
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+            padding-bottom: 0.5rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #perjalanan .gh-ref-journey-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        #perjalanan .gh-ref-journey-item {
+            flex: 0 0 68%;
+            max-width: 68%;
+            scroll-snap-align: center;
+        }
+
+        #perjalanan .gh-ref-journey-card {
+            height: 100%;
+            border-radius: 1rem;
+            border: 1px solid rgb(10 26 79 / 0.08);
+            background: #fff;
+            padding: 0.875rem;
+            box-shadow:
+                0 1px 0 #fff inset,
+                0 10px 28px -20px rgb(10 26 79 / 0.18);
+        }
+
+        #perjalanan .gh-ref-journey-card .gh-ref-step-num {
+            height: 2.25rem;
+            width: 2.25rem;
+            font-size: 0.75rem;
+        }
+
+        #perjalanan .gh-ref-journey-card h3 {
+            margin-top: 0.625rem;
+            font-size: 0.875rem !important;
+        }
+
+        #perjalanan .gh-ref-journey-card p {
+            font-size: 0.75rem;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 640px) {
+            #perjalanan .gh-ref-journey-list {
+                display: grid !important;
+                flex-wrap: unset !important;
+                margin-left: 0;
+                margin-right: 0;
+                padding-left: 0;
+                padding-right: 0;
+                overflow: visible;
+            }
+
+            #perjalanan .gh-ref-journey-item {
+                flex: unset;
+                max-width: none;
+            }
+        }
+
+        #perjalanan .gh-ref-display {
+            font-size: 1.25rem !important;
+        }
+
+        #perjalanan .gh-ref-muted.mt-4 {
+            @apply text-center text-[0.8125rem];
+        }
+
+        #perjalanan .gh-ref-section-head,
+        #testimoni .gh-ref-section-head {
+            @apply text-center;
+        }
+
+        /* ── Testimoni beranda — horizontal carousel ── */
+        .gh-ref-testimonial-track {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            gap: 0.75rem;
+            margin-left: -0.25rem;
+            margin-right: -0.25rem;
+            padding: 0.25rem 0.25rem 0.5rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .gh-ref-testimonial-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gh-ref-testimonial-card {
+            flex: 0 0 82%;
+            max-width: 82%;
+            scroll-snap-align: center;
+            padding: 1rem !important;
+        }
+
+        .gh-ref-testimonial-card blockquote {
+            font-size: 0.8125rem !important;
+            line-height: 1.55 !important;
+        }
+
+        @media (min-width: 768px) {
+            .gh-ref-testimonial-track {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                overflow: visible;
+                margin: 0;
+                padding: 0;
+            }
+
+            .gh-ref-testimonial-card {
+                flex: unset;
+                max-width: none;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .gh-ref-testimonial-track {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        /* ── CTA Mulai Hari Ini — mobile app style ── */
+        .gh-ref-cta-wrap {
+            border-radius: 1.25rem;
+            padding: 1.25rem 1rem !important;
+            text-align: center;
+        }
+
+        .gh-ref-cta-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .gh-ref-cta-copy {
+            width: 100%;
+            max-width: 20rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .gh-ref-cta-copy h2 {
+            font-size: 1.25rem !important;
+            line-height: 1.15 !important;
+        }
+
+        .gh-ref-cta-copy p:last-child {
+            font-size: 0.8125rem !important;
+        }
+
+        .gh-ref-cta-actions {
+            display: flex;
+            width: 100%;
+            max-width: 17.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .gh-ref-btn-cta-primary,
+        .gh-ref-btn-cta-ghost {
+            height: 2.75rem;
+            width: 100%;
+            border-radius: 0.875rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .gh-ref-btn-cta-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            color: #fff;
+            background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 55%, #0e7490 100%);
+            box-shadow: 0 12px 28px -14px rgb(34 211 238 / 0.55);
+        }
+
+        .gh-ref-btn-cta-ghost {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgb(255 255 255 / 0.22);
+            background: rgb(255 255 255 / 0.08);
+            color: #fff;
+        }
+
+        .gh-ref-btn-cta-primary svg {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+
+        .gh-ref-audience-grid {
+            @apply -mx-4 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:overflow-visible sm:px-0 sm:pb-0;
+            scroll-snap-type: x mandatory;
+        }
+
+        .gh-ref-audience-grid > * {
+            flex: 0 0 78%;
+            scroll-snap-align: start;
+        }
+
+        @media (min-width: 640px) {
+            .gh-ref-audience-grid > * {
+                flex: unset;
+            }
         }
 
         /* ── Partners ── */
         .gh-ref-partners {
-            @apply py-8;
+            @apply relative z-10 py-8;
         }
 
         .gh-ref-partners h2 {
@@ -167,16 +483,57 @@
             letter-spacing: 0.18em;
         }
 
+        .gh-ref-light-zone {
+            @apply relative z-10;
+        }
+
+        .gh-ref-partners .mt-12.grid {
+            @apply -mx-4 flex gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:overflow-visible md:px-0 md:pb-0;
+            scroll-snap-type: x mandatory;
+        }
+
+        .gh-ref-category-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.625rem;
+            width: 100%;
+            max-width: 20rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (min-width: 640px) {
+            .gh-ref-category-grid {
+                max-width: 36rem;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.75rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .gh-ref-category-grid {
+                max-width: 48rem;
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+        }
+
         .gh-ref-partner-tile {
-            @apply flex-col gap-2 rounded-xl px-3 py-3.5 text-center;
+            @apply flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-[#0A1A4F]/[0.08] bg-white px-2 py-3 text-center transition;
+            box-shadow: 0 8px 24px -18px rgb(10 26 79 / 0.22);
+            font-family: inherit;
         }
 
-        .gh-ref-partner-tile span:first-child {
-            @apply h-9 w-9;
+        .gh-ref-partner-tile:active {
+            transform: scale(0.97);
         }
 
-        .gh-ref-partner-tile span:last-child {
-            @apply text-[0.75rem] font-semibold;
+        .gh-ref-cat-icon {
+            @apply h-9 w-9 rounded-xl;
+        }
+
+        .gh-ref-partner-label {
+            @apply text-[0.6875rem] font-semibold leading-tight text-[#0A1A4F];
+            font-family: var(--gh-font-ui);
         }
 
         .gh-ref-stat-gradient {
@@ -193,7 +550,16 @@
 
         /* ── Sections ── */
         .gh-ref-section {
-            @apply py-10;
+            @apply py-10 text-center;
+        }
+
+        .gh-ref-section .gh-ref-container > .max-w-2xl:not(.gh-ref-section-head) {
+            @apply mx-auto text-center;
+        }
+
+        .gh-ref-partners h2,
+        .gh-ref-partners > .gh-ref-container > p {
+            @apply text-center;
         }
 
         .gh-ref-display {
@@ -264,11 +630,12 @@
             @apply h-11 w-11 text-[0.875rem];
         }
 
-        .gh-ref-section ol li h3 {
+        .gh-ref-section ol.gh-ref-journey-list ~ .gh-ref-tl-line,
+        .gh-ref-section ol:not(.gh-ref-journey-list) li h3 {
             @apply text-[0.9375rem];
         }
 
-        .gh-ref-section ol li p {
+        .gh-ref-section ol:not(.gh-ref-journey-list) li p {
             @apply text-[0.8125rem];
         }
 
@@ -371,11 +738,11 @@
         }
 
         .gh-landing-dock-secondary {
-            @apply flex h-10 flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[0.8125rem] font-semibold text-white;
+            @apply flex h-9 flex-1 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-[0.75rem] font-semibold text-white;
         }
 
         .gh-landing-dock-primary {
-            @apply flex h-10 flex-[1.25] items-center justify-center gap-1.5 rounded-lg text-[0.8125rem] font-semibold text-white;
+            @apply flex h-9 flex-[1.25] items-center justify-center gap-1 rounded-lg text-[0.75rem] font-semibold text-white;
             background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 55%, #14b8a6 100%);
             box-shadow: 0 10px 28px -12px rgb(59 130 246 / 0.5);
         }

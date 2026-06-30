@@ -33,20 +33,20 @@
 
     {{-- Hero --}}
     <section class="gh-ref-hero" aria-labelledby="hero-title">
-        <div class="pointer-events-none absolute inset-0">
+        <div class="gh-ref-hero-bg pointer-events-none absolute inset-0 z-0">
             <div class="absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full" style="background:radial-gradient(circle,rgba(59,130,246,0.35),transparent 60%);filter:blur(40px)"></div>
             <div class="absolute top-10 right-0 h-[700px] w-[700px] rounded-full" style="background:radial-gradient(circle,rgba(34,211,238,0.28),transparent 60%);filter:blur(60px)"></div>
             <div class="absolute bottom-0 left-1/4 h-[500px] w-[500px] rounded-full" style="background:radial-gradient(circle,rgba(20,184,166,0.22),transparent 60%);filter:blur(60px)"></div>
         </div>
-        <div class="gh-ref-hero-grid" aria-hidden="true"></div>
-        <div class="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true">
+        <div class="gh-ref-hero-grid z-0" aria-hidden="true"></div>
+        <div class="pointer-events-none absolute inset-0 z-0 opacity-70" aria-hidden="true">
             @foreach ([['12%','18%'],['62%','10%'],['78%','22%'],['88%','38%'],['48%','8%'],['30%','30%'],['92%','60%']] as $s)
                 <span class="gh-ref-star" style="left:{{ $s[0] }};top:{{ $s[1] }}"></span>
             @endforeach
         </div>
 
-        <div class="gh-ref-container-wide relative grid items-center gap-10 lg:grid-cols-12">
-            <div class="lg:col-span-5 gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
+        <div class="gh-ref-container-wide relative z-10 flex flex-col items-center gap-4 lg:grid lg:grid-cols-12 lg:items-center lg:gap-10">
+            <div class="gh-ref-hero-copy lg:col-span-5 gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
                 <div class="gh-ref-glass-badge">
                     <span class="h-1.5 w-1.5 rounded-full bg-[#22D3EE] shadow-[0_0_10px_#22D3EE]"></span>
                     Platform pembelajaran untuk <span class="font-semibold text-[#60A5FA]">Indonesia</span>
@@ -71,10 +71,10 @@
                 </div>
             </div>
 
-            <x-landing.dashboard-mockup :dashboard="$dashboard" :logo="$logo" class="relative lg:col-span-7" />
+            <x-landing.dashboard-mockup :dashboard="$dashboard" :logo="$logo" class="relative z-10 lg:col-span-7" />
         </div>
 
-        <div class="gh-ref-topo-wrap" aria-hidden="true">
+        <div class="gh-ref-topo-wrap z-0" aria-hidden="true">
             <div class="absolute inset-0" style="background:radial-gradient(120% 80% at 8% 100%, rgba(20,184,166,0.32), transparent 60%),radial-gradient(120% 80% at 92% 100%, rgba(34,211,238,0.32), transparent 60%);"></div>
             <svg class="absolute inset-x-0 bottom-0 h-[260px] w-full" viewBox="0 0 1440 260" preserveAspectRatio="none">
                 <defs>
@@ -95,30 +95,41 @@
                 <span class="gh-ref-eyebrow">Kepercayaan Mitra</span>
                 <span class="h-px w-10 bg-[#0A1A4F]/15"></span>
             </div>
-            <h2 class="text-center text-[28px] font-extrabold tracking-tight text-[#0A1A4F] sm:text-[34px]" style="font-family:var(--gh-font-ui)">
-                @if (count($partners))
-                    Bidang pembelajaran unggulan di GuruHub
+            <h2 class="mx-auto max-w-sm text-center text-[1.375rem] font-extrabold leading-[1.15] tracking-tight text-[#0A1A4F] sm:text-[34px]" style="font-family:var(--gh-font-ui)">
+                @if (count($featuredCategories))
+                    Mata pelajaran populer di GuruHub
                 @else
                     Platform pembelajaran terpercaya
                 @endif
             </h2>
-            <p class="mx-auto mt-3 max-w-xl text-center text-[15px] text-[#0A1A4F]/55" style="font-family:var(--gh-font-ui)">
-                @if (count($partners))
-                    Kategori kursus yang dikurasi langsung dari data admin — siap untuk siswa dan pengajar.
+            <p class="mx-auto mt-3 max-w-sm text-center text-[0.8125rem] leading-relaxed text-[#0A1A4F]/55 sm:max-w-xl sm:text-[15px]" style="font-family:var(--gh-font-ui)">
+                @if (count($featuredCategories))
+                    Pilih mapel yang kamu butuhkan — SD, SMP, SMA, persiapan ujian, dan minat bakat.
                 @else
                     Bergabung bersama komunitas belajar yang terus berkembang di Indonesia.
                 @endif
             </p>
-            @if (count($partners))
-            <div class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
-                @foreach ($partners as $p)
-                    <div class="gh-ref-partner-tile">
-                        <span class="grid h-10 w-10 place-items-center rounded-xl text-white shadow-[0_6px_18px_-6px_rgba(59,130,246,0.55)]" style="background:linear-gradient(135deg,{{ $p['from'] }},{{ $p['to'] }})">
-                            <x-ui.lucide name="book-open" class="h-5 w-5" />
-                        </span>
-                        <span class="font-semibold text-[#0A1A4F]" style="font-family:var(--gh-font-ui)">{{ $p['name'] }}</span>
-                    </div>
-                @endforeach
+            @if (count($featuredCategories))
+            <div class="gh-reveal sm:mt-10" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
+                <div class="gh-ref-category-grid mt-8"
+                    x-data="ghCategoryPicker(@js($featuredCategories))"
+                    @keydown.escape.window="closeSheet()">
+                    @foreach ($featuredCategories as $p)
+                        <button type="button"
+                            class="gh-ref-partner-tile"
+                            @click="openCategory(@js($p['slug']))"
+                            aria-label="Buka {{ $p['name'] }}">
+                            <x-browse.category-icon
+                                :icon="$p['icon']"
+                                :from="$p['from']"
+                                :to="$p['to']"
+                                size="sm"
+                            />
+                            <span class="gh-ref-partner-label">{{ $p['name'] }}</span>
+                        </button>
+                    @endforeach
+                    <x-browse.category-sheet />
+                </div>
             </div>
             @endif
             <div class="mt-14 grid grid-cols-2 gap-6 md:grid-cols-4">
@@ -197,14 +208,17 @@
                     <h2 class="gh-ref-display mt-3 text-[34px] leading-[1.05] sm:text-5xl">Dari rasa ingin tahu menuju <span class="italic text-[#0E7490]">sertifikasi.</span></h2>
                     <p class="gh-ref-muted mt-4 text-[15px]">Lima langkah yang dirancang untuk membawa setiap siswa dari pendaftaran hingga pencapaian nyata.</p>
                 </div>
-                <div class="relative mt-12 sm:mt-14 gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
+                <div class="relative mt-6 sm:mt-14 gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
                     <div class="gh-ref-tl-line" aria-hidden="true"></div>
-                    <ol class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-5 sm:gap-8">
+                    <p class="gh-journey-swipe-hint mb-2 text-[10px] font-medium text-[#0e7490]/70 lg:hidden">Geser untuk lihat langkah →</p>
+                    <ol class="gh-ref-journey-list sm:grid sm:grid-cols-2 md:grid-cols-5 sm:gap-8">
                         @foreach ($journeySteps as $step)
-                            <li>
-                                <div @class(['gh-ref-step-num', 'gh-ref-step-num-last' => !empty($step['last'])])>{{ $step['num'] }}</div>
-                                <h3 class="gh-ref-display mt-4 text-[19px]">{{ $step['label'] }}</h3>
-                                <p class="gh-ref-muted mt-1 text-[14px]">{{ $step['desc'] }}</p>
+                            <li class="gh-ref-journey-item">
+                                <div class="gh-ref-journey-card">
+                                    <div @class(['gh-ref-step-num', 'gh-ref-step-num-last' => !empty($step['last'])])>{{ $step['num'] }}</div>
+                                    <h3 class="gh-ref-display mt-3 text-[19px]">{{ $step['label'] }}</h3>
+                                    <p class="gh-ref-muted mt-1 text-[14px]">{{ $step['desc'] }}</p>
+                                </div>
                             </li>
                         @endforeach
                     </ol>
@@ -225,7 +239,7 @@
                         <div><p class="gh-ref-stat-num text-[28px] font-semibold sm:text-[34px]">{{ $fmtStat((int) $stats['courses']) }}</p><p class="gh-ref-muted mt-1 text-[12px]">Kursus</p></div>
                     </div>
                 </div>
-                <div class="grid gap-4 sm:grid-cols-2 lg:col-span-7">
+                <div class="gh-ref-audience-grid grid gap-4 sm:grid-cols-2 lg:col-span-7">
                     @foreach ($audienceCards as $i => $card)
                         <div class="gh-ref-l-card p-6 gh-reveal gh-reveal-delay-{{ $i + 1 }}" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
                             <div class="gh-ref-icon-bubble"><x-ui.lucide :name="$card['icon']" class="h-5 w-5" /></div>
@@ -239,21 +253,30 @@
 
         {{-- Testimonials --}}
         @if ($testimonials->isNotEmpty())
-        <section class="gh-ref-section border-t gh-ref-divider">
+        <section id="testimoni" class="gh-ref-section border-t gh-ref-divider">
             <div class="gh-ref-container">
-                <div class="max-w-2xl gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
-                    <p class="gh-ref-eyebrow">Suara komunitas</p>
-                    <h2 class="gh-ref-display mt-3 text-[34px] leading-[1.05] sm:text-5xl">Dipercaya oleh pendidik dan <span class="italic text-[#0E7490]">pemimpin institusi.</span></h2>
+                <div class="gh-ref-section-head gh-reveal mx-auto max-w-2xl text-center" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
+                    <p class="gh-ref-eyebrow">Apa kata mereka</p>
+                    <h2 class="gh-ref-display mt-3 text-[34px] leading-[1.05] sm:text-5xl">Cerita nyata dari <span class="italic text-[#0E7490]">komunitas GuruHub.</span></h2>
+                    <p class="gh-ref-muted mt-3 text-[15px]">Pengalaman siswa, pengajar, dan institusi yang sudah belajar bersama kami.</p>
                 </div>
-                <div class="mt-10 grid gap-5 md:grid-cols-3 sm:mt-12">
+                <p class="gh-testimonial-swipe-hint mt-6 text-center text-[10px] font-medium text-[#0e7490]/70 lg:hidden">Geser untuk baca testimoni lainnya →</p>
+                <div class="gh-ref-testimonial-track mt-3 sm:mt-10">
                     @foreach ($testimonials as $i => $t)
-                        <figure class="gh-ref-l-card p-7 gh-reveal gh-reveal-delay-{{ $i + 1 }}" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
-                            <svg class="gh-ref-quote-mark h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h4v4H8c0 3 2 4 3 4v3c-4 0-7-3-7-7V7zm9 0h4v4h-3c0 3 2 4 3 4v3c-4 0-7-3-7-7V7z"/></svg>
-                            <blockquote class="mt-4 text-[15px] leading-relaxed text-[#1F2A44]">"{{ $t['quote'] }}"</blockquote>
-                            <figcaption class="mt-6 flex items-center gap-3">
-                                <span class="h-10 w-10 shrink-0 rounded-full" style="background:linear-gradient(135deg,{{ $t['from'] }},{{ $t['to'] }})"></span>
-                                <div class="min-w-0">
-                                    <p class="text-[14px] font-semibold">{{ $t['name'] }}</p>
+                        <figure class="gh-ref-testimonial-card gh-ref-l-card gh-reveal gh-reveal-delay-{{ min($i + 1, 4) }}" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
+                            <div class="flex items-center justify-between gap-2">
+                                <svg class="gh-ref-quote-mark h-6 w-6 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 7h4v4H8c0 3 2 4 3 4v3c-4 0-7-3-7-7V7zm9 0h4v4h-3c0 3 2 4 3 4v3c-4 0-7-3-7-7V7z"/></svg>
+                                <div class="flex gap-0.5 text-amber-400" aria-label="Rating {{ $t['rating'] ?? 5 }} dari 5">
+                                    @for ($s = 1; $s <= 5; $s++)
+                                        <svg class="h-3 w-3 {{ $s <= ($t['rating'] ?? 5) ? 'text-amber-400' : 'text-amber-200' }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>
+                                    @endfor
+                                </div>
+                            </div>
+                            <blockquote class="mt-3 text-[14px] leading-relaxed text-[#1F2A44] sm:text-[15px]">"{{ $t['quote'] }}"</blockquote>
+                            <figcaption class="mt-5 flex items-center gap-3 border-t border-[#0A1A4F]/[0.06] pt-4">
+                                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-xs font-bold text-white" style="background:linear-gradient(135deg,{{ $t['from'] }},{{ $t['to'] }})">{{ strtoupper(substr($t['name'], 0, 1)) }}</span>
+                                <div class="min-w-0 text-left">
+                                    <p class="text-[14px] font-semibold text-[#0A1A4F]">{{ $t['name'] }}</p>
                                     <p class="gh-ref-muted truncate text-[12px]">{{ $t['role'] }}</p>
                                 </div>
                             </figcaption>
@@ -268,17 +291,20 @@
         <section class="gh-ref-section">
             <div class="gh-ref-container max-w-6xl">
                 <div class="gh-ref-cta-wrap gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
-                    <div class="grid items-center gap-8 lg:grid-cols-2">
-                        <div>
+                    <div class="gh-ref-cta-inner">
+                        <div class="gh-ref-cta-copy text-center lg:text-left">
                             <p class="text-[11px] font-bold tracking-[0.22em] text-[#5EEAD4] uppercase">Mulai hari ini</p>
                             <h2 class="gh-ref-display mt-3 text-[32px] leading-[1.05] text-white sm:text-5xl">
                                 Bangun masa depan pendidikan, <span class="italic text-[#5EEAD4]">satu pelajaran setiap hari.</span>
                             </h2>
-                            <p class="mt-4 max-w-lg text-[15px] text-white/75">Gratis untuk siswa. Powerful untuk pengajar. Enterprise-ready untuk institusi.</p>
+                            <p class="mx-auto mt-4 max-w-lg text-[15px] text-white/75 lg:mx-0">Gratis untuk siswa. Powerful untuk pengajar. Enterprise-ready untuk institusi.</p>
                         </div>
-                        <div class="flex flex-col gap-3 sm:flex-row lg:justify-end">
-                            <a href="{{ url('register/student') }}" class="gh-ref-btn-light-primary">Mulai Belajar Gratis</a>
-                            <a href="{{ url('register/teacher') }}" class="gh-ref-btn-light-ghost">Daftar sebagai Pengajar</a>
+                        <div class="gh-ref-cta-actions">
+                            <a href="{{ url('register/student') }}" class="gh-ref-btn-cta-primary">
+                                <span>Mulai Belajar Gratis</span>
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                            </a>
+                            <a href="{{ url('register/teacher') }}" class="gh-ref-btn-cta-ghost">Daftar sebagai Pengajar</a>
                         </div>
                     </div>
                 </div>

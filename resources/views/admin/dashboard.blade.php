@@ -1,15 +1,15 @@
-@extends('layout.template')
+﻿@extends('layout.template')
 @section('content')
     <div x-data="{ activeTab: 'semua' }" class="space-y-8 animate-fade-in">
 
         <div
             class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
             <div>
-                <h1 class="gh-page-title">
-                    Dashboard Admin
+                <h1 class="text-xl font-black text-gray-900 tracking-tight">
+                    Laporan Utama Sistem Admin
                 </h1>
-                <p class="gh-page-subtitle">
-                    Pantau transaksi, pengguna, dan kelayakan konten platform.
+                <p class="text-xs text-gray-400 font-medium mt-1">
+                    Akses penuh kendali sistem. Pantau transaksi keuangan, total pengguna, dan kelayakan konten kursus.
                 </p>
             </div>
         </div>
@@ -24,8 +24,10 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="gh-section-label block">Total Pendapatan Kotor</span>
-                    <span class="gh-stat-value">Rp {{ number_format($totalTransactions, 0, ',', '.') }}</span>
+                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total Pendapatan
+                        Kotor</span>
+                    <span class="text-lg font-black text-gray-900 leading-tight">Rp
+                        {{ number_format($totalTransactions, 0, ',', '.') }}</span>
                 </div>
             </div>
 
@@ -38,9 +40,10 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="gh-section-label block">Total Siswa</span>
-                    <span class="gh-stat-value">{{ number_format($totalStudents, 0, ',', '.') }}
-                        <span class="gh-body-sm font-normal">User</span></span>
+                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total Siswa</span>
+                    <span
+                        class="text-lg font-black text-gray-900 leading-tight">{{ number_format($totalStudents, 0, ',', '.') }}
+                        <span class="text-xs font-normal text-gray-400">User</span></span>
                 </div>
             </div>
 
@@ -52,8 +55,9 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="gh-section-label block">Total Mentor</span>
-                    <span class="gh-stat-value">{{ $totalTeachers }} <span class="gh-body-sm font-normal">Guru</span></span>
+                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Total Mentor</span>
+                    <span class="text-lg font-black text-gray-900 leading-tight">{{ $totalTeachers }} <span
+                            class="text-xs font-normal text-gray-400">Guru</span></span>
                 </div>
             </div>
 
@@ -65,8 +69,9 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="gh-section-label block">Kursus Aktif</span>
-                    <span class="gh-stat-value">{{ $totalCourses }} <span class="gh-body-sm font-normal">Kelas</span></span>
+                    <span class="text-[11px] text-gray-400 font-bold block uppercase tracking-wider">Kursus Aktif</span>
+                    <span class="text-lg font-black text-gray-900 leading-tight">{{ $totalCourses }} <span
+                            class="text-xs font-normal text-gray-400">Kelas</span></span>
                 </div>
             </div>
         </div>
@@ -74,7 +79,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             <div class="lg:col-span-2 space-y-4">
                 <div class="flex items-center justify-between">
-                    <h2 class="gh-section-label">
+                    <h2 class="text-sm font-black text-gray-900 uppercase tracking-wide">
                         Log Masuk Dana Transaksi Belajar Terbaru
                     </h2>
                     <a href="/payments" class="text-xs font-bold text-indigo-600 hover:underline">
@@ -129,7 +134,7 @@
                 </div>
             </div>
             <div class="space-y-4">
-                <h2 class="gh-section-label">
+                <h2 class="text-sm font-black text-gray-900 uppercase tracking-wide">
                     Verifikasi (Approval)
                 </h2>
 

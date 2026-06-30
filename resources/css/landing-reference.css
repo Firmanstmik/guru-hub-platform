@@ -129,7 +129,7 @@
 
     /* ── Hero (dark zone) ── */
     .gh-ref-hero {
-        @apply relative overflow-hidden pt-[140px] pb-28 lg:pt-[160px] lg:pb-32;
+        @apply relative isolate overflow-hidden pt-[140px] pb-28 lg:pt-[160px] lg:pb-32;
         background:
             radial-gradient(60% 50% at 80% 20%, rgb(34 211 238 / 0.18), transparent 60%),
             radial-gradient(50% 50% at 10% 30%, rgb(59 130 246 / 0.22), transparent 60%),
@@ -262,7 +262,7 @@
     .gh-ref-floaty-d2 { animation-delay: 2.4s; }
 
     .gh-ref-topo-wrap {
-        @apply pointer-events-none absolute right-0 bottom-0 left-0 h-[280px] overflow-hidden;
+        @apply pointer-events-none absolute right-0 bottom-0 left-0 z-0 h-[280px] overflow-hidden;
     }
 
     /* ── Partners (white band) ── */
@@ -283,21 +283,142 @@
     }
 
     .gh-ref-partner-tile {
-        @apply flex items-center justify-center gap-3 rounded-2xl px-5 py-6;
-        background: #fff;
+        @apply flex flex-col items-center justify-center gap-2 rounded-2xl border-0 bg-white px-3 py-4 text-center no-underline transition cursor-pointer;
         border: 1px solid rgb(10 26 79 / 0.08);
         box-shadow:
             0 1px 0 #fff inset,
             0 10px 30px -18px rgb(10 26 79 / 0.18);
-        transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.4s, border-color 0.4s;
+        font-family: inherit;
+    }
+
+    .gh-ref-cat-icon {
+        box-shadow: 0 10px 24px -14px rgb(14 116 144 / 0.45);
+    }
+
+    /* Category picker sheet */
+    body.gh-sheet-open {
+        overflow: hidden;
+    }
+
+    .gh-cat-sheet-root {
+        @apply fixed inset-0 z-[200] flex items-end justify-center lg:items-center lg:p-6;
+    }
+
+    .gh-cat-sheet-backdrop {
+        @apply absolute inset-0 bg-[#0A1A4F]/55 backdrop-blur-sm;
+    }
+
+    .gh-cat-sheet-panel {
+        @apply relative z-10 w-full max-w-md rounded-t-[1.5rem] bg-white px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3 lg:rounded-[1.5rem] lg:p-6;
+        box-shadow: 0 -24px 60px -20px rgb(10 26 79 / 0.35);
+    }
+
+    .gh-cat-sheet-handle {
+        @apply mx-auto mb-4 h-1 w-10 rounded-full bg-[#0A1A4F]/15;
+    }
+
+    .gh-cat-sheet-close {
+        @apply grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#0A1A4F]/10 bg-[#F8FAFC] text-[#0A1A4F];
+    }
+
+    .gh-cat-sheet-level {
+        @apply flex w-full items-center gap-3 rounded-2xl border border-[#0A1A4F]/[0.08] bg-[#F8FAFC] px-3.5 py-3 text-left transition;
+    }
+
+    .gh-cat-sheet-level:hover {
+        border-color: rgb(14 116 144 / 0.35);
+        background: #fff;
+    }
+
+    .gh-cat-sheet-level-badge {
+        @apply grid h-10 w-10 shrink-0 place-items-center rounded-xl text-[0.6875rem] font-bold text-white;
+        background: linear-gradient(135deg, #0e7490, #22d3ee);
+    }
+
+    .gh-cat-sheet-cta {
+        @apply flex h-11 w-full items-center justify-center rounded-xl text-[0.875rem] font-semibold text-white;
+        background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 60%, #14b8a6 100%);
+        box-shadow: 0 12px 28px -14px rgb(34 211 238 / 0.55);
+    }
+
+    .gh-cat-sheet-link {
+        @apply flex h-10 w-full items-center justify-center rounded-xl border border-[#0A1A4F]/10 text-[0.8125rem] font-semibold text-[#0A1A4F];
+    }
+
+    .gh-browse-level-icon {
+        @apply grid h-11 w-11 place-items-center rounded-xl bg-[#F0F9FF];
     }
 
     .gh-ref-partner-tile:hover {
-        transform: translateY(-4px);
+        transform: translateY(-3px);
         border-color: rgb(34 211 238 / 0.45);
         box-shadow:
-            0 22px 40px -22px rgb(34 211 238 / 0.45),
-            0 0 0 1px rgb(34 211 238 / 0.18);
+            0 18px 36px -20px rgb(34 211 238 / 0.4),
+            0 0 0 1px rgb(34 211 238 / 0.15);
+    }
+
+    .gh-ref-partner-emoji {
+        font-size: 1.75rem;
+        line-height: 1;
+    }
+
+    .gh-ref-partner-label {
+        font-family: var(--gh-font-ui);
+        @apply text-[0.8125rem] font-semibold leading-snug text-[#0A1A4F];
+    }
+
+    .gh-ref-category-grid {
+        @apply grid w-full gap-3;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (min-width: 640px) {
+        .gh-ref-category-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .gh-ref-category-grid {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+    }
+
+    /* Browse flow */
+    .gh-browse-page .gh-browse-hero {
+        @apply bg-white pt-24 pb-16 text-[#0a1a4f];
+    }
+
+    .gh-browse-head {
+        @apply mx-auto max-w-2xl text-center;
+    }
+
+    .gh-browse-level-card {
+        @apply flex flex-col items-center justify-center rounded-2xl border border-[#0A1A4F]/[0.08] bg-white px-3 py-5 text-center transition;
+        box-shadow: 0 10px 30px -20px rgb(10 26 79 / 0.15);
+    }
+
+    .gh-browse-level-card:hover {
+        border-color: rgb(14 116 144 / 0.35);
+        transform: translateY(-2px);
+    }
+
+    .gh-browse-teacher-card {
+        @apply flex items-center gap-3 rounded-2xl border border-[#0A1A4F]/[0.08] bg-white px-4 py-3.5 transition;
+        box-shadow: 0 8px 24px -18px rgb(10 26 79 / 0.12);
+    }
+
+    .gh-browse-teacher-card:hover {
+        border-color: rgb(14 116 144 / 0.3);
+    }
+
+    .gh-browse-teacher-avatar {
+        @apply grid h-11 w-11 shrink-0 place-items-center rounded-full text-sm font-bold text-white;
+        background: linear-gradient(135deg, #14b8a6, #0e7490);
+    }
+
+    .gh-browse-empty {
+        @apply rounded-2xl border border-dashed border-[#0A1A4F]/15 bg-[#f8fafc] px-5 py-8 text-center;
     }
 
     .gh-ref-stat-gradient {
@@ -481,6 +602,44 @@
     .gh-ref-btn-light-ghost:hover {
         border-color: #0e7490;
         color: #0e7490;
+    }
+
+    .gh-ref-testimonial-track {
+        @apply grid gap-5 md:grid-cols-2 lg:grid-cols-3;
+    }
+
+    .gh-ref-testimonial-card {
+        @apply flex h-full flex-col p-6 sm:p-7;
+    }
+
+    .gh-ref-cta-inner {
+        @apply grid items-center gap-8 lg:grid-cols-2;
+    }
+
+    .gh-ref-cta-actions {
+        @apply flex flex-col gap-3 sm:flex-row lg:justify-end;
+    }
+
+    .gh-ref-btn-cta-primary {
+        @apply inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-2xl px-6 text-center text-sm font-semibold text-white transition sm:w-auto;
+        background: linear-gradient(135deg, #22d3ee 0%, #14b8a6 55%, #0e7490 100%);
+        box-shadow:
+            0 16px 40px -14px rgb(34 211 238 / 0.55),
+            inset 0 1px 0 rgb(255 255 255 / 0.28);
+    }
+
+    .gh-ref-btn-cta-primary:hover {
+        filter: brightness(1.06);
+        transform: translateY(-1px);
+    }
+
+    .gh-ref-btn-cta-ghost {
+        @apply inline-flex h-[52px] w-full items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-6 text-center text-sm font-semibold text-white backdrop-blur-sm transition sm:w-auto;
+    }
+
+    .gh-ref-btn-cta-ghost:hover {
+        background: rgb(255 255 255 / 0.16);
+        border-color: rgb(255 255 255 / 0.35);
     }
 
     .gh-ref-section {

@@ -9,9 +9,38 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Categori extends Model
 {
     protected $table = 'categories';
-    protected $fillable = ['name', 'slug', 'description'];
+    protected $fillable = ['name', 'slug', 'description', 'icon', 'sort_order', 'is_active', 'is_featured'];
 
-    // Mendapatkan semua kelas dalam kategori ini
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_featured' => 'boolean',
+        'sort_order' => 'integer',
+    ];
+
+    public function subjects(): HasMany
+    {
+        return $this->hasMany(Subject::class, 'category_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order')->orderBy('name');
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class, 'category_id');

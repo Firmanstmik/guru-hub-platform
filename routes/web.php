@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoriController;
 use App\Http\Controllers\AksesController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BrowseController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\ClassScheduleController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\CourseMaterialController;
 use App\Http\Controllers\CourseStudentController;
 use App\Http\Controllers\CourseVideoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomepageTestimonialController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
@@ -28,7 +30,7 @@ use Spatie\Permission\Models\Permission;
 // PUBLIC ROUTES
 Route::get('/', [LandingPageController::class, 'index']);
 Route::get('/login', [AuthController::class, 'viewLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'Login']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'Logout'])->middleware('auth')->name('logout');
 
 Route::prefix('register')->group(function () {
@@ -36,6 +38,13 @@ Route::prefix('register')->group(function () {
     Route::post('/student', [RegisterController::class, 'storeSiswaRegister']);
     Route::get('/teacher', [RegisterController::class, 'guruRegister']);
     Route::post('/teacher', [RegisterController::class, 'storeGuruRegister']);
+});
+
+Route::prefix('belajar')->name('browse.')->group(function () {
+    Route::get('/{category:slug}', [BrowseController::class, 'category'])->name('category');
+    Route::get('/{category:slug}/{level:slug}', [BrowseController::class, 'subjects'])->name('subjects');
+    Route::get('/{category:slug}/{level:slug}/{subject:slug}', [BrowseController::class, 'teachers'])->name('teachers');
+    Route::get('/{category:slug}/{level:slug}/{subject:slug}/guru/{teacher}', [BrowseController::class, 'teacherDetail'])->name('teacher');
 });
 
 // PRIVATE ROUTES FOR ADMIN
@@ -59,6 +68,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('users-manage/{id}/roles', [UserManajemenController::class, 'updateRoles'])->name('users-manage.roles.update');
 
     Route::get('/akses', [AksesController::class, 'index'])->name('akses.index');
+
+    Route::get('/homepage-testimonials', [HomepageTestimonialController::class, 'index']);
+    Route::post('/homepage-testimonials', [HomepageTestimonialController::class, 'store']);
+    Route::put('/homepage-testimonials/{homepageTestimonial}', [HomepageTestimonialController::class, 'update']);
+    Route::delete('/homepage-testimonials/{homepageTestimonial}', [HomepageTestimonialController::class, 'destroy']);
 });
 
 // Route /biodata hanya didaftarkan via PermissionRouteServiceProvider (auth + permission).
