@@ -345,10 +345,6 @@
         @apply flex h-10 w-full items-center justify-center rounded-xl border border-[#0A1A4F]/10 text-[0.8125rem] font-semibold text-[#0A1A4F];
     }
 
-    .gh-browse-level-icon {
-        @apply grid h-11 w-11 place-items-center rounded-xl bg-[#F0F9FF];
-    }
-
     .gh-ref-partner-tile:hover {
         transform: translateY(-3px);
         border-color: rgb(34 211 238 / 0.45);
@@ -385,40 +381,259 @@
     }
 
     /* Browse flow */
+    .gh-browse-shell {
+        @apply relative min-h-screen overflow-hidden;
+        background:
+            radial-gradient(900px 420px at 85% -5%, rgb(34 211 238 / 0.12), transparent 58%),
+            radial-gradient(700px 380px at 5% 20%, rgb(59 130 246 / 0.08), transparent 55%),
+            linear-gradient(180deg, #ffffff 0%, #f7fafd 45%, #eef3fa 100%);
+    }
+
+    .gh-browse-shell-grid {
+        @apply pointer-events-none absolute inset-0;
+        background-image:
+            linear-gradient(rgb(10 26 79 / 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgb(10 26 79 / 0.04) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+    }
+
     .gh-browse-page .gh-browse-hero {
-        @apply bg-white pt-24 pb-16 text-[#0a1a4f];
+        @apply relative z-[1] pt-24 pb-20 text-[#0a1a4f];
+    }
+
+    .gh-browse-breadcrumb {
+        @apply rounded-2xl border border-[#0A1A4F]/[0.06] bg-white/80 px-4 py-2.5 backdrop-blur-sm;
+        box-shadow: 0 8px 24px -20px rgb(10 26 79 / 0.2);
+    }
+
+    .gh-browse-breadcrumb ol {
+        @apply flex flex-wrap items-center gap-1 text-[0.75rem] sm:text-[0.8125rem];
+    }
+
+    .gh-browse-breadcrumb a {
+        @apply font-medium text-[#0E7490] transition hover:text-[#0A1A4F];
+    }
+
+    .gh-browse-breadcrumb [aria-current] {
+        @apply font-semibold text-[#0A1A4F];
+    }
+
+    .gh-browse-breadcrumb-sep {
+        @apply text-[#0A1A4F]/25;
     }
 
     .gh-browse-head {
         @apply mx-auto max-w-2xl text-center;
     }
 
+    .gh-browse-head--wide {
+        @apply max-w-3xl;
+    }
+
+    .gh-browse-profile {
+        @apply relative mt-8 overflow-hidden rounded-[1.75rem] border border-[#0A1A4F]/[0.08] bg-white p-6 text-center sm:p-8;
+        box-shadow:
+            0 1px 0 rgb(255 255 255 / 0.9) inset,
+            0 24px 60px -32px rgb(10 26 79 / 0.22);
+    }
+
+    .gh-browse-profile::before {
+        content: '';
+        @apply pointer-events-none absolute inset-x-0 top-0 h-24;
+        background: linear-gradient(180deg, rgb(34 211 238 / 0.12), transparent);
+    }
+
+    .gh-browse-profile-avatar {
+        @apply relative mx-auto;
+    }
+
+    .gh-browse-profile-avatar .gh-app-user-photo {
+        @apply mx-auto shadow-lg;
+        box-shadow: 0 16px 40px -16px rgb(14 116 144 / 0.45);
+    }
+
+    .gh-browse-verified {
+        @apply inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[0.6875rem] font-semibold text-emerald-700;
+    }
+
+    .gh-browse-subject-pill {
+        @apply inline-flex items-center rounded-full border border-[#0A1A4F]/10 bg-[#F0F9FF] px-3 py-1 text-[0.75rem] font-semibold text-[#0E7490];
+    }
+
+    .gh-browse-stats {
+        @apply mt-6 grid grid-cols-3 gap-2 sm:gap-3;
+    }
+
+    .gh-browse-stat {
+        @apply rounded-2xl border border-[#0A1A4F]/[0.06] bg-[#F8FAFC] px-3 py-3 text-center;
+    }
+
+    .gh-browse-stat strong {
+        @apply block text-[1.125rem] font-extrabold tracking-tight text-[#0A1A4F] sm:text-xl;
+        font-family: var(--gh-font-ui);
+    }
+
+    .gh-browse-stat span {
+        @apply mt-0.5 block text-[0.6875rem] font-medium text-[#0A1A4F]/50 sm:text-[0.75rem];
+    }
+
+    .gh-browse-skill-tags {
+        @apply mt-4 flex flex-wrap justify-center gap-1.5;
+    }
+
+    .gh-browse-skill-tag {
+        @apply rounded-full bg-[#0A1A4F]/[0.05] px-2.5 py-1 text-[0.6875rem] font-semibold text-[#0A1A4F]/70;
+    }
+
+    .gh-browse-bio {
+        @apply mx-auto mt-4 max-w-xl text-[0.875rem] leading-relaxed text-[#0A1A4F]/68;
+    }
+
+    .gh-browse-section-title {
+        @apply mb-4 flex items-center justify-between gap-3;
+    }
+
+    .gh-browse-section-title h2 {
+        @apply text-[11px] font-bold tracking-[0.16em] text-[#0A1A4F]/45 uppercase;
+    }
+
+    .gh-browse-section-title span {
+        @apply text-[0.75rem] font-semibold text-[#0E7490];
+    }
+
     .gh-browse-level-card {
         @apply flex flex-col items-center justify-center rounded-2xl border border-[#0A1A4F]/[0.08] bg-white px-3 py-5 text-center transition;
-        box-shadow: 0 10px 30px -20px rgb(10 26 79 / 0.15);
+        box-shadow:
+            0 1px 0 rgb(255 255 255 / 0.95) inset,
+            0 12px 32px -22px rgb(10 26 79 / 0.18);
     }
 
     .gh-browse-level-card:hover {
         border-color: rgb(14 116 144 / 0.35);
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+        box-shadow:
+            0 20px 40px -24px rgb(14 116 144 / 0.28),
+            0 0 0 1px rgb(34 211 238 / 0.12);
+    }
+
+    .gh-browse-level-card--row {
+        @apply !flex-row !items-center !gap-3 !px-4 !py-4 !text-left;
     }
 
     .gh-browse-teacher-card {
-        @apply flex items-center gap-3 rounded-2xl border border-[#0A1A4F]/[0.08] bg-white px-4 py-3.5 transition;
-        box-shadow: 0 8px 24px -18px rgb(10 26 79 / 0.12);
+        @apply flex items-center gap-3.5 rounded-2xl border border-[#0A1A4F]/[0.08] bg-white px-4 py-4 transition;
+        box-shadow:
+            0 1px 0 rgb(255 255 255 / 0.95) inset,
+            0 10px 28px -20px rgb(10 26 79 / 0.16);
     }
 
     .gh-browse-teacher-card:hover {
-        border-color: rgb(14 116 144 / 0.3);
+        border-color: rgb(14 116 144 / 0.32);
+        transform: translateY(-2px);
+        box-shadow:
+            0 18px 36px -22px rgb(14 116 144 / 0.24),
+            0 0 0 1px rgb(34 211 238 / 0.1);
     }
 
     .gh-browse-teacher-avatar {
-        @apply grid h-11 w-11 shrink-0 place-items-center rounded-full text-sm font-bold text-white;
-        background: linear-gradient(135deg, #14b8a6, #0e7490);
+        @apply grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-sm font-bold text-white;
+        background: linear-gradient(135deg, #22d3ee, #0e7490);
+        box-shadow: 0 10px 24px -12px rgb(14 116 144 / 0.5);
+    }
+
+    .gh-browse-teacher-card .gh-app-user-photo {
+        @apply shrink-0 shadow-md;
+    }
+
+    .gh-browse-course-card {
+        @apply overflow-hidden rounded-2xl border border-[#0A1A4F]/[0.08] bg-white transition;
+        box-shadow:
+            0 1px 0 rgb(255 255 255 / 0.95) inset,
+            0 12px 32px -22px rgb(10 26 79 / 0.18);
+    }
+
+    .gh-browse-course-card:hover {
+        border-color: rgb(14 116 144 / 0.28);
+        box-shadow:
+            0 18px 40px -24px rgb(14 116 144 / 0.22),
+            0 0 0 1px rgb(34 211 238 / 0.1);
+    }
+
+    .gh-browse-course-body {
+        @apply flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5;
+    }
+
+    .gh-browse-course-main {
+        @apply flex min-w-0 flex-1 items-start gap-3.5;
+    }
+
+    .gh-browse-course-icon {
+        @apply grid h-11 w-11 shrink-0 place-items-center rounded-xl text-white;
+        background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 60%, #14b8a6 100%);
+        box-shadow: 0 10px 22px -12px rgb(34 211 238 / 0.55);
+    }
+
+    .gh-browse-course-title {
+        @apply text-[0.9375rem] font-bold leading-snug text-[#0A1A4F] sm:text-base;
+        font-family: var(--gh-font-ui);
+    }
+
+    .gh-browse-course-meta {
+        @apply mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.75rem] text-[#0A1A4F]/55;
+    }
+
+    .gh-browse-course-meta-dot::before {
+        content: '·';
+        @apply mr-2 text-[#0A1A4F]/25;
+    }
+
+    .gh-browse-course-desc {
+        @apply mt-2 line-clamp-2 text-[0.8125rem] leading-relaxed text-[#0A1A4F]/58;
+    }
+
+    .gh-browse-course-action {
+        @apply flex shrink-0 flex-col items-stretch gap-2 sm:items-end;
+    }
+
+    .gh-browse-course-price {
+        @apply text-right text-[0.8125rem] font-bold text-[#0E7490];
+    }
+
+    .gh-browse-btn {
+        @apply inline-flex h-10 items-center justify-center gap-1.5 rounded-xl px-5 text-[0.8125rem] font-semibold text-white transition;
+        background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 60%, #14b8a6 100%);
+        box-shadow: 0 12px 28px -14px rgb(34 211 238 / 0.55);
+    }
+
+    .gh-browse-btn:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+    }
+
+    .gh-browse-btn--outline {
+        @apply border border-[#0A1A4F]/12 bg-white text-[#0A1A4F] shadow-none;
+    }
+
+    .gh-browse-btn--outline:hover {
+        @apply border-[#0E7490]/35 bg-[#F0F9FF];
+        filter: none;
     }
 
     .gh-browse-empty {
-        @apply rounded-2xl border border-dashed border-[#0A1A4F]/15 bg-[#f8fafc] px-5 py-8 text-center;
+        @apply rounded-[1.75rem] border border-dashed border-[#0A1A4F]/14 bg-white/70 px-6 py-10 text-center backdrop-blur-sm;
+        box-shadow: 0 16px 40px -28px rgb(10 26 79 / 0.15);
+    }
+
+    .gh-browse-empty-icon {
+        @apply mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl text-[#0E7490];
+        background: linear-gradient(135deg, rgb(240 249 255), rgb(224 242 254));
+        border: 1px solid rgb(14 116 144 / 0.12);
+    }
+
+    .gh-browse-level-icon {
+        @apply grid h-11 w-11 place-items-center rounded-xl bg-[#F0F9FF];
+        border: 1px solid rgb(14 116 144 / 0.1);
     }
 
     .gh-ref-stat-gradient {

@@ -790,5 +790,42 @@
         .gh-ref-btn-hero-outline:active {
             transform: scale(0.98);
         }
+
+        /* Browse pages */
+        .gh-browse-page .gh-browse-hero {
+            @apply pt-[4.75rem] pb-14;
+        }
+
+        .gh-browse-breadcrumb {
+            @apply px-3 py-2;
+        }
+
+        .gh-browse-profile {
+            @apply mt-6 rounded-2xl p-5;
+        }
+
+        .gh-browse-profile .gh-app-user-photo--2xl {
+            @apply h-24 w-24;
+        }
+
+        .gh-browse-stat strong {
+            @apply text-base;
+        }
+
+        .gh-browse-course-body {
+            @apply p-4;
+        }
+
+        .gh-browse-course-action {
+            @apply w-full;
+        }
+
+        .gh-browse-btn {
+            @apply w-full;
+        }
+
+        .gh-browse-level-card--row {
+            @apply !py-3.5;
+        }
     }
 }
