@@ -13,7 +13,7 @@
                 ['label' => $subject->name],
             ]" />
 
-            <div class="gh-browse-head mt-6">
+            <div class="gh-browse-head mt-6 text-center">
                 <p class="gh-ref-eyebrow">Pengajar tersedia</p>
                 <h1 class="gh-ref-display mt-3 text-[1.75rem] sm:text-4xl">{{ $subject->name }}</h1>
                 <p class="gh-ref-muted mt-3 text-[0.9375rem]">{{ $level->name }} · {{ $category->name }}</p>
