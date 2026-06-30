@@ -7,9 +7,7 @@ use App\Models\Course;
 use App\Models\EducationLevel;
 use App\Models\Subject;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BrowseController extends Controller
 {
@@ -42,11 +40,9 @@ class BrowseController extends Controller
         return view('browse.levels', compact('category', 'levels'));
     }
 
-    public function subjects(Categori $category, EducationLevel $level): View
+    public function subjects(Categori $category, EducationLevel $level): View|\Illuminate\Http\RedirectResponse
     {
         abort_unless($category->is_active && $level->is_active, 404);
-
-        $this->assertLevelHasCategorySubjects($category, $level);
 
         $subjects = Subject::active()
             ->ordered()
@@ -55,12 +51,20 @@ class BrowseController extends Controller
             ->withCount(['courses' => fn ($q) => $q->where('status', 'published')])
             ->get();
 
+        if ($subjects->count() === 1) {
+            return redirect()->route('browse.teachers', [
+                'category' => $category,
+                'level' => $level,
+                'subject' => $subjects->first(),
+            ]);
+        }
+
         return view('browse.subjects', compact('category', 'level', 'subjects'));
     }
 
     public function teachers(Categori $category, EducationLevel $level, Subject $subject): View
     {
-        $this->assertSubjectBelongsTo($category, $level, $subject);
+        abort_unless($category->is_active && $level->is_active && $subject->is_active, 404);
 
         $courses = Course::query()
             ->where('status', 'published')
@@ -99,8 +103,7 @@ class BrowseController extends Controller
     public function teacherDetail(Categori $category, EducationLevel $level, Subject $subject, User $teacher): View
     {
         abort_unless($teacher->hasRole('guru'), 404);
-
-        $this->assertSubjectBelongsTo($category, $level, $subject);
+        abort_unless($category->is_active && $level->is_active && $subject->is_active, 404);
 
         $courses = Course::query()
             ->where('status', 'published')
@@ -122,29 +125,5 @@ class BrowseController extends Controller
         $teacher->loadMissing('teacherProfile');
 
         return view('browse.teacher-detail', compact('category', 'level', 'subject', 'teacher', 'courses'));
-    }
-
-    private function assertLevelHasCategorySubjects(Categori $category, EducationLevel $level): void
-    {
-        $exists = Subject::active()
-            ->where('category_id', $category->id)
-            ->where('education_level_id', $level->id)
-            ->exists();
-
-        if (! $exists) {
-            throw new NotFoundHttpException();
-        }
-    }
-
-    private function assertSubjectBelongsTo(Categori $category, EducationLevel $level, Subject $subject): void
-    {
-        abort_unless(
-            $category->is_active
-            && $level->is_active
-            && $subject->is_active
-            && $subject->category_id === $category->id
-            && $subject->education_level_id === $level->id,
-            404
-        );
     }
 }
