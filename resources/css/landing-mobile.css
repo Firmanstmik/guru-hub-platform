@@ -82,12 +82,12 @@
 
         /* ── Hero ── */
         .gh-ref-hero {
-            @apply isolate pb-8 pt-[4.5rem];
+            @apply isolate overflow-hidden pb-8 pt-[4.5rem];
         }
 
         .gh-ref-hero-bg,
         .gh-ref-hero-grid,
-        .gh-ref-topo-wrap {
+        .gh-ref-mobile-dotscape {
             z-index: 0 !important;
         }
 
@@ -95,8 +95,34 @@
             @apply hidden;
         }
 
+        /* Dot-matrix landscape — bottom of hero, never over cards */
+        .gh-ref-mobile-dotscape {
+            pointer-events: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 5.5rem;
+            max-height: 22vh;
+            overflow: hidden;
+            z-index: 1;
+            mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.7) 55%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0.7) 55%, transparent 100%);
+        }
+
+        .gh-ref-mobile-dotscape-svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 12px rgb(103 232 249 / 0.25));
+        }
+
         .gh-ref-hero-grid {
-            opacity: 0.22;
+            opacity: 0.18;
+        }
+
+        .gh-ref-hero .pointer-events-none.absolute.inset-0.z-0.opacity-70 {
+            opacity: 0.45;
         }
 
         .gh-ref-container-wide,
@@ -106,6 +132,13 @@
 
         .gh-ref-container-wide.relative {
             @apply relative z-10;
+        }
+
+        .gh-ref-hero-copy,
+        .gh-landing-dash-wrap,
+        .gh-landing-dash-side-stack {
+            position: relative;
+            z-index: 20;
         }
 
         .gh-ref-glass-badge {

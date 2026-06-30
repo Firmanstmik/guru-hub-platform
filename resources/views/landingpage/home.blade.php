@@ -74,7 +74,28 @@
             <x-landing.dashboard-mockup :dashboard="$dashboard" :logo="$logo" class="relative z-10 lg:col-span-7" />
         </div>
 
-        <div class="gh-ref-topo-wrap z-0" aria-hidden="true">
+        {{-- Mobile: dot-matrix landscape (behind cards) --}}
+        <div class="gh-ref-mobile-dotscape lg:hidden" aria-hidden="true">
+            <svg class="gh-ref-mobile-dotscape-svg" viewBox="0 0 390 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="mobileTopoDots" x="0" y="0" width="11" height="11" patternUnits="userSpaceOnUse">
+                        <circle cx="2.2" cy="2.2" r="1.15" fill="#67E8F9"/>
+                    </pattern>
+                    <linearGradient id="mobileTopoFade" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="white" stop-opacity="0"/>
+                        <stop offset="55%" stop-color="white" stop-opacity="0.35"/>
+                        <stop offset="100%" stop-color="white" stop-opacity="1"/>
+                    </linearGradient>
+                    <mask id="mobileTopoMask">
+                        <rect width="390" height="140" fill="url(#mobileTopoFade)"/>
+                        <path d="M0,118 L0,78 C32,78 48,52 78,58 C108,64 118,88 148,48 C178,28 198,72 228,42 C258,22 278,68 308,38 C338,28 358,62 390,50 L390,140 L0,140 Z" fill="white" opacity="0.95"/>
+                    </mask>
+                </defs>
+                <rect width="390" height="140" fill="url(#mobileTopoDots)" mask="url(#mobileTopoMask)" opacity="0.92"/>
+            </svg>
+        </div>
+
+        <div class="gh-ref-topo-wrap z-0 hidden lg:block" aria-hidden="true">
             <div class="absolute inset-0" style="background:radial-gradient(120% 80% at 8% 100%, rgba(20,184,166,0.32), transparent 60%),radial-gradient(120% 80% at 92% 100%, rgba(34,211,238,0.32), transparent 60%);"></div>
             <svg class="absolute inset-x-0 bottom-0 h-[260px] w-full" viewBox="0 0 1440 260" preserveAspectRatio="none">
                 <defs>
