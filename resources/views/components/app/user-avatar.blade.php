@@ -19,17 +19,41 @@
 @endphp
 
 @if ($user)
-    <img
-        src="{{ $user->avatarUrl() }}"
-        alt="Foto {{ $user->name }}"
-        {{ $attributes->class([
-            'gh-app-user-photo',
-            $sizeClass,
-            'gh-app-user-photo--ring' => $ring,
-            'gh-app-user-photo--guru' => $isGuru,
-            'gh-app-user-photo--siswa' => $user->hasRole('siswa'),
-        ]) }}
-        loading="lazy"
-        decoding="async"
-    />
+    @php
+        $avatarSrc = $user->avatarUrl();
+        $usePicture = ! $user->hasCustomAvatar();
+        $webpSrc = $usePicture ? preg_replace('/\.avif$/', '.webp', $avatarSrc) : null;
+    @endphp
+    @if ($usePicture && $webpSrc)
+        <picture>
+            <source srcset="{{ $avatarSrc }}" type="image/avif">
+            <img
+                src="{{ $webpSrc }}"
+                alt="Foto {{ $user->name }}"
+                {{ $attributes->class([
+                    'gh-app-user-photo',
+                    $sizeClass,
+                    'gh-app-user-photo--ring' => $ring,
+                    'gh-app-user-photo--guru' => $isGuru,
+                    'gh-app-user-photo--siswa' => $user->hasRole('siswa'),
+                ]) }}
+                loading="lazy"
+                decoding="async"
+            />
+        </picture>
+    @else
+        <img
+            src="{{ $avatarSrc }}"
+            alt="Foto {{ $user->name }}"
+            {{ $attributes->class([
+                'gh-app-user-photo',
+                $sizeClass,
+                'gh-app-user-photo--ring' => $ring,
+                'gh-app-user-photo--guru' => $isGuru,
+                'gh-app-user-photo--siswa' => $user->hasRole('siswa'),
+            ]) }}
+            loading="lazy"
+            decoding="async"
+        />
+    @endif
 @endif

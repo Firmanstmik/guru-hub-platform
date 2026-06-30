@@ -17,7 +17,10 @@
                         data-has-custom="{{ $user->hasCustomAvatar() ? '1' : '0' }}"
                         data-neutral="{{ asset('assets/avatar/default-neutral.avif') }}"
                         data-male="{{ asset('assets/avatar/default-siswa-l.avif') }}"
-                        data-female="{{ asset('assets/avatar/default-siswa-p.avif') }}">
+                        data-female="{{ asset('assets/avatar/default-siswa-p.avif') }}"
+                        data-neutral-webp="{{ asset('assets/avatar/default-neutral.webp') }}"
+                        data-male-webp="{{ asset('assets/avatar/default-siswa-l.webp') }}"
+                        data-female-webp="{{ asset('assets/avatar/default-siswa-p.webp') }}">
                         @if ($user->hasCustomAvatar())
                             <img src="{{ $user->avatarUrl() }}" alt="Foto {{ $user->name }}"
                                 class="gh-app-user-photo gh-app-user-photo--xl gh-app-user-photo--ring gh-app-user-photo--siswa"
@@ -252,10 +255,24 @@
                 L: wrap.dataset.male,
                 P: wrap.dataset.female,
             };
+            const defaultsWebp = {
+                '': wrap.dataset.neutralWebp,
+                L: wrap.dataset.maleWebp,
+                P: wrap.dataset.femaleWebp,
+            };
 
             const applyDefault = () => {
                 if (wrap.dataset.hasCustom === '1') return;
-                img.src = defaults[gender.value] || defaults[''];
+                const src = defaults[gender.value] || defaults[''];
+                const webp = defaultsWebp[gender.value] || defaultsWebp[''];
+                const pic = img.closest('picture');
+                if (pic) {
+                    const source = pic.querySelector('source');
+                    if (source) source.srcset = src;
+                    img.src = webp || src;
+                } else {
+                    img.src = src;
+                }
             };
 
             gender.addEventListener('change', applyDefault);
