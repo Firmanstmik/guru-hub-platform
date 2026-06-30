@@ -85,7 +85,7 @@
                                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm p-2 border">
                                     <option value="">-- Pilih Kelas Terkait --</option>
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}">{{ $course->title }}</option>
+                                        <option value="{{ $course->id }}">{{ $course->catalogLabel() }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -159,7 +159,7 @@
                                     class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm p-2 border">
                                     <option value="">-- Pilih Kelas Terkait --</option>
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}">{{ $course->title }}</option>
+                                        <option value="{{ $course->id }}">{{ $course->catalogLabel() }}</option>
                                     @endforeach
                                 </select>
                             </div>

@@ -1,470 +1,489 @@
 @extends('layout.master-app')
 
+@php
+    use App\Support\TeacherProfileChecklist;
+
+    $hasProfile = (bool) $profile->id;
+    $verificationStatus = $profile->verification_status ?? 'pending';
+    $verificationLabel = TeacherProfileChecklist::verificationLabel($verificationStatus);
+    $verificationVariant = TeacherProfileChecklist::verificationVariant($verificationStatus);
+@endphp
+
 @section('content')
-    <div class="gh-app-page">
+    <div class="gh-app-page" x-data="{ profileTab: 'ringkasan' }">
         <div class="gh-app-page-grid" aria-hidden="true"></div>
         <div class="gh-app-page-inner space-y-4">
-            <x-app.page-header title="Pengaturan Profil Pengajar" subtitle="Kelola informasi publik Anda, sertifikasi kompetensi, serta kredensial akun bank pencairan." eyebrow="Ruang Pengajar">
-                <x-slot:action>
-                    @if (is_null($profile) || !$profile->id)
-                        <button type="button" onclick="openModal('addProfileModal')"
-                            class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">
-                            Buat Profil Pengajar
-                        </button>
-                    @endif
-                </x-slot:action>
-            </x-app.page-header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+            @unless ($hasProfile)
+                <div class="gh-profile-onboard">
+                    <p class="text-sm font-bold text-amber-900">Lengkapi profil pengajar Anda</p>
+                    <p class="mt-1 text-xs text-amber-800/90">Profil wajib diisi agar bisa membuat kelas, tampil di katalog, dan menerima pencairan pendapatan.</p>
+                    <button type="button" onclick="openModal('addProfileModal')" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm mt-3">
+                        Mulai isi profil
+                    </button>
+                </div>
+            @endunless
 
-            <div class="gh-app-card relative overflow-hidden p-6 text-center space-y-6">
-                <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#0A1A4F] via-[#0E7490] to-[#C9A227]"></div>
-
-                <div class="space-y-4 pt-2">
-                    <div class="relative mx-auto w-fit group">
-                        <x-app.user-avatar :user="$user" size="xl" class="mx-auto" />
-                        @if($profile->id)
-                        <button type="button" onclick="openModal('uploadMediaModal')"
-                            class="gh-app-btn gh-app-btn-primary absolute -bottom-1 -right-1 !min-h-0 !h-8 !w-8 !rounded-xl !p-0 shadow-lg border-2 border-white"
-                            title="Upload Foto / CV">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
-                            </svg>
-                        </button>
-                        @else
-                            <p class="text-red-500 text-sm">Lengkapi Profile terlebih dahulu</p>
-                        @endif
-                    </div>
-
-                    <div>
-                        <h2
-                            class="text-base font-black text-gray-900 flex items-center justify-center gap-1.5 leading-tight">
-                            {{ $user->name }}
-                            @if (($profile->verification_status ?? 'pending') === 'approved')
-                                <span class="text-sky-500 bg-sky-50 rounded-full p-0.5" title="Verified Instructor">
-                                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                                        <path
-                                            d="M6.267 3.455a.75.75 0 00-.708-.523.75.75 0 00-.507.291L1.5 7.625l-.002.002a.75.75 0 00-.03 1.026l3.6 4a.75.75 0 001.121-.013l8.4-9.6a.75.75 0 00-.113-1.054l-8.209 6.471-3.003-3.339 3.003-3.34z" />
-                                    </svg>
-                                </span>
+            {{-- Hero --}}
+            <section class="gh-profile-hero">
+                <div class="gh-profile-hero-glow" aria-hidden="true"></div>
+                <div class="gh-profile-hero-body">
+                    <div class="gh-profile-hero-main">
+                        <div class="relative shrink-0">
+                            <x-app.user-avatar :user="$user" size="2xl" />
+                            @if ($hasProfile)
+                                <button type="button" onclick="openModal('uploadMediaModal')"
+                                    class="gh-app-btn gh-app-btn-primary absolute -bottom-1 -right-1 !min-h-0 !h-8 !w-8 !rounded-xl !p-0 shadow-lg border-2 border-white"
+                                    title="Ubah foto">
+                                    <x-ui.lucide name="upload" class="h-3.5 w-3.5" />
+                                </button>
                             @endif
-                        </h2>
-                        <p class="text-xs font-bold text-indigo-600 uppercase tracking-widest mt-1">
-                            {{ $profile->title ?? 'Instruktur Pengajar' }}
-                        </p>
+                        </div>
+                        <div class="gh-profile-hero-meta">
+                            <p class="gh-app-eyebrow">Ruang Pengajar</p>
+                            <h1 class="gh-profile-hero-name">{{ $user->name }}</h1>
+                            <p class="gh-profile-hero-headline">{{ $profile->title ?? 'Guru Pengajar GuruHub' }}</p>
+                            <div class="gh-profile-hero-badges">
+                                <x-app.badge :variant="$verificationVariant">{{ $verificationLabel }}</x-app.badge>
+                                <x-app.badge variant="neutral">⭐ {{ number_format($profile->average_rating ?? 0, 1) }}</x-app.badge>
+                                @if ($publishedCoursesCount > 0)
+                                    <x-app.badge variant="info">{{ $publishedCoursesCount }} kelas aktif</x-app.badge>
+                                @endif
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="flex items-center justify-center gap-2">
-                        <span
-                            class="px-2.5 py-0.5 text-[10px] font-black rounded-lg uppercase tracking-wider 
-                        {{ ($profile->verification_status ?? 'pending') === 'approved' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : (($profile->verification_status ?? 'pending') === 'rejected' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-amber-50 text-amber-700 border border-amber-200') }}">
-                            {{ $profile->verification_status ?? 'pending' }}
-                        </span>
-                        <span
-                            class="px-2.5 py-0.5 text-[10px] font-black bg-gray-50 border border-gray-100 text-gray-700 rounded-lg flex items-center gap-1">
-                            ⭐ {{ number_format($profile->average_rating ?? 0, 1) }}
-                        </span>
-                    </div>
-                </div>
-
-                <hr class="border-gray-100">
-
-                <div class="space-y-2 text-left">
-                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Keahlian Utama</h4>
-                    <div class="flex flex-wrap gap-1.5">
-                        @forelse($skills ?? [] as $tag)
-                            <span
-                                class="px-2 py-1 bg-gray-50 text-gray-600 font-bold border border-gray-100 rounded-lg text-[10px]">{{ $tag }}</span>
-                        @empty
-                            <span class="text-xs text-gray-400 italic">Belum menambahkan tag keahlian.</span>
-                        @endforelse
+                    <div class="gh-profile-progress">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-bold text-[#475569]">Kelengkapan profil</span>
+                            <span class="text-sm font-black text-[#06122E]">{{ $checklist['percent'] }}%</span>
+                        </div>
+                        <div class="gh-profile-progress-bar" role="progressbar" aria-valuenow="{{ $checklist['percent'] }}" aria-valuemin="0" aria-valuemax="100">
+                            <span style="width: {{ $checklist['percent'] }}%"></span>
+                        </div>
+                        <p class="text-[10px] text-[#94A3B8]">{{ $checklist['done'] }}/{{ $checklist['total'] }} langkah selesai</p>
                     </div>
                 </div>
+            </section>
 
-                @if (($user->teachingSubjects ?? collect())->isNotEmpty())
-                <div class="space-y-2 text-left">
-                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mapel & Jenjang</h4>
-                    <div class="flex flex-wrap gap-1.5">
-                        @foreach ($user->teachingSubjects as $ts)
-                            <span class="px-2 py-1 bg-indigo-50 text-indigo-700 font-bold border border-indigo-100 rounded-lg text-[10px]">
-                                {{ $ts->educationLevel?->name }} · {{ $ts->name }}
-                            </span>
-                        @endforeach
-                    </div>
-                </div>
+            {{-- Quick actions --}}
+            <div class="gh-profile-quick-grid">
+                @if ($hasProfile)
+                    <button type="button" onclick="openModal('editProfileModal')" class="gh-profile-quick-btn">
+                        <span class="gh-profile-quick-icon"><x-ui.lucide name="edit" class="h-4 w-4" /></span>
+                        <span class="gh-profile-quick-label">Edit profil</span>
+                    </button>
+                    <button type="button" onclick="openModal('uploadMediaModal')" class="gh-profile-quick-btn">
+                        <span class="gh-profile-quick-icon"><x-ui.lucide name="upload" class="h-4 w-4" /></span>
+                        <span class="gh-profile-quick-label">Foto & CV</span>
+                    </button>
+                    <a href="/courses" class="gh-profile-quick-btn">
+                        <span class="gh-profile-quick-icon"><x-ui.lucide name="layers" class="h-4 w-4" /></span>
+                        <span class="gh-profile-quick-label">Kelola kelas</span>
+                    </a>
+                    <a href="/earnings" class="gh-profile-quick-btn">
+                        <span class="gh-profile-quick-icon"><x-ui.lucide name="circle-dollar-sign" class="h-4 w-4" /></span>
+                        <span class="gh-profile-quick-label">Pendapatan</span>
+                    </a>
+                @else
+                    <button type="button" onclick="openModal('addProfileModal')" class="gh-profile-quick-btn sm:col-span-2">
+                        <span class="gh-profile-quick-icon"><x-ui.lucide name="user" class="h-4 w-4" /></span>
+                        <span class="gh-profile-quick-label">Buat profil</span>
+                    </button>
+                    <a href="/guru-dashboard" class="gh-profile-quick-btn">
+                        <span class="gh-profile-quick-icon"><x-ui.lucide name="layout-dashboard" class="h-4 w-4" /></span>
+                        <span class="gh-profile-quick-label">Dashboard</span>
+                    </a>
+                    <a href="/courses" class="gh-profile-quick-btn opacity-60 pointer-events-none" title="Lengkapi profil dulu">
+                        <span class="gh-profile-quick-icon"><x-ui.lucide name="layers" class="h-4 w-4" /></span>
+                        <span class="gh-profile-quick-label">Kelas</span>
+                    </a>
                 @endif
-
-                <div class="pt-2 text-left border-t border-gray-50">
-                    <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Berkas Pendukung</h4>
-                    @if (isset($profile) && $profile->cv_file)
-                        <a href="{{ asset('storage/' . $profile->cv_file) }}" target="_blank"
-                            class="inline-flex items-center gap-2 p-2.5 w-full bg-gray-50 border border-gray-100 hover:border-indigo-200 text-xs font-bold text-gray-700 rounded-xl transition group">
-                            <svg class="w-4 h-4 text-rose-500 shrink-0" fill="none" stroke="currentColor"
-                                stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                            </svg>
-                            <span class="truncate flex-1 group-hover:text-indigo-600">Lihat Lampiran CV (PDF)</span>
-                        </a>
-                    @else
-                        <p class="text-xs text-amber-600 bg-amber-50/50 p-2.5 rounded-xl border border-amber-100 italic">
-                            Dokumen berkas CV belum diunggah.</p>
-                    @endif
-                </div>
             </div>
 
-            <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-2xs space-y-6">
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                        <div>
-                            <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Detail Ringkasan Profil
-                            </h3>
-                            <p class="text-[11px] text-gray-400 mt-0.5">Berikut adalah rincian data Anda yang terdaftar pada
-                                sistem.</p>
+            <div class="gh-profile-layout">
+                {{-- Sidebar: checklist + mini stats --}}
+                <aside class="gh-profile-sidebar space-y-4">
+                    @unless ($checklist['is_complete'])
+                        <div class="gh-app-card">
+                            <div class="mb-3">
+                                <p class="gh-app-eyebrow">Checklist</p>
+                                <h2 class="gh-app-heading mt-0.5">Yang perlu dilengkapi</h2>
+                            </div>
+                            <div class="gh-profile-checklist">
+                                @foreach ($checklist['items'] as $item)
+                                    @if (! $item['done'])
+                                        <button type="button" onclick="openModal('{{ $item['modal'] }}')"
+                                            class="gh-profile-check-item">
+                                            <span class="gh-profile-check-icon gh-profile-check-icon--todo">
+                                                <x-ui.lucide :name="$item['icon']" class="h-4 w-4" />
+                                            </span>
+                                            <span class="min-w-0 flex-1">
+                                                <span class="block text-[12px] font-bold text-[#0A1A4F]">{{ $item['label'] }}</span>
+                                                <span class="block text-[10px] text-[#94A3B8]">{{ $item['hint'] }}</span>
+                                            </span>
+                                            <x-ui.lucide name="arrow-right" class="h-4 w-4 shrink-0 text-[#94A3B8]" />
+                                        </button>
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
-                        @if (isset($profile) && $profile->id)
-                            <button type="button" onclick="openModal('editProfileModal')"
-                                class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-1.5">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                </svg>
-                                Edit Profil
-                            </button>
+                    @else
+                        <div class="gh-app-card border-emerald-200/60 bg-emerald-50/40">
+                            <div class="flex items-start gap-3">
+                                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-600">
+                                    <x-ui.lucide name="badge-check" class="h-5 w-5" />
+                                </span>
+                                <div>
+                                    <p class="text-sm font-bold text-emerald-900">Profil lengkap</p>
+                                    <p class="mt-0.5 text-xs text-emerald-800/80">Semua data penting sudah terisi. Profil siap tampil profesional.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endunless
+
+                    <div class="gh-app-card hidden lg:block">
+                        <p class="gh-app-eyebrow mb-2">Ringkasan</p>
+                        <div class="gh-profile-stat-row">
+                            <div class="gh-app-stat !p-2.5">
+                                <p class="gh-app-stat-value text-base">{{ $user->teachingSubjects->count() }}</p>
+                                <p class="gh-app-stat-label">Mapel</p>
+                            </div>
+                            <div class="gh-app-stat !p-2.5">
+                                <p class="gh-app-stat-value text-base">{{ count($skills ?? []) }}</p>
+                                <p class="gh-app-stat-label">Keahlian</p>
+                            </div>
+                            <div class="gh-app-stat !p-2.5">
+                                <p class="gh-app-stat-value text-base">{{ $publishedCoursesCount }}</p>
+                                <p class="gh-app-stat-label">Kelas</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                {{-- Main content tabs --}}
+                <div class="gh-profile-main">
+                    <div class="gh-profile-tabs" role="tablist">
+                        <button type="button" role="tab" @click="profileTab = 'ringkasan'"
+                            :class="profileTab === 'ringkasan' ? 'gh-profile-tab gh-profile-tab--active' : 'gh-profile-tab'">
+                            Ringkasan
+                        </button>
+                        <button type="button" role="tab" @click="profileTab = 'mengajar'"
+                            :class="profileTab === 'mengajar' ? 'gh-profile-tab gh-profile-tab--active' : 'gh-profile-tab'">
+                            Mapel & keahlian
+                        </button>
+                        <button type="button" role="tab" @click="profileTab = 'rekening'"
+                            :class="profileTab === 'rekening' ? 'gh-profile-tab gh-profile-tab--active' : 'gh-profile-tab'">
+                            Rekening & dokumen
+                        </button>
+                    </div>
+
+                    {{-- Tab: Ringkasan --}}
+                    <div class="gh-app-card mt-3" x-show="profileTab === 'ringkasan'" x-cloak>
+                        <div class="mb-4 flex items-center justify-between gap-3 border-b border-[#0A1A4F]/[0.06] pb-3">
+                            <div>
+                                <h2 class="gh-app-heading">Data pribadi</h2>
+                                <p class="gh-app-caption mt-0.5">Informasi yang tampil untuk siswa & admin</p>
+                            </div>
+                            @if ($hasProfile)
+                                <button type="button" onclick="openModal('editProfileModal')" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm hidden sm:inline-flex">
+                                    <x-ui.lucide name="edit" class="h-3.5 w-3.5" /> Edit
+                                </button>
+                            @endif
+                        </div>
+                        <div class="gh-profile-field-grid">
+                            <div class="gh-profile-field">
+                                <span class="gh-profile-field-label">Nama lengkap</span>
+                                <p class="gh-profile-field-value">{{ $user->name }}</p>
+                            </div>
+                            <div class="gh-profile-field">
+                                <span class="gh-profile-field-label">Telepon / WhatsApp</span>
+                                <p class="gh-profile-field-value">{{ $user->phone_number ?? 'Belum diisi' }}</p>
+                            </div>
+                            <div class="gh-profile-field">
+                                <span class="gh-profile-field-label">Email akun</span>
+                                <p class="gh-profile-field-value">{{ $user->email }}</p>
+                            </div>
+                            <div class="gh-profile-field">
+                                <span class="gh-profile-field-label">Jenis kelamin</span>
+                                <p class="gh-profile-field-value">{{ TeacherProfileChecklist::genderLabel($profile->gender ?? null) }}</p>
+                            </div>
+                            <div class="gh-profile-field sm:col-span-2">
+                                <span class="gh-profile-field-label">Headline profesional</span>
+                                <p class="gh-profile-field-value">{{ $profile->title ?? 'Belum diisi' }}</p>
+                            </div>
+                            <div class="gh-profile-field sm:col-span-2">
+                                <span class="gh-profile-field-label">Biografi & deskripsi mengajar</span>
+                                <div class="gh-profile-field-value gh-profile-field-value--multiline">
+                                    {{ $profile->bio ?? 'Ceritakan pengalaman dan gaya mengajar Anda agar siswa lebih percaya.' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Tab: Mapel --}}
+                    <div class="gh-app-card mt-3" x-show="profileTab === 'mengajar'" x-cloak>
+                        <div class="mb-4 flex items-center justify-between gap-3 border-b border-[#0A1A4F]/[0.06] pb-3">
+                            <div>
+                                <h2 class="gh-app-heading">Mapel & keahlian</h2>
+                                <p class="gh-app-caption mt-0.5">Menentukan kelas apa yang bisa Anda buat</p>
+                            </div>
+                            @if ($hasProfile)
+                                <button type="button" onclick="openModal('editProfileModal')" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">
+                                    <x-ui.lucide name="plus" class="h-3.5 w-3.5" /> Atur mapel
+                                </button>
+                            @endif
+                        </div>
+
+                        @if ($user->teachingSubjects->isNotEmpty())
+                            <div class="space-y-4">
+                                @foreach ($subjectGroups as $levelName => $subjects)
+                                    <div class="gh-profile-subject-group">
+                                        <p class="gh-profile-subject-level">{{ $subjects->first()->educationLevel?->icon }} {{ $levelName }}</p>
+                                        <div class="flex flex-wrap gap-1.5">
+                                            @foreach ($subjects as $subject)
+                                                <span class="inline-flex items-center gap-1 rounded-lg border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-700">
+                                                    {{ $subject->name }}
+                                                    @if ($subject->category?->name)
+                                                        <span class="font-normal text-indigo-400">· {{ $subject->category->name }}</span>
+                                                    @endif
+                                                </span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <x-app.empty-state icon="book-open" title="Belum ada mapel" description="Pilih jenjang dan mata pelajaran yang Anda ampu agar bisa membuat kelas.">
+                                <button type="button" onclick="openModal('{{ $hasProfile ? 'editProfileModal' : 'addProfileModal' }}')" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm mt-4">
+                                    Pilih mapel sekarang
+                                </button>
+                            </x-app.empty-state>
+                        @endif
+
+                        <div class="mt-5 border-t border-[#0A1A4F]/[0.06] pt-4">
+                            <p class="gh-profile-field-label mb-2">Tag keahlian</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                @forelse($skills ?? [] as $tag)
+                                    <span class="rounded-lg border border-[#0A1A4F]/[0.08] bg-[#f8fafc] px-2.5 py-1 text-[11px] font-bold text-[#475569]">{{ $tag }}</span>
+                                @empty
+                                    <p class="text-xs text-[#94A3B8] italic">Belum ada tag keahlian.</p>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        @if ($hasProfile && $user->teachingSubjects->isNotEmpty())
+                            <div class="mt-4 rounded-xl border border-[#0E7490]/15 bg-[#ecfeff]/50 p-3">
+                                <p class="text-xs font-semibold text-[#0A1A4F]">Langkah berikutnya</p>
+                                <p class="mt-0.5 text-[11px] text-[#64748B]">Mapel sudah terdaftar — buat kelas pertama Anda di menu Kelola Kelas.</p>
+                                <a href="/courses" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm mt-2 inline-flex">Buat kelas</a>
+                            </div>
                         @endif
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-1">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nama Lengkap
-                                & Gelar</span>
-                            <p
-                                class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
-                                {{ $user->name }}</p>
-                        </div>
-                        <div class="space-y-1">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nomor Telepon
-                                / WhatsApp</span>
-                            <p
-                                class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
-                                {{ $user->phone_number ?? '-' }}</p>
-                        </div>
-                        <div class="md:col-span-2 space-y-1">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Headline
-                                Profesional</span>
-                            <p
-                                class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
-                                {{ $profile->title ?? 'Belum ditentukan' }}</p>
-                        </div>
-                        <div class="md:col-span-2 space-y-1">
-                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Biografi &
-                                Deskripsi Pengajaran</span>
-                            <div
-                                class="text-xs font-medium text-gray-600 bg-gray-50 px-3 py-3 rounded-xl border border-gray-100 leading-relaxed whitespace-pre-line">
-                                {{ $profile->bio ?? 'Anda belum menuliskan biografi singkat pengajaran Anda.' }}
+                    {{-- Tab: Rekening & dokumen --}}
+                    <div class="gh-app-card mt-3" x-show="profileTab === 'rekening'" x-cloak>
+                        <div class="mb-4 flex items-center justify-between gap-3 border-b border-[#0A1A4F]/[0.06] pb-3">
+                            <div>
+                                <h2 class="gh-app-heading">Rekening & dokumen</h2>
+                                <p class="gh-app-caption mt-0.5">Untuk pencairan pendapatan dan verifikasi</p>
                             </div>
+                            @if ($hasProfile)
+                                <button type="button" onclick="openModal('uploadMediaModal')" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm hidden sm:inline-flex">
+                                    <x-ui.lucide name="upload" class="h-3.5 w-3.5" /> Upload
+                                </button>
+                            @endif
                         </div>
-                    </div>
 
-                    <div class="border-t border-gray-100 pt-5 space-y-4">
-                        <h4 class="text-xs font-black text-gray-900 uppercase tracking-wider">Kredensial Rekening Pencairan
-                        </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="space-y-1">
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nama
-                                    Bank</span>
-                                <p
-                                    class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
-                                    {{ $profile->bank_name ?? '-' }}</p>
+                        <div class="gh-profile-field-grid mb-4">
+                            <div class="gh-profile-field">
+                                <span class="gh-profile-field-label">Nama bank</span>
+                                <p class="gh-profile-field-value">{{ $profile->bank_name ?? 'Belum diisi' }}</p>
                             </div>
-                            <div class="space-y-1">
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Nomor
-                                    Rekening</span>
-                                <p
-                                    class="text-xs font-mono font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
-                                    {{ $profile->bank_account_number ?? '-' }}</p>
+                            <div class="gh-profile-field">
+                                <span class="gh-profile-field-label">No. rekening</span>
+                                <p class="gh-profile-field-value font-mono">{{ $profile->bank_account_number ?? 'Belum diisi' }}</p>
                             </div>
-                            <div class="space-y-1">
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Pemilik
-                                    Rekening</span>
-                                <p
-                                    class="text-xs font-bold text-gray-800 bg-gray-50 px-3 py-2.5 rounded-xl border border-gray-100">
-                                    {{ $profile->bank_account_name ?? '-' }}</p>
+                            <div class="gh-profile-field sm:col-span-2">
+                                <span class="gh-profile-field-label">Nama pemilik rekening</span>
+                                <p class="gh-profile-field-value">{{ $profile->bank_account_name ?? 'Belum diisi' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <p class="gh-profile-field-label">Berkas pendukung</p>
+                            @if ($profile->cv_file ?? false)
+                                <a href="{{ asset('storage/' . $profile->cv_file) }}" target="_blank" rel="noopener"
+                                    class="flex items-center gap-3 rounded-xl border border-[#0A1A4F]/[0.08] bg-[#f8fafc] p-3 transition hover:border-[#0E7490]/30">
+                                    <span class="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-rose-500">
+                                        <x-ui.lucide name="file-text" class="h-5 w-5" />
+                                    </span>
+                                    <span class="min-w-0 flex-1">
+                                        <span class="block text-sm font-bold text-[#0A1A4F]">Curriculum Vitae (PDF)</span>
+                                        <span class="block text-[11px] text-[#94A3B8]">Ketuk untuk membuka berkas</span>
+                                    </span>
+                                    <x-ui.lucide name="arrow-right" class="h-4 w-4 text-[#94A3B8]" />
+                                </a>
+                            @else
+                                <div class="rounded-xl border border-dashed border-amber-200 bg-amber-50/50 p-4 text-center">
+                                    <p class="text-xs font-semibold text-amber-900">CV belum diunggah</p>
+                                    <p class="mt-0.5 text-[11px] text-amber-800/80">Unggah PDF untuk memperkuat kredibilitas profil.</p>
+                                    @if ($hasProfile)
+                                        <button type="button" onclick="openModal('uploadMediaModal')" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm mt-2">Unggah CV</button>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <div class="flex items-center gap-3 rounded-xl border border-[#0A1A4F]/[0.08] bg-[#f8fafc] p-3">
+                                <x-app.user-avatar :user="$user" size="md" />
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-bold text-[#0A1A4F]">Foto profil</p>
+                                    <p class="text-[11px] text-[#94A3B8]">
+                                        {{ $user->hasCustomAvatar() ? 'Foto kustom sudah diunggah' : 'Masih memakai avatar default' }}
+                                    </p>
+                                </div>
+                                @if ($hasProfile)
+                                    <button type="button" onclick="openModal('uploadMediaModal')" class="gh-app-btn gh-app-btn-ghost gh-app-btn-sm">Ubah</button>
+                                @endif
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            @if ($hasProfile)
+                <div class="gh-app-sticky-cta lg:hidden">
+                    <button type="button" onclick="openModal('editProfileModal')" class="gh-app-btn gh-app-btn-primary gh-app-btn-block">
+                        <x-ui.lucide name="edit" class="h-4 w-4" /> Edit profil pengajar
+                    </button>
+                </div>
+            @endif
         </div>
     </div>
+@endsection
 
-    <div id="addProfileModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+@push('app-modals')
+    <div id="addProfileModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true" hidden>
         <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="closeModal('addProfileModal')" aria-hidden="true"></div>
         <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
-            <div class="w-full max-w-2xl rounded-2xl border border-gray-100 bg-white text-left shadow-xl"
-                onclick="event.stopPropagation()">
-                <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Lengkapi Profile</h3>
-                        <button type="button" onclick="closeModal('addProfileModal')"
-                            class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+            <div class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-xl" onclick="event.stopPropagation()">
+                <div class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-5 py-4">
+                    <div>
+                        <h3 class="text-base font-bold text-[#06122E]">Buat profil pengajar</h3>
+                        <p class="text-xs text-[#64748B]">Isi data utama — bisa diperbarui kapan saja</p>
                     </div>
-
-                    <form action="{{ url('/teachers') }}" method="POST" enctype="multipart/form-data"
-                        class="space-y-4">
-                        @csrf
-                        <input type="hidden" name="user_id" value="{{ $user->id }}">
-                        <input type="hidden" name="verification_status" value="pending">
-
-                        <div class="space-y-1">
-                            <label class="text-xs font-black text-gray-600">Jenis Kelamin</label>
-                            <select name="gender"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
-                                <option value="">Pilih jenis kelamin</option>
-                                <option value="L" {{ old('gender') === 'L' ? 'selected' : '' }}>Laki-laki</option>
-                                <option value="P" {{ old('gender') === 'P' ? 'selected' : '' }}>Perempuan</option>
-                            </select>
-                        </div>
-
-                        <div class="space-y-1">
-                            <label class="text-xs font-black text-gray-600">Judul Profesional / Headline</label>
-                            <input type="text" name="title" value="{{ old('title') }}"
-                                placeholder="Contoh: Senior Fullstack Engineer & Informatics Educator"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
-                        </div>
-
-                        <div class="space-y-1">
-                            <label class="text-xs font-black text-gray-600">Keahlian Tags (Pisahkan Dengan Koma)</label>
-                            <input type="text" name="skills_tags" value="{{ old('skills_tags') }}"
-                                placeholder="Laravel, Kotlin, Unit Testing"
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none">
-                        </div>
-
-                        <x-education.subject-picker :levels="$educationLevels ?? collect()" :selected="$selectedSubjectIds ?? []" />
-
-                        <div class="space-y-1">
-                            <label class="text-xs font-black text-gray-600">Biografi Singkat</label>
-                            <textarea name="bio" rows="3" placeholder="Jelaskan pengalaman industri Anda..."
-                                class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:border-indigo-500 focus:outline-none resize-none">{{ old('bio') }}</textarea>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-                            <div>
-                                <label class="text-xs font-black text-gray-600">Nama Bank</label>
-                                <input type="text" name="bank_name" value="{{ old('bank_name') }}"
-                                    placeholder="BCA/Mandiri"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="text-xs font-black text-gray-600">No. Rekening</label>
-                                <input type="text" name="bank_account_number"
-                                    value="{{ old('bank_account_number') }}" placeholder="04128912"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="text-xs font-black text-gray-600">Nama Pemilik Akun</label>
-                                <input type="text" name="bank_account_name" value="{{ old('bank_account_name') }}"
-                                    placeholder="Sesuai buku tabungan"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-end gap-2 border-t border-gray-50 pt-3 mt-4">
-                            <button type="button" onclick="closeModal('addProfileModal')"
-                                class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700">Batal</button>
-                            <button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow-xs uppercase tracking-wider">Simpan
-                                Profil</button>
-                        </div>
-                    </form>
+                    <button type="button" onclick="closeModal('addProfileModal')" class="gh-app-icon-btn" aria-label="Tutup">
+                        <x-ui.lucide name="x" class="h-4 w-4" />
+                    </button>
+                </div>
+                <div class="space-y-4 p-5">
+                    <x-guru.profile-form
+                        :user="$user"
+                        :profile="$profile"
+                        :education-levels="$educationLevels"
+                        :selected-subject-ids="$selectedSubjectIds"
+                        form-action="{{ url('/teachers') }}"
+                        submit-label="Simpan & lanjutkan"
+                    />
                 </div>
             </div>
         </div>
     </div>
 
-    @if (isset($profile) && $profile->id)
-        <div id="editProfileModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+    @if ($hasProfile)
+        <div id="editProfileModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true" hidden>
             <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="closeModal('editProfileModal')" aria-hidden="true"></div>
             <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
-                <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-100 bg-white text-left shadow-xl"
-                    onclick="event.stopPropagation()">
-                    <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
-                        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-                            <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Edit Informasi Profil
-                                Anda</h3>
-                            <button type="button" onclick="closeModal('editProfileModal')"
-                                class="text-gray-400 hover:text-gray-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
+                <div class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-xl" onclick="event.stopPropagation()">
+                    <div class="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-5 py-4">
+                        <div>
+                            <h3 class="text-base font-bold text-[#06122E]">Edit profil pengajar</h3>
+                            <p class="text-xs text-[#64748B]">Perbarui identitas, mapel, biografi, dan rekening</p>
                         </div>
-
-                        <form action="{{ url('/teachers/' . $profile->id) }}" method="POST" class="space-y-4">
-                            @csrf
-                            @method('PUT')
-
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label class="text-xs font-black text-gray-600">Nama Lengkap & Gelar</label>
-                                    <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-black text-gray-600">Nomor Telepon / WhatsApp</label>
-                                    <input type="text" name="phone_number"
-                                        value="{{ old('phone_number', $user->phone_number) }}"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-black text-gray-600">Jenis Kelamin</label>
-                                    <select name="gender"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
-                                        <option value="">Pilih jenis kelamin</option>
-                                        <option value="L" {{ old('gender', $profile->gender ?? '') === 'L' ? 'selected' : '' }}>Laki-laki</option>
-                                        <option value="P" {{ old('gender', $profile->gender ?? '') === 'P' ? 'selected' : '' }}>Perempuan</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="space-y-1">
-                                <label class="text-xs font-black text-gray-600">Judul Profesional / Headline</label>
-                                <input type="text" name="title" value="{{ old('title', $profile->title ?? '') }}"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-medium focus:bg-white focus:border-indigo-500 focus:outline-none">
-                            </div>
-
-                            <div class="space-y-1">
-                                <label class="text-xs font-black text-gray-600">Keahlian Tags (Pisahkan Dengan
-                                    Koma)</label>
-                                <input type="text" name="skills_tags"
-                                    value="{{ old('skills_tags', $profile->skills_tags ? implode(', ', json_decode($profile->skills_tags, true)) : '') }}"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs font-mono focus:bg-white focus:border-indigo-500 focus:outline-none">
-                            </div>
-
-                            <x-education.subject-picker :levels="$educationLevels ?? collect()" :selected="$selectedSubjectIds ?? []" />
-
-                            <div class="space-y-1">
-                                <label class="text-xs font-black text-gray-600">Biografi Singkat</label>
-                                <textarea name="bio" rows="4"
-                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-2.5 text-xs focus:bg-white focus:border-indigo-500 focus:outline-none resize-none">{{ old('bio', $profile->bio ?? '') }}</textarea>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 border-t border-gray-50 pt-3">
-                                <div>
-                                    <label class="text-xs font-black text-gray-600">Nama Bank</label>
-                                    <input type="text" name="bank_name"
-                                        value="{{ old('bank_name', $profile->bank_name ?? '') }}"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-black text-gray-600">No. Rekening</label>
-                                    <input type="text" name="bank_account_number"
-                                        value="{{ old('bank_account_number', $profile->bank_account_number ?? '') }}"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="text-xs font-black text-gray-600">Nama Pemilik Akun</label>
-                                    <input type="text" name="bank_account_name"
-                                        value="{{ old('bank_account_name', $profile->bank_account_name ?? '') }}"
-                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none">
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-end gap-2 border-t border-gray-50 pt-3 mt-4">
-                                <button type="button" onclick="closeModal('editProfileModal')"
-                                    class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700">Batal</button>
-                                <button type="submit"
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow-xs uppercase tracking-wider">Simpan
-                                    Perubahan</button>
-                            </div>
-                        </form>
+                        <button type="button" onclick="closeModal('editProfileModal')" class="gh-app-icon-btn" aria-label="Tutup">
+                            <x-ui.lucide name="x" class="h-4 w-4" />
+                        </button>
+                    </div>
+                    <div class="space-y-4 p-5">
+                        <x-guru.profile-form
+                            :user="$user"
+                            :profile="$profile"
+                            :education-levels="$educationLevels"
+                            :selected-subject-ids="$selectedSubjectIds"
+                            form-action="{{ url('/teachers/' . $profile->id) }}"
+                            form-method="PUT"
+                            :show-user-fields="true"
+                            submit-label="Simpan perubahan"
+                        />
                     </div>
                 </div>
             </div>
         </div>
     @endif
 
-    <div id="uploadMediaModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+    <div id="uploadMediaModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true" hidden>
         <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="closeModal('uploadMediaModal')" aria-hidden="true"></div>
         <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
-            <div class="w-full max-w-lg rounded-2xl border border-gray-100 bg-white text-left shadow-xl"
-                onclick="event.stopPropagation()">
-                <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
-                    <div class="flex items-center justify-between border-b border-gray-50 pb-3">
-                        <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Perbarui File Media</h3>
-                        <button type="button" onclick="closeModal('uploadMediaModal')"
-                            class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+            <div class="w-full max-w-lg rounded-2xl border border-gray-100 bg-white shadow-xl" onclick="event.stopPropagation()">
+                <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+                    <div>
+                        <h3 class="text-base font-bold text-[#06122E]">Foto & berkas CV</h3>
+                        <p class="text-xs text-[#64748B]">Tampil lebih profesional di katalog guru</p>
+                    </div>
+                    <button type="button" onclick="closeModal('uploadMediaModal')" class="gh-app-icon-btn" aria-label="Tutup">
+                        <x-ui.lucide name="x" class="h-4 w-4" />
+                    </button>
+                </div>
+                <form action="{{ url('/teachers/' . ($profile->id ?? $user->id)) }}" method="POST" enctype="multipart/form-data" class="space-y-4 p-5">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="name" value="{{ $user->name }}">
+                    <input type="hidden" name="phone_number" value="{{ $user->phone_number }}">
+                    <input type="hidden" name="title" value="{{ $profile->title ?? 'Guru Pengajar' }}">
+                    <input type="hidden" name="bio" value="{{ $profile->bio ?? '' }}">
+                    <input type="hidden" name="skills_tags" value="{{ ($profile->skills_tags ?? null) ? implode(', ', json_decode($profile->skills_tags, true)) : '' }}">
+                    <input type="hidden" name="bank_name" value="{{ $profile->bank_name ?? '' }}">
+                    <input type="hidden" name="bank_account_number" value="{{ $profile->bank_account_number ?? '' }}">
+                    <input type="hidden" name="bank_account_name" value="{{ $profile->bank_account_name ?? $user->name }}">
+                    @foreach ($selectedSubjectIds as $sid)
+                        <input type="hidden" name="subject_ids[]" value="{{ $sid }}">
+                    @endforeach
+
+                    <div>
+                        <label class="gh-profile-form-label">Foto profil</label>
+                        <div class="mt-1 rounded-xl border border-[#0A1A4F]/[0.08] bg-[#f8fafc] p-3">
+                            <input type="file" name="avatar" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                class="w-full text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-indigo-700">
+                        </div>
+                        <p class="mt-1 text-[10px] text-[#94A3B8]">JPG, PNG, WEBP — maks. 2 MB</p>
                     </div>
 
-                    <form action="{{ url('/teachers/' . ($profile->id ?? $user->id)) }}" method="POST"
-                        enctype="multipart/form-data" class="space-y-5">
-                        @csrf
-                        @method('PUT')
-
-                        <input type="hidden" name="name" value="{{ $user->name }}">
-                        <input type="hidden" name="phone_number" value="{{ $user->phone_number }}">
-                        <input type="hidden" name="title" value="{{ $profile->title ?? 'Instructor' }}">
-                        <input type="hidden" name="bio" value="{{ $profile->bio ?? '' }}">
-                        <input type="hidden" name="skills_tags"
-                            value="{{ isset($profile) && $profile->skills_tags ? implode(', ', json_decode($profile->skills_tags, true)) : '' }}">
-                        <input type="hidden" name="bank_name" value="{{ $profile->bank_name ?? 'Mandiri' }}">
-                        <input type="hidden" name="bank_account_number"
-                            value="{{ $profile->bank_account_number ?? '00000' }}">
-                        <input type="hidden" name="bank_account_name"
-                            value="{{ $profile->bank_account_name ?? $user->name }}">
-
-                        <div class="space-y-1">
-                            <label class="text-xs font-black text-gray-600 block">Ubah Foto Profil (Avatar)</label>
-                            <div class="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <input type="file" name="avatar"
-                                    class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 cursor-pointer">
-                            </div>
-                            <span class="text-[10px] text-gray-400 block">Ekstensi: JPG, JPEG, PNG (Maks 2MB).</span>
+                    <div>
+                        <label class="gh-profile-form-label">Berkas CV (PDF)</label>
+                        <div class="mt-1 rounded-xl border border-[#0A1A4F]/[0.08] bg-[#f8fafc] p-3">
+                            <input type="file" name="cv_file" accept="application/pdf,.pdf"
+                                class="w-full text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-emerald-700">
                         </div>
+                        <p class="mt-1 text-[10px] text-[#94A3B8]">PDF — maks. 3 MB</p>
+                    </div>
 
-                        <div class="space-y-1">
-                            <label class="text-xs font-black text-gray-600 block">Unggah Berkas Curriculum Vitae
-                                Baru</label>
-                            <div class="mt-1 flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <input type="file" name="cv_file"
-                                    class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 cursor-pointer">
-                            </div>
-                            <span class="text-[10px] text-gray-400 block">Ekstensi: PDF (Maksimal 3MB).</span>
-                        </div>
-
-                        <div class="flex items-center justify-end gap-2 border-t border-gray-50 pt-3">
-                            <button type="button" onclick="closeModal('uploadMediaModal')"
-                                class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700">Batal</button>
-                            <button type="submit"
-                                class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-4 py-2 rounded-xl text-xs shadow-xs transition">Simpan
-                                Berkas</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="flex flex-col-reverse gap-2 border-t border-[#0A1A4F]/[0.06] pt-4 sm:flex-row sm:justify-end">
+                        <button type="button" onclick="closeModal('uploadMediaModal')" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">Batal</button>
+                        <button type="submit" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">Simpan berkas</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+@endpush
 
+@push('app-scripts')
     <script>
         function openModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.remove('hidden');
+                modal.removeAttribute('hidden');
                 document.body.style.overflow = 'hidden';
             }
         }
@@ -473,15 +492,19 @@
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.add('hidden');
-                document.body.style.overflow = 'auto';
+                modal.setAttribute('hidden', '');
+                document.body.style.overflow = '';
             }
         }
 
-        // Otomatis popup kembali modal jika ada error validasi saat upload berkas
-        @if ($errors->has('avatar') || $errors->has('cv_file'))
-            document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.style.overflow = '';
+
+            @if ($errors->any() && ! $errors->has('avatar') && ! $errors->has('cv_file'))
+                openModal('{{ $hasProfile ? 'editProfileModal' : 'addProfileModal' }}');
+            @elseif ($errors->has('avatar') || $errors->has('cv_file'))
                 openModal('uploadMediaModal');
-            });
-        @endif
+            @endif
+        });
     </script>
-@endsection
+@endpush

@@ -107,13 +107,13 @@ class ClassScheduleController extends Controller
 
             // Ambil data courses & materials berdasarkan role untuk kebutuhan Dropdown Modal
             if ($user->hasRole('admin')) {
-                $courses = Course::where('status', 'published')->orderBy('title')->get();
+                $courses = Course::orderedForSelect()->where('status', 'published')->get();
                 // Ambil semua materi untuk admin (atau sesuaikan dengan kebutuhan Anda)
                 $materials = CourseMaterial::orderBy('title')->get();
             } else {
-                $courses = Course::where('status', 'published')
+                $courses = Course::orderedForSelect()
+                    ->where('status', 'published')
                     ->where('teacher_id', $user->id)
-                    ->orderBy('title')
                     ->get();
 
                 // Ambil materi yang kelasnya diampu oleh guru yang sedang login

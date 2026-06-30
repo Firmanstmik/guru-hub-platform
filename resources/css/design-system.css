@@ -241,11 +241,9 @@
 @keyframes gh-slide-up {
     from {
         opacity: 0;
-        transform: translateY(8px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
@@ -1136,6 +1134,13 @@
 
     .gh-animate-slide-up {
         animation: var(--animate-slide-up);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .gh-animate-slide-up {
+            animation: none;
+            opacity: 1;
+        }
     }
 
     .gh-animate-scale-in {

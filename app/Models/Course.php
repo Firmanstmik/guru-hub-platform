@@ -46,6 +46,11 @@ class Course extends Model
         return $this->hasMany(ClassSchedule::class);
     }
 
+    public function scopeOrderedForSelect($query)
+    {
+        return $query->with(['subject', 'educationLevel', 'category'])->orderBy('title');
+    }
+
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'course_students', 'course_id', 'student_id')
@@ -61,5 +66,10 @@ class Course extends Model
     public function quizzes()
     {
         return $this->hasManyThrough(Quizze::class, CourseMaterial::class, 'course_id', 'material_id');
+    }
+
+    public function catalogLabel(): string
+    {
+        return \App\Support\CourseCatalog::courseLabel($this);
     }
 }

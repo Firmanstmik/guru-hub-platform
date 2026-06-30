@@ -52,11 +52,11 @@ class CertificateController extends Controller
 
             // Spatie: Guru hanya boleh memilih kelas asuhannya sendiri untuk dropdown modal
             if ($user->hasRole('admin')) {
-                $courses = Course::where('status', 'published')->orderBy('title')->get();
+                $courses = Course::orderedForSelect()->where('status', 'published')->get();
             } else {
-                $courses = Course::where('status', 'published')
+                $courses = Course::orderedForSelect()
+                    ->where('status', 'published')
                     ->where('teacher_id', $user->id)
-                    ->orderBy('title')
                     ->get();
             }
 

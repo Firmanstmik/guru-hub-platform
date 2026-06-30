@@ -23,7 +23,7 @@
                         <option value="">Semua Kelas</option>
                         @foreach ($courses as $course)
                             <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>
-                                {{ $course->title }}
+                                {{ $course->catalogLabel() }}
                             </option>
                         @endforeach
                 </select>
@@ -82,8 +82,7 @@
                                     class="w-full border-gray-300 rounded-lg text-sm p-2.5 border focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
                                     <option value="">-- Pilih Program Kelas --</option>
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}">{{ $course->title }} (Guru:
-                                            {{ $course->teacher->name ?? 'Tidak Ada' }})</option>
+                                        <option value="{{ $course->id }}">{{ $course->catalogLabel() }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -143,7 +142,7 @@
                                 <select id="edit_course_id" name="course_id" required
                                     class="w-full border-gray-300 rounded-lg text-sm p-2.5 border focus:border-indigo-500">
                                     @foreach ($courses as $course)
-                                        <option value="{{ $course->id }}">{{ $course->title }}</option>
+                                        <option value="{{ $course->id }}">{{ $course->catalogLabel() }}</option>
                                     @endforeach
                                 </select>
                             </div>

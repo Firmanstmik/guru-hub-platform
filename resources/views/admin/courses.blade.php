@@ -43,6 +43,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Cover & Judul Kelas</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Jenjang & Mapel</th>
                         <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Kategori</th>
                         @role('admin')
                             <th class="px-6 py-3 text-xs font-semibold text-gray-500 uppercase">Guru Pengajar</th>
@@ -66,6 +67,10 @@
                                         </div>
                                     </div>
                                 </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-700">
+                                <div class="font-medium text-gray-900">{{ $course->educationLevel?->name ?? '—' }}</div>
+                                <div class="text-xs text-gray-500">{{ $course->subject?->name ?? '—' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-gray-700 font-medium">
                                 {{ $course->category->name }}
@@ -110,7 +115,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ auth()->user()->hasRole('admin') ? '7' : '6' }}"
+                            <td colspan="{{ auth()->user()->hasRole('admin') ? '8' : '7' }}"
                                 class="px-6 py-12 text-center text-gray-500">Tidak ada program kelas yang ditemukan.
                             </td>
                         </tr>
@@ -139,19 +144,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="sm:col-span-2">
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">Mata Pelajaran & Jenjang</label>
-                                    <select name="subject_id" id="add_course_subject_id" required
-                                        class="w-full border-gray-300 rounded-lg text-sm p-2 border">
-                                        <option value="">Pilih mapel sesuai jenjang</option>
-                                        @foreach ($subjects->groupBy(fn ($s) => $s->educationLevel?->name ?? 'Lainnya') as $levelName => $levelSubjects)
-                                            <optgroup label="{{ $levelName }}">
-                                                @foreach ($levelSubjects as $subject)
-                                                    <option value="{{ $subject->id }}" data-teacher-filter="1">
-                                                        {{ $subject->name }} ({{ $subject->category?->name }})
-                                                    </option>
-                                                @endforeach
-                                            </optgroup>
-                                        @endforeach
-                                    </select>
+                                    <x-course.subject-select :subjects="$subjects" id="add_course_subject_id" class="w-full border-gray-300 rounded-lg text-sm p-2 border" />
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">Guru Pengajar</label>
@@ -227,18 +220,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div class="sm:col-span-2">
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">Mata Pelajaran & Jenjang</label>
-                                    <select id="edit_subject_id" name="subject_id" required
-                                        class="w-full border-gray-300 rounded-lg text-sm p-2 border">
-                                        @foreach ($subjects->groupBy(fn ($s) => $s->educationLevel?->name ?? 'Lainnya') as $levelName => $levelSubjects)
-                                            <optgroup label="{{ $levelName }}">
-                                                @foreach ($levelSubjects as $subject)
-                                                    <option value="{{ $subject->id }}">
-                                                        {{ $subject->name }} ({{ $subject->category?->name }})
-                                                    </option>
-                                                @endforeach
-                                            </optgroup>
-                                        @endforeach
-                                    </select>
+                                    <x-course.subject-select :subjects="$subjects" id="edit_subject_id" class="w-full border-gray-300 rounded-lg text-sm p-2 border" />
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">Guru Pengajar</label>

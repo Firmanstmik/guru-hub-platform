@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EducationLevel;
 use App\Models\User;
 use App\Models\TeacherProfile;
+use App\Support\TeacherProfileChecklist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class TeacherProfileController extends Controller
 
             // Menggunakan Spatie hasRole() / Deteksi rute Guru
             if ($user->hasRole('guru') || $request->is('guru*')) {
-                $user->load(['teacherProfile', 'teachingSubjects']);
+                $user->load(['teacherProfile', 'teachingSubjects.educationLevel', 'teachingSubjects.category']);
                 $profile = $user->teacherProfile ?? new TeacherProfile();
                 $skills = $profile->skills_tags ? json_decode($profile->skills_tags, true) : [];
                 $educationLevels = EducationLevel::active()
@@ -33,8 +34,20 @@ class TeacherProfileController extends Controller
                     ->with(['subjects' => fn ($q) => $q->active()->with('category:id,name')->ordered()])
                     ->get();
                 $selectedSubjectIds = $user->teachingSubjects()->pluck('subjects.id')->all();
+                $checklist = TeacherProfileChecklist::build($user, $profile);
+                $subjectGroups = $user->teachingSubjects->groupBy(fn ($s) => $s->educationLevel?->name ?? 'Lainnya');
+                $publishedCoursesCount = $user->teacherCourses()->where('status', 'published')->count();
 
-                return view('guru.profile', compact('user', 'profile', 'skills', 'educationLevels', 'selectedSubjectIds'));
+                return view('guru.profile', compact(
+                    'user',
+                    'profile',
+                    'skills',
+                    'educationLevels',
+                    'selectedSubjectIds',
+                    'checklist',
+                    'subjectGroups',
+                    'publishedCoursesCount',
+                ));
             }
 
             // JIKA YANG AKSES ADALAH ADMIN

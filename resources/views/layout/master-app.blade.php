@@ -31,7 +31,10 @@
         </div>
     </main>
 
+    @stack('app-modals')
+
     <x-layout.alert-dismiss />
+    @stack('app-scripts')
 </body>
 
 </html>

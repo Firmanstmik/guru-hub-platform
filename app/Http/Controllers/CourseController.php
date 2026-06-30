@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\AuthorizesCourseOwnership;
 use App\Http\Controllers\Controller;
-use App\Models\Categori; // Tetap menggunakan model Categori sesuai dengan relasi index Anda
+use App\Models\Categori;
 use App\Models\Course;
-use App\Models\Subject;
 use App\Models\User;
+use App\Support\CourseCatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -39,6 +39,10 @@ class CourseController extends Controller
                 $query->where('category_id', $request->category_id);
             }
 
+            if ($request->has('subject_id') && $request->subject_id != '') {
+                $query->where('subject_id', $request->subject_id);
+            }
+
             // Filter berdasarkan Status Kelas
             if ($request->has('status') && $request->status != '') {
                 $query->where('status', $request->status);
@@ -48,7 +52,8 @@ class CourseController extends Controller
 
             // Data pendukung untuk modal Tambah/Edit Kelas
             $categories = Categori::orderBy('name')->get();
-            $subjects = Subject::active()->with(['category:id,name', 'educationLevel:id,name'])->ordered()->get();
+            $subjects = CourseCatalog::subjectsFor($user);
+            $canCreateCourse = $subjects->isNotEmpty();
 
             // Spatie: Efisiensi dropdown select guru di modal
             if ($user->hasRole('admin')) {
@@ -58,9 +63,9 @@ class CourseController extends Controller
             }
 
             if ($user->hasRole('admin')) {
-                return view('admin.courses', compact('courses', 'categories', 'teachers', 'subjects'));
+                return view('admin.courses', compact('courses', 'categories', 'teachers', 'subjects', 'canCreateCourse'));
             } elseif ($user->hasRole('guru')) {
-                return view('guru.courses', compact('courses', 'categories', 'teachers', 'subjects'));
+                return view('guru.courses', compact('courses', 'categories', 'teachers', 'subjects', 'canCreateCourse'));
             } else {
                 abort(403, 'Anda tidak memiliki hak akses untuk halaman ini.');
             }
@@ -106,8 +111,10 @@ class CourseController extends Controller
         $uploadedPath = null;
 
         try {
-            if (Auth::user()->hasRole('guru') && !Auth::user()->hasRole('admin')) {
-                $validated['teacher_id'] = Auth::id();
+            $actor = Auth::user();
+
+            if ($actor->hasRole('guru') && ! $actor->hasRole('admin')) {
+                $validated['teacher_id'] = $actor->id;
             }
 
             if ($request->hasFile('cover_image')) {
@@ -115,7 +122,7 @@ class CourseController extends Controller
                 $validated['cover_image'] = $uploadedPath;
             }
 
-            $subject = Subject::findOrFail($validated['subject_id']);
+            $subject = CourseCatalog::assertTeacherMayUseSubject($actor, (int) $validated['subject_id']);
             $validated['category_id'] = $subject->category_id;
             $validated['education_level_id'] = $subject->education_level_id;
 
@@ -168,13 +175,19 @@ class CourseController extends Controller
         $this->authorizeOwnsCourse($course);
 
         try {
+            $actor = Auth::user();
+
+            if ($actor->hasRole('guru') && ! $actor->hasRole('admin')) {
+                $validated['teacher_id'] = $course->teacher_id;
+            }
+
             if ($request->hasFile('cover_image')) {
                 // Simpan berkas baru terlebih dahulu
                 $newUploadedPath = $request->file('cover_image')->store('courses/covers', 'public');
                 $validated['cover_image'] = $newUploadedPath;
             }
 
-            $subject = Subject::findOrFail($validated['subject_id']);
+            $subject = CourseCatalog::assertTeacherMayUseSubject($actor, (int) $validated['subject_id']);
             $validated['category_id'] = $subject->category_id;
             $validated['education_level_id'] = $subject->education_level_id;
 
