@@ -14,6 +14,26 @@
     $defaultTitle = 'Halo, ' . $firstName;
     $profileUrl = $isGuru ? '/teachers' : '/biodata';
     $dashboardUrl = $isGuru ? '/guru-dashboard' : '/siswa-dashboard';
+    $roleLabel = $isGuru ? 'Pengajar' : 'Siswa';
+
+    $guruNav = [
+        ['href' => '/guru-dashboard', 'icon' => 'layout-dashboard', 'label' => 'Dashboard', 'active' => request()->is('guru-dashboard*')],
+        ['href' => '/courses', 'icon' => 'layers', 'label' => 'Kelas', 'active' => request()->is('courses*') || request()->is('categories*')],
+        ['href' => '/materials', 'icon' => 'book-open', 'label' => 'Materi', 'active' => request()->is('materials*') || request()->is('videos*')],
+        ['href' => '/schedules', 'icon' => 'calendar', 'label' => 'Jadwal', 'active' => request()->is('schedules*')],
+        ['href' => '/earnings', 'icon' => 'circle-dollar-sign', 'label' => 'Pendapatan', 'active' => request()->is('earnings*')],
+        ['href' => $profileUrl, 'icon' => 'user', 'label' => 'Profil', 'active' => request()->is('teachers*')],
+    ];
+
+    $siswaNav = [
+        ['href' => '/siswa-dashboard', 'icon' => 'layout-dashboard', 'label' => 'Home', 'active' => request()->is('siswa-dashboard*')],
+        ['href' => '/tampil-kursus', 'icon' => 'library', 'label' => 'Katalog', 'active' => request()->is('tampil-kursus*') || request()->is('bookings*')],
+        ['href' => '/my-courses', 'icon' => 'book-open', 'label' => 'Kelas Saya', 'active' => request()->is('my-courses*') || request()->is('student/courses*')],
+        ['href' => '/history-bookings', 'icon' => 'receipt-text', 'label' => 'Riwayat', 'active' => request()->is('history-bookings*') || request()->is('payments-class*')],
+        ['href' => $profileUrl, 'icon' => 'user', 'label' => 'Profil', 'active' => request()->is('biodata*')],
+    ];
+
+    $desktopNav = $isGuru ? $guruNav : $siswaNav;
 @endphp
 
 <header class="gh-app-header" x-data="{ searchOpen: {{ $showSearch ? 'true' : 'false' }} }">
@@ -23,48 +43,30 @@
             <h1 class="gh-app-header-title">{{ $title ?? $defaultTitle }}</h1>
         </a>
 
-        <a href="{{ $dashboardUrl }}" class="gh-nav-brand hidden lg:flex">
+        <a href="{{ $dashboardUrl }}" class="gh-app-header-brand hidden lg:flex">
             <div class="gh-nav-brand-logo">
                 <img src="{{ asset('assets/logo-app/guru_hub_logo.jpeg') }}" alt="GuruHub"
                     class="h-full w-full object-contain">
             </div>
-            <span class="gh-nav-brand-title">GuruHub</span>
+            <span class="gh-app-header-brand-copy">
+                <span class="gh-nav-brand-title">GuruHub</span>
+                <span class="gh-app-header-brand-role">{{ $defaultEyebrow }}</span>
+            </span>
         </a>
 
-        @if ($isGuru)
-            <nav class="gh-app-desktop-nav" aria-label="Navigasi desktop pengajar">
-                <a href="/guru-dashboard" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('guru-dashboard*')])>
-                    <x-ui.lucide name="layout-dashboard" class="h-4 w-4" /> Dashboard
-                </a>
-                <a href="/courses" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('courses*')])>
-                    <x-ui.lucide name="layers" class="h-4 w-4" /> Kelas
-                </a>
-                <a href="/materials" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('materials*')])>
-                    <x-ui.lucide name="book-open" class="h-4 w-4" /> Materi
-                </a>
-                <a href="/schedules" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('schedules*')])>
-                    <x-ui.lucide name="calendar" class="h-4 w-4" /> Jadwal
-                </a>
-                <a href="/earnings" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('earnings*')])>
-                    <x-ui.lucide name="circle-dollar-sign" class="h-4 w-4" /> Pendapatan
-                </a>
-            </nav>
-        @else
-            <nav class="gh-app-desktop-nav" aria-label="Navigasi desktop siswa">
-                <a href="/siswa-dashboard" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('siswa-dashboard*')])>
-                    <x-ui.lucide name="layout-dashboard" class="h-4 w-4" /> Home
-                </a>
-                <a href="/tampil-kursus" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('tampil-kursus*')])>
-                    <x-ui.lucide name="library" class="h-4 w-4" /> Katalog
-                </a>
-                <a href="/my-courses" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('my-courses*')])>
-                    <x-ui.lucide name="book-open" class="h-4 w-4" /> Kelas Saya
-                </a>
-                <a href="/history-bookings" @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => request()->is('history-bookings*')])>
-                    <x-ui.lucide name="receipt-text" class="h-4 w-4" /> Riwayat
-                </a>
-            </nav>
-        @endif
+        <nav class="gh-app-desktop-nav" aria-label="{{ $isGuru ? 'Navigasi desktop pengajar' : 'Navigasi desktop siswa' }}">
+            <div class="gh-app-desktop-nav-track" role="menubar">
+                @foreach ($desktopNav as $item)
+                    <a href="{{ $item['href'] }}" role="menuitem"
+                        @class(['gh-app-desktop-link', 'gh-app-desktop-link-active' => $item['active']])>
+                        <span class="gh-app-desktop-link-icon" aria-hidden="true">
+                            <x-ui.lucide :name="$item['icon']" class="h-3.5 w-3.5" />
+                        </span>
+                        <span class="gh-app-desktop-link-label">{{ $item['label'] }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </nav>
 
         <div class="gh-app-header-actions">
             @if ($showSearch && $searchAction)
@@ -74,17 +76,29 @@
                 </button>
             @endif
 
-            <button type="button" class="gh-app-icon-btn" aria-label="Notifikasi">
-                <x-ui.lucide name="bell" class="h-4 w-4" />
-            </button>
+            <div class="gh-app-header-actions-main">
+                <button type="button" class="gh-app-icon-btn gh-app-icon-btn--ghost" aria-label="Notifikasi">
+                    <x-ui.lucide name="bell" class="h-4 w-4" />
+                </button>
 
-            <a href="{{ $profileUrl }}" class="lg:hidden" title="Profil">
-                <x-app.user-avatar :user="$user" size="md" />
-            </a>
+                <a href="{{ $profileUrl }}" class="gh-app-desktop-profile lg:flex" title="Profil {{ $roleLabel }}">
+                    <x-app.user-avatar :user="$user" size="sm" :ring="false" />
+                    <span class="gh-app-desktop-profile-meta">
+                        <span class="gh-app-desktop-profile-name">{{ $firstName }}</span>
+                        <span class="gh-app-desktop-profile-role">{{ $roleLabel }}</span>
+                    </span>
+                </a>
 
-            <a href="{{ url('/logout') }}" class="gh-app-icon-btn" title="Keluar" aria-label="Keluar">
-                <x-ui.lucide name="log-out" class="h-4 w-4" />
-            </a>
+                <a href="{{ $profileUrl }}" class="lg:hidden" title="Profil">
+                    <x-app.user-avatar :user="$user" size="md" />
+                </a>
+
+                <span class="gh-app-header-divider" aria-hidden="true"></span>
+
+                <a href="{{ url('/logout') }}" class="gh-app-icon-btn gh-app-icon-btn--logout" title="Keluar" aria-label="Keluar">
+                    <x-ui.lucide name="log-out" class="h-4 w-4" />
+                </a>
+            </div>
         </div>
     </div>
 

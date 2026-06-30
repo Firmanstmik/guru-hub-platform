@@ -236,19 +236,37 @@
                         </div>
 
                         @if ($user->teachingSubjects->isNotEmpty())
-                            <div class="space-y-4">
+                            <div class="gh-subject-picker-levels !max-h-none">
                                 @foreach ($subjectGroups as $levelName => $subjects)
-                                    <div class="gh-profile-subject-group">
-                                        <p class="gh-profile-subject-level">{{ $subjects->first()->educationLevel?->icon }} {{ $levelName }}</p>
-                                        <div class="flex flex-wrap gap-1.5">
-                                            @foreach ($subjects as $subject)
-                                                <span class="inline-flex items-center gap-1 rounded-lg border border-indigo-100 bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-700">
-                                                    {{ $subject->name }}
-                                                    @if ($subject->category?->name)
-                                                        <span class="font-normal text-indigo-400">· {{ $subject->category->name }}</span>
-                                                    @endif
-                                                </span>
-                                            @endforeach
+                                    <div class="gh-subject-level">
+                                        <div class="gh-subject-level-trigger !cursor-default">
+                                            <span class="gh-subject-level-icon">{{ $subjects->first()->educationLevel?->icon }}</span>
+                                            <span class="gh-subject-level-copy">
+                                                <span class="gh-subject-level-name">{{ $levelName }}</span>
+                                                <span class="gh-subject-level-meta">{{ $subjects->count() }} mapel diampu</span>
+                                            </span>
+                                            <span class="gh-subject-level-badge">{{ $subjects->count() }}</span>
+                                        </div>
+                                        <div class="gh-subject-level-panel">
+                                            <div class="gh-subject-chip-grid">
+                                                @foreach ($subjects as $subject)
+                                                    @php
+                                                        $categoryName = $subject->category?->name;
+                                                        $showCategory = filled($categoryName) && strcasecmp($categoryName, $subject->name) !== 0;
+                                                    @endphp
+                                                    <div class="gh-subject-chip gh-subject-chip--readonly">
+                                                        <span class="gh-subject-chip-check gh-subject-chip-check--on">
+                                                            <x-ui.lucide name="shield-check" class="h-3.5 w-3.5" />
+                                                        </span>
+                                                        <span class="gh-subject-chip-body">
+                                                            <span class="gh-subject-chip-title">{{ $subject->name }}</span>
+                                                            @if ($showCategory)
+                                                                <span class="gh-subject-chip-meta">{{ $categoryName }}</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach

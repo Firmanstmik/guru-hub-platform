@@ -62,9 +62,11 @@
                 <input type="text" name="skills_tags"
                     value="{{ old('skills_tags', ($profile->skills_tags ?? null) ? implode(', ', json_decode($profile->skills_tags, true)) : '') }}"
                     placeholder="Aljabar, UTBK, Kurikulum Merdeka"
-                    class="gh-app-input w-full font-mono text-[13px]">
+                    class="gh-app-input w-full text-[13px]">
             </div>
-            <x-education.subject-picker :levels="$educationLevels" :selected="$selectedSubjectIds" class="max-h-64" />
+            <div>
+                <label class="gh-profile-form-label">Mata pelajaran per jenjang</label>
+                <x-education.subject-picker :levels="$educationLevels" :selected="$selectedSubjectIds" />
         </div>
     </div>
 
