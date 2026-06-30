@@ -202,13 +202,11 @@
         </div>
     </div>
 
-    <div id="addProfileModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-xs transition-opacity"
-                onclick="closeModal('addProfileModal')"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-            <div
-                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100">
+    <div id="addProfileModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="closeModal('addProfileModal')" aria-hidden="true"></div>
+        <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
+            <div class="w-full max-w-2xl rounded-2xl border border-gray-100 bg-white text-left shadow-xl"
+                onclick="event.stopPropagation()">
                 <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
                     <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                         <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Lengkapi Profile</h3>
@@ -294,13 +292,11 @@
     </div>
 
     @if (isset($profile) && $profile->id)
-        <div id="editProfileModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-xs transition-opacity"
-                    onclick="closeModal('editProfileModal')"></div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-                <div
-                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-100">
+        <div id="editProfileModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+            <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="closeModal('editProfileModal')" aria-hidden="true"></div>
+            <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
+                <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-100 bg-white text-left shadow-xl"
+                    onclick="event.stopPropagation()">
                     <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
                         <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                             <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Edit Informasi Profil
@@ -398,13 +394,11 @@
         </div>
     @endif
 
-    <div id="uploadMediaModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-xs transition-opacity"
-                onclick="closeModal('uploadMediaModal')"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-            <div
-                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100">
+    <div id="uploadMediaModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="closeModal('uploadMediaModal')" aria-hidden="true"></div>
+        <div class="relative z-10 flex min-h-full items-end justify-center p-4 pb-24 sm:items-center sm:pb-4">
+            <div class="w-full max-w-lg rounded-2xl border border-gray-100 bg-white text-left shadow-xl"
+                onclick="event.stopPropagation()">
                 <div class="bg-white px-5 pt-5 pb-4 sm:p-6 space-y-4">
                     <div class="flex items-center justify-between border-b border-gray-50 pb-3">
                         <h3 class="text-sm font-black text-gray-900 uppercase tracking-wider">Perbarui File Media</h3>
