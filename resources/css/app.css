@@ -6,6 +6,7 @@
 @import './guru-dashboard.css';
 @import './app-mobile.css';
 @import './app-premium.css';
+@import './page-loader.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';

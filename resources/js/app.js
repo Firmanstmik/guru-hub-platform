@@ -149,3 +149,95 @@ document.addEventListener('keydown', (event) => {
 
 window.Alpine = Alpine;
 Alpine.start();
+
+/* ── Professional silver page loader (backup if component script missing) ── */
+(function initGhPageLoader() {
+    if (window.__ghPageLoaderBound) return;
+    window.__ghPageLoaderBound = true;
+
+    const MIN_MS = 480;
+    let shownAt = 0;
+    let hideTimer = null;
+
+    function el() {
+        return document.getElementById('gh-page-loader');
+    }
+
+    function show() {
+        const node = el();
+        if (!node) return;
+        clearTimeout(hideTimer);
+        node.hidden = false;
+        node.classList.remove('is-hiding');
+        node.setAttribute('aria-busy', 'true');
+        document.body.classList.add('gh-is-loading');
+        shownAt = Date.now();
+    }
+
+    function hide() {
+        const node = el();
+        if (!node || node.hidden) return;
+        const wait = Math.max(0, MIN_MS - (Date.now() - shownAt));
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => {
+            node.classList.add('is-hiding');
+            node.setAttribute('aria-busy', 'false');
+            document.body.classList.remove('gh-is-loading');
+            setTimeout(() => {
+                if (node.classList.contains('is-hiding')) {
+                    node.hidden = true;
+                }
+            }, 340);
+        }, wait);
+    }
+
+    function sameOriginNav(anchor) {
+        if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return false;
+        if (anchor.dataset.noLoader === 'true') return false;
+        const href = anchor.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+            return false;
+        }
+        try {
+            const url = new URL(href, window.location.href);
+            return url.origin === window.location.origin;
+        } catch {
+            return false;
+        }
+    }
+
+    document.addEventListener('click', (event) => {
+        if (event.defaultPrevented) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const anchor = event.target.closest?.('a[href]');
+        if (!sameOriginNav(anchor)) return;
+        const url = new URL(anchor.href, window.location.href);
+        if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) {
+            return;
+        }
+        show();
+    }, true);
+
+    document.addEventListener('submit', (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (form.dataset.noLoader === 'true') return;
+        if (form.target === '_blank') return;
+        show();
+    }, true);
+
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) hide();
+    });
+
+    if (document.readyState === 'complete') {
+        hide();
+    } else {
+        window.addEventListener('load', hide, { once: true });
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(hide, 120);
+        });
+    }
+
+    window.ghPageLoader = { show, hide };
+})();

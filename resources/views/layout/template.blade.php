@@ -38,6 +38,7 @@
 </head>
 
 <body class="bg-gray-50 antialiased font-sans md:overflow-hidden">
+    <x-app.page-loader />
 
     <div class="min-h-screen flex flex-col md:flex-row md:h-screen md:overflow-hidden"
         @if (auth()->user()->hasRole('admin'))

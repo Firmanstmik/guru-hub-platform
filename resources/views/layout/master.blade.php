@@ -13,6 +13,8 @@
     x-data="{ mobileOpen: false, registerOpen: false, navScrolled: false }"
     @scroll.window="navScrolled = window.scrollY > 12">
 
+<x-app.page-loader />
+
 @hasSection('flush')
     <header class="gh-ref-nav-bar fixed inset-x-0 top-0 z-50" aria-label="Navigasi situs">
         <div class="gh-ref-nav-inner">

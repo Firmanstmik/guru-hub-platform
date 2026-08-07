@@ -6,6 +6,7 @@
 </head>
 
 <body class="gh-login-shell">
+    <x-app.page-loader />
     <div class="gh-login-layout">
         <x-auth.login-brand />
 

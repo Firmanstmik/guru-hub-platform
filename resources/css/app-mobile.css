@@ -712,7 +712,19 @@
 
     /* ── Skeleton loading ── */
     .gh-app-skeleton {
-        @apply animate-pulse rounded-xl bg-[#0A1A4F]/[0.06];
+        position: relative;
+        overflow: hidden;
+        border-radius: 0.75rem;
+        background: #dde1e7;
+    }
+
+    .gh-app-skeleton::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+        animation: gh-skel-shimmer 1.35s ease-in-out infinite;
     }
 
     .gh-app-skeleton-line {

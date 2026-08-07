@@ -9,6 +9,7 @@
     'gh-app-shell gh-mobile-app' => auth()->user()->hasAnyRole(['guru', 'siswa']),
     'gh-guru-app' => auth()->user()->hasRole('guru'),
 ])>
+    <x-app.page-loader />
 
     @if (auth()->user()->hasAnyRole(['guru', 'siswa']))
         <x-app.mobile-header

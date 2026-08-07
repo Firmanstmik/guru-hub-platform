@@ -6,6 +6,7 @@
 </head>
 
 <body @class(['gh-auth-shell', 'gh-auth-register-mode' => View::hasSection('auth-simple')])>
+    <x-app.page-loader />
     <div class="gh-auth-layout">
         @hasSection('auth-simple')
             <x-auth.brand-panel-simple
