@@ -370,7 +370,7 @@
             </div>
 
             @if ($hasProfile)
-                <div class="gh-app-sticky-cta lg:hidden">
+                <div class="lg:hidden">
                     <button type="button" onclick="openModal('editProfileModal')" class="gh-app-btn gh-app-btn-primary gh-app-btn-block">
                         <x-ui.lucide name="edit" class="h-4 w-4" /> Edit profil pengajar
                     </button>
