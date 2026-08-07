@@ -864,13 +864,26 @@
     }
 
     /* Leave room so checklist / form actions are not covered by sticky CTA + dock */
-    .gh-app-page-inner:has(+ .gh-app-sticky-cta),
     .gh-app-page-inner:has(.gh-app-sticky-cta) {
-        padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .gh-app-page-inner:has(.gh-app-sticky-cta) .gh-profile-layout,
+    .gh-app-page-inner:has(.gh-app-sticky-cta) .gh-profile-checklist {
+        scroll-margin-bottom: calc(8rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .gh-app-page-inner:has(.gh-app-sticky-cta) .gh-profile-sidebar {
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 1023px) {
+        .gh-app-page-inner:has(.gh-app-sticky-cta) .gh-profile-layout {
+            padding-bottom: 1rem;
+        }
     }
 
     @media (min-width: 1024px) {
-        .gh-app-page-inner:has(+ .gh-app-sticky-cta),
         .gh-app-page-inner:has(.gh-app-sticky-cta) {
             padding-bottom: 0;
         }
