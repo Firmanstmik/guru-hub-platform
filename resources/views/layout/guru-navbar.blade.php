@@ -87,10 +87,10 @@
                 </div>
             </a>
 
-            <a href="{{ url('/logout') }}" class="gh-nav-logout p-2" title="Keluar">
+            <x-logout-button class="gh-nav-logout p-2" title="Keluar">
                 <x-ui.lucide name="log-out" class="h-5 w-5" />
                 <span class="hidden lg:inline">Keluar</span>
-            </a>
+            </x-logout-button>
         </div>
 
         <div class="gh-guru-nav-mobile-actions">
@@ -182,10 +182,10 @@
                     <p class="gh-nav-profile-role truncate">instructor@email.com</p>
                 </div>
             </div>
-            <a href="{{ url('/logout') }}" class="gh-nav-logout mt-3 w-full">
+            <x-logout-button class="gh-nav-logout mt-3 w-full" title="Keluar">
                 <x-ui.lucide name="log-out" class="h-5 w-5" />
                 <span>Keluar</span>
-            </a>
+            </x-logout-button>
         </div>
     </div>
 </nav>

@@ -31,14 +31,18 @@ use Spatie\Permission\Models\Permission;
 // PUBLIC ROUTES
 Route::get('/', [LandingPageController::class, 'index']);
 Route::get('/login', [AuthController::class, 'viewLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'Logout'])->middleware('auth')->name('logout');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+// Legacy GET logout: redirect to home after invalidating is unsafe for CSRF; keep soft-deprecation
+Route::get('/logout', function () {
+    return redirect('/login')->with('error', 'Silakan keluar melalui tombol Logout.');
+})->name('logout.get');
 
 Route::prefix('register')->group(function () {
     Route::get('/student', [RegisterController::class, 'siswaRegister']);
-    Route::post('/student', [RegisterController::class, 'storeSiswaRegister']);
+    Route::post('/student', [RegisterController::class, 'storeSiswaRegister'])->middleware('throttle:register');
     Route::get('/teacher', [RegisterController::class, 'guruRegister']);
-    Route::post('/teacher', [RegisterController::class, 'storeGuruRegister']);
+    Route::post('/teacher', [RegisterController::class, 'storeGuruRegister'])->middleware('throttle:register');
 });
 
 Route::prefix('belajar')->name('browse.')->withoutScopedBindings()->group(function () {

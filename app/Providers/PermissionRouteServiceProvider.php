@@ -16,42 +16,41 @@ class PermissionRouteServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if (!app()->runningInConsole() && !app()->routesAreCached()) {
+        // Registered once via bootstrap/providers.php — do not double-register from AppServiceProvider.
+        // Skip when routes are cached. Do NOT run `php artisan route:cache` with this provider.
+        if (! app()->routesAreCached()) {
             $this->mapDynamicPermissionRoutes();
         }
     }
 
     protected function mapDynamicPermissionRoutes()
     {
-        $permissions = Permission::whereNotNull('uri')
-            ->whereNotNull('method')
-            ->whereNotNull('action')
-            ->whereNotNull('controller')
-            ->get();
+        $permissions = cache()->remember('guruhub.permission_routes', 300, function () {
+            return Permission::whereNotNull('uri')
+                ->whereNotNull('method')
+                ->whereNotNull('action')
+                ->whereNotNull('controller')
+                ->get(['id', 'name', 'uri', 'method', 'action', 'controller']);
+        });
 
         foreach ($permissions as $permission) {
             $method = strtolower($permission->method);
             $allowedMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
-            if (!in_array($method, $allowedMethods)) {
+            if (! in_array($method, $allowedMethods, true)) {
                 continue;
             }
 
             $controllerClass = "\\App\\Http\\Controllers\\{$permission->controller}";
 
-            // 1. Tentukan susunan dasar middleware
             $middlewares = ['web', 'auth', "can:{$permission->name}"];
 
-            // 2. KECUALIKAN rute form biodata agar tidak memicu redirect loop
-            // Menghapus spasi/slash di ujung URI agar pencocokan teks lebih akurat
             $cleanUri = trim($permission->uri, '/');
 
             if ($cleanUri !== 'biodata' && $cleanUri !== 'teachers') {
-                // Jika BUKAN rute pengisian profil, maka wajib pasang pengunci biodata
                 $middlewares[] = 'auth.biodata';
             }
 
-            // 3. Daftarkan rute dengan susunan middleware yang dinamis
             Route::group([
                 'middleware' => $middlewares,
             ], function () use ($method, $permission, $controllerClass) {

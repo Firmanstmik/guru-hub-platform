@@ -23,9 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        app()->register(PermissionRouteServiceProvider::class);
-
         $this->registerBrowseRouteBindings();
+
+        if ($this->app->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 
     private function registerBrowseRouteBindings(): void

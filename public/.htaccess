@@ -5,6 +5,9 @@
 
     RewriteEngine On
 
+    # Force HTTPS when behind proxy that sets X-Forwarded-Proto (optional safety)
+    # Certbot/nginx usually handles this; keep front controller rules below.
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -22,4 +25,19 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Long-cache hashed Vite build assets (speed)
+<IfModule mod_headers.c>
+    <If "%{REQUEST_URI} =~ m#^/build/#">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </If>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Gzip text assets when Apache serves them directly
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
 </IfModule>

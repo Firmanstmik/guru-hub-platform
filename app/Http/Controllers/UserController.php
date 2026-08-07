@@ -93,10 +93,10 @@ class UserController extends Controller
             $user = User::create([
                 'name'         => $validated['name'],
                 'email'        => $validated['email'],
-                'password'     => Hash::make($validated['password']), // Menggunakan Hash manual jika cast model dinonaktifkan
+                'password'     => Hash::make($validated['password']),
                 'phone_number' => $validated['phone_number'] ?? null,
-                'is_active'    => true,
             ]);
+            $user->forceFill(['is_active' => true])->save();
 
             DB::commit();
             return redirect('/users')->with('success', "Akun pengguna {$user->name} berhasil ditambahkan.");
@@ -185,9 +185,9 @@ class UserController extends Controller
         }
 
         try {
-            $user->update([
-                'is_active' => !$user->is_active
-            ]);
+            $user->forceFill([
+                'is_active' => ! $user->is_active,
+            ])->save();
 
             $statusMessage = $user->is_active ? 'diaktifkan kembali' : 'ditangguhkan (suspend)';
 

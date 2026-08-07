@@ -62,10 +62,10 @@
         </nav>
 
         <div class="gh-app-drawer-footer">
-            <a href="{{ url('/logout') }}" class="gh-app-btn gh-app-btn-secondary gh-app-btn-block">
+            <x-logout-button class="gh-app-btn gh-app-btn-secondary gh-app-btn-block" title="Keluar">
                 <x-ui.lucide name="log-out" class="h-4 w-4" />
                 Keluar
-            </a>
+            </x-logout-button>
         </div>
     </aside>
 </div>

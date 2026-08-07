@@ -95,9 +95,9 @@
 
                 <span class="gh-app-header-divider" aria-hidden="true"></span>
 
-                <a href="{{ url('/logout') }}" class="gh-app-icon-btn gh-app-icon-btn--logout" title="Keluar" aria-label="Keluar">
+                <x-logout-button class="gh-app-icon-btn gh-app-icon-btn--logout" title="Keluar">
                     <x-ui.lucide name="log-out" class="h-4 w-4" />
-                </a>
+                </x-logout-button>
             </div>
         </div>
     </div>

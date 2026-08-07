@@ -78,7 +78,18 @@ class StudentQuizController extends Controller
         // Validasi input jawaban dari form blade siswa
         $request->validate([
             'answers' => 'required|array',
+            'answers.*' => 'nullable',
         ]);
+
+        // Validasi file PDF jawaban (jika ada) — cegah upload berbahaya / terlalu besar
+        foreach ($request->allFiles()['answers'] ?? [] as $questionId => $file) {
+            $request->validate([
+                "answers.{$questionId}" => 'file|mimes:pdf|max:5120',
+            ], [
+                "answers.{$questionId}.mimes" => 'Jawaban lampiran harus berupa PDF.',
+                "answers.{$questionId}.max" => 'Ukuran PDF jawaban maksimal 5 MB.',
+            ]);
+        }
 
         $quiz = Quizze::with('material')->findOrFail($quizId);
         $this->assertStudentEnrolledInCourse((int) $quiz->material->course_id);

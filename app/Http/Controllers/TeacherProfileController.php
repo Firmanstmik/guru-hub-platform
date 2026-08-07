@@ -419,9 +419,9 @@ class TeacherProfileController extends Controller
                 if ($user->hasRole('guru')) {
                     $user->removeRole('guru');
                 }
-                $user->update([
-                    'is_active' => 0
-                ]);
+                $user->forceFill([
+                    'is_active' => 0,
+                ])->save();
             }
 
             DB::commit();

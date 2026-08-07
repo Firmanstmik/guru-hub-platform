@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Permission;
 use Exception;
 
 class PermissionController extends Controller
 {
+    private function bustRoutePermissionCache(): void
+    {
+        Cache::forget('guruhub.permission_routes');
+    }
     /**
      * INDEX (Daftar Hak Akses Sistem)
      */
@@ -58,6 +63,7 @@ class PermissionController extends Controller
             $validated['guard_name'] = 'web';
 
             Permission::create($validated);
+            $this->bustRoutePermissionCache();
 
             return redirect()->route('permissions.index')->with('success', 'Hak akses (Permission) baru berhasil ditambahkan.');
 
@@ -102,6 +108,7 @@ class PermissionController extends Controller
         try {
             $permission = Permission::findOrFail($id);
             $permission->update($validated);
+            $this->bustRoutePermissionCache();
 
             return redirect()->route('permissions.index')->with('success', 'Konfigurasi hak akses berhasil diperbarui.');
 
@@ -123,6 +130,7 @@ class PermissionController extends Controller
             $permission->roles()->detach();
 
             $permission->delete();
+            $this->bustRoutePermissionCache();
 
             return redirect()->route('permissions.index')->with('success', 'Hak akses berhasil dihapus dari sistem secara permanen.');
 
