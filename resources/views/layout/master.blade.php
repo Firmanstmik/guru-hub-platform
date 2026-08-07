@@ -249,10 +249,14 @@
     <footer class="gh-layout-footer">
         <div class="gh-container flex flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
             <p class="text-sm text-brand-400">&copy; {{ date('Y') }} Guru Hub. Semua hak dilindungi.</p>
-            <nav class="flex gap-6 text-sm text-brand-500" aria-label="Footer">
+            <nav class="flex flex-wrap items-center justify-center gap-6 text-sm text-brand-500" aria-label="Footer">
                 <a href="{{ url('register/student') }}" class="transition-colors hover:text-brand-800">Untuk Siswa</a>
                 <a href="{{ url('register/teacher') }}" class="transition-colors hover:text-brand-800">Untuk Pengajar</a>
                 <a href="{{ url('/login') }}" class="transition-colors hover:text-brand-800">Masuk</a>
+                <span class="hidden h-4 w-px bg-brand-200 sm:block" aria-hidden="true"></span>
+                <a href="https://www.instagram.com/guruhubku" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-brand-800" aria-label="Instagram GuruHub">Instagram</a>
+                <a href="https://www.facebook.com/share/1Crvgnk2Z5/" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-brand-800" aria-label="Facebook GuruHub">Facebook</a>
+                <a href="mailto:guruhubku@gmail.com" class="transition-colors hover:text-brand-800" aria-label="Email GuruHub">Email</a>
             </nav>
         </div>
     </footer>

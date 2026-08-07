@@ -343,6 +343,17 @@
                         <span class="gh-ref-display text-[20px] font-semibold">GuruHub</span>
                     </div>
                     <p class="gh-ref-muted mt-4 max-w-xs text-[13px]">Mengajar • Berbagi Ilmu • Membangun Masa Depan.</p>
+                    <div class="mt-5 flex items-center gap-3" aria-label="Media sosial">
+                        <a href="https://www.instagram.com/guruhubku" target="_blank" rel="noopener noreferrer" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="Instagram GuruHub">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                        </a>
+                        <a href="https://www.facebook.com/share/1Crvgnk2Z5/" target="_blank" rel="noopener noreferrer" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="Facebook GuruHub">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 13.5h2.5l.5-3H14v-1.5c0-.9.3-1.5 1.5-1.5H17V4.5h-2c-2.4 0-3.5 1.4-3.5 3.5V10.5H9v3h2.5V20h2.5v-6.5z"/></svg>
+                        </a>
+                        <a href="mailto:guruhubku@gmail.com" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="Email GuruHub">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                        </a>
+                    </div>
                 </div>
                 <div>
                     <p class="text-[11px] font-semibold tracking-widest text-[#0E7490] uppercase">Produk</p>
@@ -357,7 +368,7 @@
                     <ul class="mt-4 space-y-2.5 text-[14px]">
                         <li><a href="{{ url('/') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Tentang</a></li>
                         <li><a href="{{ url('register/teacher') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Karir</a></li>
-                        <li><a href="{{ url('/login') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Kontak</a></li>
+                        <li><a href="mailto:guruhubku@gmail.com" class="gh-ref-muted transition hover:text-[#0A1A4F]">Kontak</a></li>
                     </ul>
                 </div>
                 <div class="col-span-2 md:col-span-1">
