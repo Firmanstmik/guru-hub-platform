@@ -243,7 +243,7 @@
                                             {{ $course->teacher->name ?? 'Guru' }}</p>
                                     </div>
 
-                                    <form action="/admin/courses/{{ $course->id }}/publish" method="POST"
+                                    <form action="/courses/{{ $course->id }}/publish" method="POST"
                                         class="pt-1">
                                         @csrf
                                         @method('PATCH')

@@ -241,4 +241,23 @@ class CourseController extends Controller
             return redirect()->back()->with('error', 'Gagal menghapus kelas dari sistem karena kendala database.');
         }
     }
+
+    /**
+     * Publikasikan kelas draft (admin dashboard).
+     */
+    public function publish(Course $course)
+    {
+        try {
+            if ($course->status === 'published') {
+                return redirect()->back()->with('success', 'Kelas sudah berstatus published.');
+            }
+
+            $course->update(['status' => 'published']);
+
+            return redirect()->back()->with('success', 'Kelas berhasil dipublikasikan!');
+        } catch (Exception $e) {
+            Log::error('Gagal mempublikasikan kelas ID ' . $course->id . ': ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal mempublikasikan kelas.');
+        }
+    }
 }

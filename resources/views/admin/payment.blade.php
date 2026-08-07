@@ -9,7 +9,7 @@
             </div>
 
             <div class="w-full lg:w-auto">
-                <form action="/admin/payments" method="GET" class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                <form action="/payments" method="GET" class="flex flex-col sm:flex-row items-center gap-2 w-full">
                     <div class="relative w-full sm:w-64">
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari invoice / nama..."
@@ -28,7 +28,7 @@
                     </select>
 
                     @if (request('search') || request('status'))
-                        <a href="/admin/payments"
+                        <a href="/payments"
                             class="w-full sm:w-auto text-center text-xs text-rose-600 font-semibold hover:underline px-2">Reset</a>
                     @endif
                 </form>
@@ -128,7 +128,7 @@
                                     </button>
                                 @endif
 
-                                <form action="/admin/payments/{{ $payment->id }}" method="POST"
+                                <form action="/payments/{{ $payment->id }}" method="POST"
                                     onsubmit="return confirm('Hapus permanen log transaksi pembayaran ini?')">
                                     @csrf
                                     @method('DELETE')

@@ -42,7 +42,7 @@ class DashboardController extends Controller
                 ->latest('teacher_profiles.created_at')
                 ->get();
             $pendingCourses = Course::with('teacher')
-                ->where('status', 'pending')
+                ->where('status', 'draft')
                 ->latest()
                 ->get();
 

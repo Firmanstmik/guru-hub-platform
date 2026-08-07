@@ -112,7 +112,6 @@ class TeacherEarningController extends Controller
             // Fallback jika ada user dengan role lain mencoba masuk
             abort(403, 'Anda tidak memiliki hak akses untuk melihat halaman pendapatan ini.');
         } catch (Exception $e) {
-            dd($e->getMessage());
             Log::error('Gagal memuat data pendapatan bagi hasil pengajar: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memuat laporan pendapatan.');
         }

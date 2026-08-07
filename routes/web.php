@@ -80,6 +80,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::post('/homepage-testimonials', [HomepageTestimonialController::class, 'store']);
     Route::put('/homepage-testimonials/{homepageTestimonial}', [HomepageTestimonialController::class, 'update']);
     Route::delete('/homepage-testimonials/{homepageTestimonial}', [HomepageTestimonialController::class, 'destroy']);
+
+    // Admin shortcuts for actions missing from permission seed / wrong blade URLs
+    Route::patch('/courses/{course}/publish', [CourseController::class, 'publish'])->name('admin.courses.publish');
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('admin.payments.destroy');
 });
 
 // Route /biodata hanya didaftarkan via PermissionRouteServiceProvider (auth + permission).
