@@ -203,10 +203,6 @@
     </div>
 
     <script>
-        function toggleModal(modalId) {
-            document.getElementById(modalId).classList.toggle('hidden');
-        }
-
         function handleOpenEditModal(button) {
             const materialData = JSON.parse(button.getAttribute('data-material'));
             openEditModal(materialData); // Teruskan objek bersih ke fungsi modal utama Anda

@@ -292,10 +292,6 @@
             openEditModal(scheduleData);
         }
 
-        function toggleModal(modalId) {
-            document.getElementById(modalId).classList.toggle('hidden');
-        }
-
         function openEditModal(schedule) {
             document.getElementById('edit_course_id').value = schedule.course_id;
             document.getElementById('edit_material_id').value = schedule.material_id || '';

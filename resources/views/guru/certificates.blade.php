@@ -202,10 +202,6 @@
     </div>
 
     <script>
-        function toggleModal(modalId) {
-            document.getElementById(modalId).classList.toggle('hidden');
-        }
-
         function handleOpenEditModal(button) {
             // Ambil payload data objek sertifikat dari atribut 'data-certificate'
             const cert = JSON.parse(button.getAttribute('data-certificate'));

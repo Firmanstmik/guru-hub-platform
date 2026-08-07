@@ -863,6 +863,43 @@
         @apply fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom,0px))] z-30 border-t border-[#0A1A4F]/[0.06] bg-white/95 p-4 backdrop-blur-xl lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none;
     }
 
+    /* Leave room so checklist / form actions are not covered by sticky CTA + dock */
+    .gh-app-page-inner:has(+ .gh-app-sticky-cta),
+    .gh-app-page-inner:has(.gh-app-sticky-cta) {
+        padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    @media (min-width: 1024px) {
+        .gh-app-page-inner:has(+ .gh-app-sticky-cta),
+        .gh-app-page-inner:has(.gh-app-sticky-cta) {
+            padding-bottom: 0;
+        }
+    }
+
+    body.gh-modal-open .gh-app-bottom-nav,
+    body.gh-modal-open .gh-app-sticky-cta {
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    #addProfileModal,
+    #editProfileModal,
+    #uploadMediaModal,
+    #addCourseModal,
+    #editCourseModal,
+    #addScheduleModal,
+    #editScheduleModal,
+    #addMaterialModal,
+    #editMaterialModal,
+    #documentPreviewModal,
+    #addVideoModal,
+    #editVideoModal,
+    #videoPlayerModal,
+    #addCertificateModal,
+    #editCertificateModal {
+        z-index: 200;
+    }
+
     /* ── Guru profile page ── */
     .gh-profile-hero {
         @apply relative overflow-hidden rounded-2xl border border-[#0A1A4F]/[0.08] bg-white p-4 sm:p-5 lg:p-6;

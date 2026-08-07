@@ -67,6 +67,7 @@
             <div>
                 <label class="gh-profile-form-label">Mata pelajaran per jenjang</label>
                 <x-education.subject-picker :levels="$educationLevels" :selected="$selectedSubjectIds" />
+            </div>
         </div>
     </div>
 

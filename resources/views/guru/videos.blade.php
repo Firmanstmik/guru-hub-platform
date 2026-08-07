@@ -212,10 +212,6 @@
     </div>
 
     <script>
-        function toggleModal(modalId) {
-            document.getElementById(modalId).classList.toggle('hidden');
-        }
-
         function handleEditModal(button) {
             const videoData = JSON.parse(button.getAttribute('data-video'));
             openEditModal(videoData);

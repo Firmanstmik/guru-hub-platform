@@ -219,10 +219,6 @@
     @endif
 
     <script>
-        function toggleModal(modalId) {
-            document.getElementById(modalId).classList.toggle('hidden');
-        }
-
         function handleOpenEditModal(button) {
             openEditModal(JSON.parse(button.getAttribute('data-course')));
         }

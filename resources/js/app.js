@@ -86,5 +86,66 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 
+function ghSyncModalBodyState() {
+    const openDialog = document.querySelector('[role="dialog"][data-gh-open="true"]');
+    if (openDialog) {
+        document.body.classList.add('gh-modal-open');
+        document.body.style.overflow = 'hidden';
+        return;
+    }
+
+    document.body.classList.remove('gh-modal-open');
+    document.body.style.overflow = '';
+}
+
+window.openModal = function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+    }
+
+    document.querySelectorAll('[role="dialog"][data-gh-open="true"]').forEach((openDialog) => {
+        if (openDialog === modal) return;
+        openDialog.classList.add('hidden');
+        openDialog.setAttribute('hidden', '');
+        openDialog.removeAttribute('data-gh-open');
+    });
+
+    modal.classList.remove('hidden');
+    modal.removeAttribute('hidden');
+    modal.setAttribute('data-gh-open', 'true');
+    ghSyncModalBodyState();
+};
+
+window.closeModal = function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modal.setAttribute('hidden', '');
+    modal.removeAttribute('data-gh-open');
+    ghSyncModalBodyState();
+};
+
+window.toggleModal = function toggleModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    const isHidden = modal.classList.contains('hidden') || modal.hasAttribute('hidden');
+    if (isHidden) {
+        window.openModal(modalId);
+    } else {
+        window.closeModal(modalId);
+    }
+};
+
+document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const openDialog = document.querySelector('[role="dialog"][data-gh-open="true"]');
+    if (openDialog?.id) window.closeModal(openDialog.id);
+});
+
 window.Alpine = Alpine;
 Alpine.start();

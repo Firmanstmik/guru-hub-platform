@@ -497,25 +497,15 @@
 
 @push('app-scripts')
     <script>
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.removeAttribute('hidden');
-                document.body.style.overflow = 'hidden';
-            }
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.setAttribute('hidden', '');
-                document.body.style.overflow = '';
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function () {
+            ['addProfileModal', 'editProfileModal', 'uploadMediaModal'].forEach((id) => {
+                const modal = document.getElementById(id);
+                if (modal && modal.parentElement !== document.body) {
+                    document.body.appendChild(modal);
+                }
+            });
+
+            document.body.classList.remove('gh-modal-open');
             document.body.style.overflow = '';
 
             @if ($errors->any() && ! $errors->has('avatar') && ! $errors->has('cv_file'))
