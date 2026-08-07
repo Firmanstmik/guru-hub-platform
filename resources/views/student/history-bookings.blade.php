@@ -75,7 +75,7 @@
                             </div>
                         </div>
 
-                        <div class="flex md:flex-col items-between md:items-end justify-between md:justify-center gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-gray-50 shrink-0">
+                        <div class="flex md:flex-col items-center md:items-end justify-between md:justify-center gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-gray-50 shrink-0">
                             <div class="space-y-0.5">
                                 <span class="text-[10px] text-gray-400 block md:text-right">Total Pembayaran</span>
                                 <span class="text-sm font-extrabold font-mono text-indigo-600">

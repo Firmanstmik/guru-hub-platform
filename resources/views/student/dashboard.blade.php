@@ -105,10 +105,10 @@
                             <span class="gh-app-timeline-dot"></span>
                             <div class="gh-app-timeline-card">
                                 <x-app.badge variant="danger">Live Class</x-app.badge>
-                                <p class="gh-app-caption mt-1">{{ \Carbon\Carbon::parse($live->date)->translatedFormat('d M · H:i') }} WIB</p>
+                                <p class="gh-app-caption mt-1">{{ $live->start_time->translatedFormat('d M · H:i') }} WIB</p>
                                 <h4 class="gh-app-subheading mt-0.5">{{ $live->topic }}</h4>
-                                @if ($live->link)
-                                    <a href="{{ $live->link }}" target="_blank" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm mt-2 inline-flex">
+                                @if ($live->meeting_link)
+                                    <a href="{{ $live->meeting_link }}" target="_blank" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm mt-2 inline-flex">
                                         <x-ui.lucide name="video" class="h-3.5 w-3.5" /> Gabung Meet
                                     </a>
                                 @endif

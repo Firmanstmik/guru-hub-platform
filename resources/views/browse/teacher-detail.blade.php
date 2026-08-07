@@ -119,7 +119,7 @@
 
                                     @auth
                                         @if (auth()->user()->hasRole('siswa'))
-                                            <a href="{{ url('student/dashboard') }}" class="gh-browse-btn">Mulai belajar</a>
+                                            <a href="{{ url('/bookings/create?course_id=' . $course->id) }}" class="gh-browse-btn">Mulai belajar</a>
                                         @else
                                             <a href="{{ url('login') }}" class="gh-browse-btn gh-browse-btn--outline">Masuk</a>
                                         @endif

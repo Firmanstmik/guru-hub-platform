@@ -48,7 +48,7 @@
                         <h3 class="gh-app-subheading mt-2 text-[#94A3B8] line-through">{{ $booking->course->title }}</h3>
                         <p class="gh-app-caption">{{ $booking->course->teacher->name ?? 'Instruktur' }} · {{ $booking->updated_at->format('d M Y') }}</p>
                         <div class="mt-3 grid grid-cols-2 gap-2">
-                            <a href="/student/courses/{{ $booking->course_id }}/certificate" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">Sertifikat</a>
+                            <a href="/student/courses/{{ $booking->course_id }}/learn" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">Sertifikat</a>
                             <a href="/student/courses/{{ $booking->course_id }}/review" class="gh-app-btn gh-app-btn-ghost gh-app-btn-sm">Ulasan</a>
                         </div>
                     </div>

@@ -92,7 +92,7 @@ class BookingController extends Controller
             $courseId = $request->query('course_id');
 
             if (!$courseId) {
-                return redirect('/courses')->with('error', 'Silakan pilih program kelas terlebih dahulu dari katalog.');
+                return redirect('/tampil-kursus')->with('error', 'Silakan pilih program kelas terlebih dahulu dari katalog.');
             }
 
             $selectedCourse = Course::with(['teacher', 'category'])
@@ -104,7 +104,7 @@ class BookingController extends Controller
             return view('student.booking-form', compact('student', 'selectedCourse', 'banks'));
         } catch (Exception $e) {
             Log::error('Gagal memuat formulir booking siswa: ' . $e->getMessage());
-            return redirect('/courses')->with('error', 'Kelas yang Anda tuju tidak ditemukan atau sudah tidak aktif.');
+            return redirect('/tampil-kursus')->with('error', 'Kelas yang Anda tuju tidak ditemukan atau sudah tidak aktif.');
         }
     }
 

@@ -200,9 +200,10 @@
                                         $materialChecked = isset($material->is_completed) && $material->is_completed;
                                     @endphp
                                     <div
-                                        class="flex items-center gap-2.5 p-3 rounded-xl border transition {{ $isCurrentMaterial ? 'bg-emerald-50/70 border-emerald-200' : 'bg-gray-50/50 border-transparent hover:bg-gray-50' }}">
+                                        class="flex flex-col gap-2.5 p-3 rounded-xl border transition sm:flex-row sm:items-center {{ $isCurrentMaterial ? 'bg-emerald-50/70 border-emerald-200' : 'bg-gray-50/50 border-transparent hover:bg-gray-50' }}">
 
                                         {{-- Checkbox Kustom Dokumen --}}
+                                        <div class="flex items-start gap-2.5 min-w-0 flex-1">
                                         <div class="flex items-center shrink-0">
                                             <input type="checkbox" data-id="{{ $material->id }}" data-type="material"
                                                 class="progress-checkbox w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500/30 transition cursor-pointer"
@@ -215,7 +216,7 @@
                                                 fill="none" stroke="currentColor" stroke-width="2"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125 504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                             </svg>
                                             <div class="space-y-0.5 min-w-0 flex-1">
                                                 <a href="?type=material&id={{ $material->id }}"
@@ -229,12 +230,15 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        </div>
 
                                         {{-- tombol quiz --}}
-                                        <a href="{{ url('/materials/'.$material->id.'/quiz') }}"
-                                            class="btn bg-indigo-600 text-white font-bold">
-                                            Kerjakan Kuis
-                                        </a>
+                                        @if ($material->quiz)
+                                            <a href="{{ url('/materials/'.$material->id.'/quiz') }}"
+                                                class="gh-app-btn gh-app-btn-primary gh-app-btn-sm shrink-0 whitespace-nowrap self-start sm:self-center">
+                                                Kuis
+                                            </a>
+                                        @endif
                                     </div>
                                 @empty
                                     <p class="text-[11px] text-gray-400 italic pl-1">Belum ada modul PDF.</p>
@@ -257,7 +261,7 @@
                                         <div class="flex items-start justify-between gap-2">
                                             <div class="space-y-0.5">
                                                 <p class="text-xs font-bold text-gray-800 leading-tight">
-                                                    {{ $schedule->name }}</p>
+                                                    {{ $schedule->topic }}</p>
                                                 <div class="flex items-center gap-2 text-[10px] text-gray-400">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">

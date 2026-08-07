@@ -22,6 +22,7 @@
 
             @if($alreadyTaken)
                 <x-app.badge variant="danger">🔒 Anda sudah menyelesaikan kuis ini</x-app.badge>
+                <a href="/my-courses" class="gh-app-btn gh-app-btn-ghost gh-app-btn-sm">Kembali ke Kelas</a>
             @else
                 <a href="{{ url('/quiz/'.$quiz->id.'/take') }}" class="gh-app-btn gh-app-btn-primary gh-app-btn-block max-w-xs mx-auto">Mulai Kerjakan Sekarang 🚀</a>
                 <a href="/my-courses" class="gh-app-btn gh-app-btn-ghost gh-app-btn-sm">Kembali ke Kelas</a>

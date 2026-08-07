@@ -227,7 +227,7 @@ class StudentCourseController extends Controller
                 ->exists();
 
             if (!$hasAccess) {
-                return redirect()->route('student.courses')
+                return redirect('/my-courses')
                     ->with('error', 'Akses ditolak. Anda belum terdaftar atau belum menyelesaikan pembayaran di kelas premium ini.');
             }
 
@@ -248,7 +248,7 @@ class StudentCourseController extends Controller
             }
 
             // 2. Ambil data Course beserta Video, Materi, DAN Jadwal Meeting
-            $course = Course::with(['videos', 'materials', 'schedules' => function ($query) {
+            $course = Course::with(['videos', 'materials.quiz', 'schedules' => function ($query) {
                 $query->orderBy('start_time', 'asc');
             }])->findOrFail($course_id);
 
