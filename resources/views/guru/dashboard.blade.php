@@ -11,6 +11,23 @@
                 subtitle="Pantau kelas, jadwal live, dan perkembangan siswa dari satu tempat."
             />
 
+            @php $tkaPdf = asset('dokumen/surat-tka-an-sma-smk-sulingjar-2026.pdf'); @endphp
+            <aside class="gh-app-card gh-guru-official-notice" aria-label="Pengumuman resmi TKA dan AN 2026">
+                <div class="gh-guru-official-notice-copy">
+                    <span class="gh-ref-official-badge">Dokumen Kemendikdasmen</span>
+                    <h2 class="gh-app-subheading mt-2">Penyelenggaraan TKA, AN, dan Sulingjar 2026</h2>
+                    <p class="gh-app-caption mt-1">Nomor 0212/B/F/SK.02.02/2026 · 1 Juli 2026 · Pendaftaran 27 Jul–27 Sep · Pelaksanaan 26 Okt–8 Nov</p>
+                </div>
+                <div class="gh-guru-official-notice-actions">
+                    <a href="{{ $tkaPdf }}" target="_blank" rel="noopener" class="gh-app-btn gh-app-btn-primary gh-app-btn-sm">
+                        <x-ui.lucide name="eye" class="h-3.5 w-3.5" /> Lihat PDF
+                    </a>
+                    <a href="{{ $tkaPdf }}" download="surat-tka-an-sma-smk-sulingjar-2026.pdf" class="gh-app-btn gh-app-btn-secondary gh-app-btn-sm">
+                        <x-ui.lucide name="download" class="h-3.5 w-3.5" /> Unduh
+                    </a>
+                </div>
+            </aside>
+
             {{-- Quick stats --}}
             <div class="gh-app-stat-grid">
                 <div class="gh-app-stat">

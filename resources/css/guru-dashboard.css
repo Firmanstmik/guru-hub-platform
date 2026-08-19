@@ -224,6 +224,14 @@
         @apply text-xs;
     }
 
+    .gh-guru-official-notice {
+        @apply flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-5;
+    }
+
+    .gh-guru-official-notice-actions {
+        @apply flex shrink-0 flex-wrap gap-2;
+    }
+
     /* ── Empty state ── */
     .gh-guru-empty {
         @apply p-8 text-center text-sm leading-relaxed text-[#64748B];

@@ -10,6 +10,7 @@
         return (string) $n;
     };
     $logo = asset('assets/logo-app/guru_hub_logo.jpeg');
+    $tkaPdf = asset('dokumen/surat-tka-an-sma-smk-sulingjar-2026.pdf');
     $courseChips = $categories ?? collect(['Semua']);
     $journeySteps = [
         ['num' => '01', 'label' => 'Discover', 'desc' => 'Telusuri ribuan kursus & pengajar terkurasi.'],
@@ -272,6 +273,102 @@
             </div>
         </section>
 
+        {{-- Informasi resmi — edaran Kemendikdasmen, bukan materi kursus --}}
+        <section id="informasi-resmi" class="gh-ref-section border-t gh-ref-divider" x-data="{ previewOpen: false }"
+            @keydown.escape.window="previewOpen = false"
+            x-effect="document.body.classList.toggle('overflow-hidden', previewOpen)">
+            <div class="gh-ref-container">
+                <div class="max-w-2xl gh-reveal" x-data="ghReveal" x-bind:class="{ 'gh-reveal-visible': visible }">
+                    <p class="gh-ref-eyebrow">Informasi resmi</p>
+                    <h2 class="gh-ref-display mt-3 text-[34px] leading-[1.05] sm:text-5xl">Edaran TKA, AN, dan <span class="italic text-[#0E7490]">Sulingjar 2026.</span></h2>
+                    <p class="gh-ref-muted mt-4 text-[15px]">Salinan surat Kepala BKPDM untuk satuan pendidikan. GuruHub menayangkannya agar dinas, operator, dan pendidik dapat mengakses jadwal resmi tanpa login.</p>
+                </div>
+
+                <div class="mt-8 grid gap-5 lg:mt-12 lg:grid-cols-12 lg:gap-8">
+                    <article class="gh-ref-official-card lg:col-span-7">
+                        <div class="gh-ref-official-copy">
+                            <span class="gh-ref-official-badge">Dokumen Kemendikdasmen</span>
+                            <h3 class="gh-ref-display mt-3 text-[20px] leading-snug sm:text-[22px]">Penyelenggaraan TKA dan AN SMA/SMK serta Sulingjar 2026</h3>
+                            <p class="gh-ref-muted mt-2 text-[13px] sm:text-[14px]">Nomor <span class="font-semibold text-[#0A1A4F]">0212/B/F/SK.02.02/2026</span> · 1 Juli 2026 · 8 halaman</p>
+                            <div class="mt-5 flex flex-wrap gap-2.5">
+                                <button type="button" class="gh-ref-official-btn-primary" @click="previewOpen = true">
+                                    <x-ui.lucide name="eye" class="h-4 w-4" />
+                                    Lihat
+                                </button>
+                                <a href="{{ $tkaPdf }}" download="surat-tka-an-sma-smk-sulingjar-2026.pdf" class="gh-ref-official-btn-ghost">
+                                    <x-ui.lucide name="download" class="h-4 w-4" />
+                                    Unduh PDF
+                                </a>
+                            </div>
+                            <p class="gh-ref-official-credit mt-4">Sumber: Badan Standar, Kurikulum, dan Asesmen Pendidikan. GuruHub menayangkan salinan untuk kemudahan akses satuan pendidikan — bukan sebagai penyelenggara TKA.</p>
+                        </div>
+                        <div class="gh-ref-official-preview" aria-hidden="true">
+                            <iframe src="{{ $tkaPdf }}#page=1&toolbar=0&navpanes=0" title="Pratinjau halaman 1 surat TKA/AN 2026" loading="lazy"></iframe>
+                        </div>
+                    </article>
+
+                    <aside class="gh-ref-official-schedule lg:col-span-5">
+                        <p class="gh-ref-eyebrow">Ringkasan jadwal</p>
+                        <h3 class="gh-ref-display mt-2 text-[19px]">Lampiran 1 — TKA/AN SMA/SMK 2026</h3>
+                        <ul class="gh-ref-official-timeline">
+                            <li>
+                                <span>Pendaftaran</span>
+                                <strong>27 Jul–27 Sep 2026</strong>
+                            </li>
+                            <li>
+                                <span>Simulasi</span>
+                                <strong>21–27 Sep 2026</strong>
+                            </li>
+                            <li>
+                                <span>Pelaksanaan</span>
+                                <strong>26 Okt–8 Nov 2026</strong>
+                            </li>
+                            <li>
+                                <span>Susulan</span>
+                                <strong>16–29 Nov 2026</strong>
+                            </li>
+                            <li>
+                                <span>Pengumuman hasil TKA</span>
+                                <strong>23 Des 2026</strong>
+                            </li>
+                        </ul>
+                        <p class="gh-ref-muted mt-4 text-[12px] leading-relaxed">Jadwal lengkap, cut-off Dapodik/EMIS, dan ketentuan SMK/PKL ada di PDF 8 halaman.</p>
+                    </aside>
+                </div>
+            </div>
+
+            <div
+                x-show="previewOpen"
+                x-cloak
+                x-transition.opacity.duration.200ms
+                class="gh-ref-official-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="tka-preview-title"
+                @click.self="previewOpen = false">
+                <div class="gh-ref-official-modal-panel" @click.stop>
+                    <div class="gh-ref-official-modal-head">
+                        <div>
+                            <p id="tka-preview-title" class="text-[14px] font-semibold text-[#0A1A4F]">Surat TKA/AN &amp; Sulingjar 2026</p>
+                            <p class="text-[11px] text-[#64748B]">0212/B/F/SK.02.02/2026 · 1 Juli 2026</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ $tkaPdf }}" download="surat-tka-an-sma-smk-sulingjar-2026.pdf" class="gh-ref-official-btn-ghost gh-ref-official-btn-sm">
+                                <x-ui.lucide name="download" class="h-3.5 w-3.5" />
+                                Unduh
+                            </a>
+                            <button type="button" class="gh-ref-official-modal-close" @click="previewOpen = false" aria-label="Tutup pratinjau">
+                                <x-ui.lucide name="x" class="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
+                    <div class="gh-ref-official-modal-body">
+                        <iframe x-bind:src="previewOpen ? '{{ $tkaPdf }}' : ''" title="Pratinjau PDF surat TKA/AN 2026"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         {{-- Testimonials --}}
         @if ($testimonials->isNotEmpty())
         <section id="testimoni" class="gh-ref-section border-t gh-ref-divider">
@@ -368,6 +465,7 @@
                     <ul class="mt-4 space-y-2.5 text-[14px]">
                         <li><a href="{{ url('/') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Tentang</a></li>
                         <li><a href="{{ url('register/teacher') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Karir</a></li>
+                        <li><a href="{{ url('/#informasi-resmi') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Informasi Resmi</a></li>
                         <li><a href="mailto:guruhubku@gmail.com" class="gh-ref-muted transition hover:text-[#0A1A4F]">Kontak</a></li>
                     </ul>
                 </div>

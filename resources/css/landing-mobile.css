@@ -827,5 +827,29 @@
         .gh-browse-level-card--row {
             @apply !py-3.5;
         }
+
+        .gh-ref-official-card,
+        .gh-ref-official-schedule {
+            @apply rounded-xl;
+        }
+
+        .gh-ref-official-copy,
+        .gh-ref-official-schedule {
+            @apply p-4;
+        }
+
+        .gh-ref-official-copy .gh-ref-official-btn-primary,
+        .gh-ref-official-copy .gh-ref-official-btn-ghost {
+            @apply h-10 flex-1 justify-center px-3 text-[12px];
+        }
+
+        .gh-ref-official-modal-panel {
+            height: min(92vh, 100dvh);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        .gh-ref-official-modal-body iframe {
+            min-height: 70vh;
+        }
     }
 }

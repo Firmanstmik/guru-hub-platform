@@ -900,6 +900,121 @@
         }
     }
 
+    /* ── Official document (Kemendikdasmen) ── */
+    .gh-ref-official-card {
+        @apply flex flex-col overflow-hidden rounded-[20px] border border-[#0a1a4f]/[0.07] bg-white;
+        box-shadow:
+            0 1px 0 #fff inset,
+            0 18px 50px -28px rgb(10 26 79 / 0.18);
+    }
+
+    .gh-ref-official-copy {
+        @apply p-5 sm:p-7;
+    }
+
+    .gh-ref-official-badge {
+        @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold tracking-wide text-[#0E7490];
+        background: linear-gradient(180deg, #ecfeff, #ccfbf1);
+        border: 1px solid rgb(14 116 144 / 0.18);
+    }
+
+    .gh-ref-official-btn-primary {
+        @apply inline-flex h-11 items-center gap-2 rounded-xl px-5 text-[13px] font-semibold text-white transition;
+        background: linear-gradient(180deg, #14b8a6, #0e7490);
+        box-shadow:
+            0 14px 30px -10px rgb(14 116 144 / 0.45),
+            inset 0 1px 0 rgb(255 255 255 / 0.25);
+    }
+
+    .gh-ref-official-btn-primary:hover {
+        filter: brightness(1.08);
+    }
+
+    .gh-ref-official-btn-ghost {
+        @apply inline-flex h-11 items-center gap-2 rounded-xl border border-[#0a1a4f]/10 bg-white px-5 text-[13px] font-semibold text-[#0a1a4f] transition;
+    }
+
+    .gh-ref-official-btn-ghost:hover {
+        border-color: #0e7490;
+        color: #0e7490;
+    }
+
+    .gh-ref-official-btn-sm {
+        @apply h-9 px-3 text-[12px];
+    }
+
+    .gh-ref-official-credit {
+        @apply text-[12px] leading-relaxed text-[#64748B];
+    }
+
+    .gh-ref-official-preview {
+        @apply relative hidden h-[280px] overflow-hidden border-t border-[#0a1a4f]/[0.06] bg-[#eef2f7] lg:block lg:h-[360px];
+    }
+
+    .gh-ref-official-preview iframe {
+        @apply h-full w-full border-0 bg-white;
+    }
+
+    .gh-ref-official-schedule {
+        @apply rounded-[20px] border border-[#0a1a4f]/[0.07] bg-white p-5 sm:p-7;
+        box-shadow:
+            0 1px 0 #fff inset,
+            0 18px 50px -28px rgb(10 26 79 / 0.18);
+    }
+
+    .gh-ref-official-timeline {
+        @apply mt-5 space-y-0;
+    }
+
+    .gh-ref-official-timeline li {
+        @apply relative flex items-baseline justify-between gap-3 border-b border-[#0a1a4f]/[0.06] py-3 pl-5;
+    }
+
+    .gh-ref-official-timeline li:last-child {
+        @apply border-b-0;
+    }
+
+    .gh-ref-official-timeline li::before {
+        content: '';
+        @apply absolute left-0 top-[1.15rem] h-2 w-2 rounded-full;
+        background: linear-gradient(180deg, #14b8a6, #0e7490);
+        box-shadow: 0 0 0 3px rgb(20 184 166 / 0.15);
+    }
+
+    .gh-ref-official-timeline span {
+        @apply text-[13px] text-[#4b5a7a];
+    }
+
+    .gh-ref-official-timeline strong {
+        @apply text-right text-[13px] font-semibold text-[#0A1A4F];
+    }
+
+    .gh-ref-official-modal {
+        @apply fixed inset-0 z-[80] flex items-end justify-center bg-[#04081c]/70 p-0 sm:items-center sm:p-6;
+        backdrop-filter: blur(8px);
+    }
+
+    .gh-ref-official-modal-panel {
+        @apply flex h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-2xl bg-white sm:h-[85vh] sm:rounded-2xl;
+        box-shadow: 0 40px 80px -32px rgb(0 0 0 / 0.55);
+    }
+
+    .gh-ref-official-modal-head {
+        @apply flex items-center justify-between gap-3 border-b border-[#0a1a4f]/[0.08] bg-[#f8fafc] px-4 py-3 sm:px-5;
+    }
+
+    .gh-ref-official-modal-close {
+        @apply grid h-9 w-9 place-items-center rounded-full bg-[#0a1a4f]/[0.06] text-[#0A1A4F] transition hover:bg-[#0a1a4f]/10;
+    }
+
+    .gh-ref-official-modal-body {
+        @apply min-h-0 flex-1 bg-[#e2e8f0] p-0 sm:p-2;
+    }
+
+    .gh-ref-official-modal-body iframe {
+        @apply h-full w-full border-0 bg-white sm:rounded-lg;
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .gh-ref-floaty,
         .gh-ref-star,

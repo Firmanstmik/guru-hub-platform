@@ -23,6 +23,9 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
+# Source PDF at repo root (published copy lives in public/dokumen/)
+/Surat_Penyelenggaraan_*.pdf
+
 # Internal development reports (not for distribution)
 *_REPORT.md
 AUDIT_REPORT.md
