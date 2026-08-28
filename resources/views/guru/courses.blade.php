@@ -153,7 +153,11 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">Cover Kelas (opsional)</label>
-                                <input type="file" name="cover_image" accept="image/*" class="gh-app-input w-full text-xs file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-indigo-700">
+                                <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                                    class="gh-app-input w-full text-xs file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-indigo-700"
+                                    onchange="previewCoverImage(this, 'add_cover_preview')">
+                                <p class="mt-1 text-[11px] text-gray-500">JPG, PNG, atau WebP — maks. 5 MB.</p>
+                                <img id="add_cover_preview" src="" alt="" class="mt-2 hidden max-h-36 w-full rounded-lg border border-gray-200 object-cover" />
                             </div>
                         </div>
                         <div class="flex flex-col-reverse gap-2 border-t border-gray-100 bg-gray-50 px-5 py-4 sm:flex-row sm:justify-end">
@@ -205,7 +209,11 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">Ganti Cover (opsional)</label>
-                                <input type="file" name="cover_image" accept="image/*" class="gh-app-input w-full text-xs file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-indigo-700">
+                                <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                                    class="gh-app-input w-full text-xs file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-indigo-700"
+                                    onchange="previewCoverImage(this, 'edit_cover_preview')">
+                                <p class="mt-1 text-[11px] text-gray-500">JPG, PNG, atau WebP — maks. 5 MB.</p>
+                                <img id="edit_cover_preview" src="" alt="" class="mt-2 hidden max-h-36 w-full rounded-lg border border-gray-200 object-cover" />
                             </div>
                         </div>
                         <div class="flex flex-col-reverse gap-2 border-t border-gray-100 bg-gray-50 px-5 py-4 sm:flex-row sm:justify-end">
@@ -219,6 +227,20 @@
     @endif
 
     <script>
+        function previewCoverImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            if (!preview || !input.files || !input.files[0]) {
+                if (preview) {
+                    preview.src = '';
+                    preview.classList.add('hidden');
+                }
+                return;
+            }
+
+            preview.src = URL.createObjectURL(input.files[0]);
+            preview.classList.remove('hidden');
+        }
+
         function handleOpenEditModal(button) {
             openEditModal(JSON.parse(button.getAttribute('data-course')));
         }

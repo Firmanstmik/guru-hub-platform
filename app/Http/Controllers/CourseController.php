@@ -8,6 +8,7 @@ use App\Models\Categori;
 use App\Models\Course;
 use App\Models\User;
 use App\Support\CourseCatalog;
+use App\Support\UploadedImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -81,6 +82,10 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        if ($uploadError = UploadedImage::failedUploadMessage($request, 'cover_image')) {
+            return redirect()->back()->withInput()->withErrors(['cover_image' => $uploadError]);
+        }
+
         // Validasi dengan custom pesan Bahasa Indonesia
         $validated = $request->validate([
             'teacher_id'  => 'required|exists:users,id',
@@ -89,8 +94,8 @@ class CourseController extends Controller
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
             'status'      => 'required|in:draft,published,archived',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-        ], [
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:'.UploadedImage::MAX_KB,
+        ], array_merge([
             'teacher_id.required'  => 'Pengajar wajib dipilih.',
             'teacher_id.exists'    => 'Pengajar tidak valid atau tidak terdaftar di sistem.',
             'subject_id.required' => 'Mata pelajaran & jenjang wajib dipilih.',
@@ -103,10 +108,7 @@ class CourseController extends Controller
             'price.min'            => 'Harga kelas tidak boleh kurang dari 0.',
             'status.required'      => 'Status publikasi kelas wajib dipilih.',
             'status.in'            => 'Status yang dipilih tidak sesuai ketentuan.',
-            'cover_image.image'    => 'Berkas sampul harus berupa gambar.',
-            'cover_image.mimes'    => 'Format gambar sampul harus berupa jpeg, png, jpg, atau webp.',
-            'cover_image.max'      => 'Gagal mengunggah! Ukuran gambar sampul terlalu besar (Maksimal 5 MB).'
-        ]);
+        ], UploadedImage::validationMessages()));
 
         $uploadedPath = null;
 
@@ -118,7 +120,10 @@ class CourseController extends Controller
             }
 
             if ($request->hasFile('cover_image')) {
-                $uploadedPath = $request->file('cover_image')->store('courses/covers', 'public');
+                $uploadedPath = UploadedImage::storeOnPublicDisk(
+                    $request->file('cover_image'),
+                    'courses/covers'
+                );
                 $validated['cover_image'] = $uploadedPath;
             }
 
@@ -146,6 +151,10 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
+        if ($uploadError = UploadedImage::failedUploadMessage($request, 'cover_image')) {
+            return redirect()->back()->withInput()->withErrors(['cover_image' => $uploadError]);
+        }
+
         // Validasi dengan custom pesan Bahasa Indonesia
         $validated = $request->validate([
             'teacher_id'  => 'required|exists:users,id',
@@ -154,8 +163,8 @@ class CourseController extends Controller
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
             'status'      => 'required|in:draft,published,archived',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
-        ], [
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:'.UploadedImage::MAX_KB,
+        ], array_merge([
             'teacher_id.required'  => 'Pengajar wajib ditentukan.',
             'subject_id.required' => 'Mata pelajaran & jenjang wajib ditentukan.',
             'title.required'       => 'Judul kelas tidak boleh kosong.',
@@ -164,10 +173,7 @@ class CourseController extends Controller
             'price.numeric'        => 'Harga harus berupa nominal angka.',
             'price.min'            => 'Harga kelas tidak boleh minus.',
             'status.required'      => 'Status kelas tidak boleh kosong.',
-            'cover_image.image'    => 'Berkas harus berupa gambar valid.',
-            'cover_image.mimes'    => 'Format gambar baru harus berupa jpeg, png, jpg, atau webp.',
-            'cover_image.max'      => 'Gagal memperbarui! Ukuran gambar sampul baru terlalu besar (Maksimal 5 MB).'
-        ]);
+        ], UploadedImage::validationMessages('gambar sampul baru')));
 
         $newUploadedPath = null;
         $oldFilePath = $course->cover_image;
@@ -182,8 +188,10 @@ class CourseController extends Controller
             }
 
             if ($request->hasFile('cover_image')) {
-                // Simpan berkas baru terlebih dahulu
-                $newUploadedPath = $request->file('cover_image')->store('courses/covers', 'public');
+                $newUploadedPath = UploadedImage::storeOnPublicDisk(
+                    $request->file('cover_image'),
+                    'courses/covers'
+                );
                 $validated['cover_image'] = $newUploadedPath;
             }
 
