@@ -78,6 +78,7 @@ document.addEventListener('alpine:init', () => {
                 sd: 'SD',
                 smp: 'SMP',
                 'sma-smk': 'SMA',
+                umum: 'Umum',
                 'persiapan-ujian': 'Ujian',
                 'minat-bakat': 'Bakat',
             };

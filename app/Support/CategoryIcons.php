@@ -98,6 +98,7 @@ class CategoryIcons
             'sd' => 'backpack',
             'smp' => 'layers',
             'sma-smk' => 'graduation-cap',
+            'umum' => 'book-open',
             'persiapan-ujian' => 'clipboard-check',
             'minat-bakat' => 'star',
             default => 'book-open',

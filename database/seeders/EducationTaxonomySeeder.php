@@ -16,8 +16,9 @@ class EducationTaxonomySeeder extends Seeder
             ['name' => 'SD', 'slug' => 'sd', 'icon' => '📘', 'sort_order' => 1],
             ['name' => 'SMP', 'slug' => 'smp', 'icon' => '📗', 'sort_order' => 2],
             ['name' => 'SMA / SMK', 'slug' => 'sma-smk', 'icon' => '📕', 'sort_order' => 3],
-            ['name' => 'Persiapan Ujian', 'slug' => 'persiapan-ujian', 'icon' => '🎯', 'sort_order' => 4],
-            ['name' => 'Minat & Bakat', 'slug' => 'minat-bakat', 'icon' => '🎨', 'sort_order' => 5],
+            ['name' => 'Umum', 'slug' => 'umum', 'icon' => '📚', 'sort_order' => 4],
+            ['name' => 'Persiapan Ujian', 'slug' => 'persiapan-ujian', 'icon' => '🎯', 'sort_order' => 5],
+            ['name' => 'Minat & Bakat', 'slug' => 'minat-bakat', 'icon' => '🎨', 'sort_order' => 6],
         ];
 
         $levelIds = [];
@@ -42,6 +43,7 @@ class EducationTaxonomySeeder extends Seeder
             ['name' => 'Seni & Menggambar', 'icon' => 'palette', 'sort_order' => 10],
             ['name' => 'Persiapan UTBK', 'icon' => 'graduation-cap', 'sort_order' => 11],
             ['name' => 'Olimpiade', 'icon' => 'trophy', 'sort_order' => 12],
+            ['name' => 'Pengembangan Diri', 'icon' => 'sparkles', 'sort_order' => 13],
         ];
 
         $categoryIds = [];
@@ -98,6 +100,15 @@ class EducationTaxonomySeeder extends Seeder
                 ['Bahasa Jepang', 'Bahasa Jepang'],
                 ['Bahasa Korea', 'Bahasa Korea'],
                 ['Bahasa Mandarin', 'Bahasa Mandarin'],
+            ],
+            'umum' => [
+                ['Pengembangan Diri', 'Soft Skills & Kepemimpinan'],
+                ['Pengembangan Diri', 'Persiapan Karir'],
+                ['Bahasa Inggris', 'Bahasa Inggris Umum'],
+                ['Informatika', 'Literasi Digital'],
+                ['Bahasa Indonesia', 'Komunikasi & Presentasi'],
+                ['IPS', 'Kewirausahaan'],
+                ['Matematika', 'Literasi Finansial'],
             ],
             'persiapan-ujian' => [
                 ['Persiapan UTBK', 'UTBK SNBT'],
