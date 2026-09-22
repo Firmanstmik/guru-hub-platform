@@ -105,8 +105,8 @@
                                             class="inline-flex items-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-2xs transition">
                                             <span>Upload Ulang Bukti</span>
                                         </a>
-                                        <a href="https://wa.me/6287728893916?text=Halo%20Admin,%20saya%20ingin%20konfirmasi%20pembayaran%20kelas%20untuk%20invoice:%20{{ $booking->transaction_code }}"
-                                            target="_blank"
+                                        <a href="{{ \App\Support\AdminContact::paymentConfirmUrl($booking->transaction_code) }}"
+                                            target="_blank" rel="noopener noreferrer"
                                             class="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold rounded-xl transition">
                                             <span>Konfirmasi WA</span>
                                         </a>
@@ -123,8 +123,8 @@
                                             class="inline-flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-2xs transition">
                                             <span>Upload Bukti</span>
                                         </a>
-                                        <a href="https://wa.me/6287728893916?text=Halo%20Admin,%20saya%20ingin%20konfirmasi%20pembayaran%20kelas%20untuk%20invoice:%20{{ $booking->transaction_code }}"
-                                            target="_blank"
+                                        <a href="{{ \App\Support\AdminContact::paymentConfirmUrl($booking->transaction_code) }}"
+                                            target="_blank" rel="noopener noreferrer"
                                             class="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold rounded-xl transition">
                                             <span>Konfirmasi WA</span>
                                         </a>
@@ -137,8 +137,8 @@
                                             class="px-3 py-2 bg-gray-50 border border-gray-200 text-gray-400 text-xs font-semibold rounded-xl cursor-not-allowed">
                                             ⏳ Proses Verifikasi
                                         </button>
-                                        <a href="https://wa.me/6287728893916?text=Halo%20Admin,%20saya%20ingin%20konfirmasi%20pembayaran%20kelas%20untuk%20invoice:%20{{ $booking->transaction_code }}"
-                                            target="_blank"
+                                        <a href="{{ \App\Support\AdminContact::paymentConfirmUrl($booking->transaction_code) }}"
+                                            target="_blank" rel="noopener noreferrer"
                                             class="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold rounded-xl transition">
                                             <span>Konfirmasi WA</span>
                                         </a>

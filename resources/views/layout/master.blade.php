@@ -258,7 +258,8 @@
                 <span class="hidden h-4 w-px bg-brand-200 sm:block" aria-hidden="true"></span>
                 <a href="https://www.instagram.com/guruhubku" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-brand-800" aria-label="Instagram GuruHub">Instagram</a>
                 <a href="https://www.facebook.com/share/1Crvgnk2Z5/" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-brand-800" aria-label="Facebook GuruHub">Facebook</a>
-                <a href="mailto:guruhubku@gmail.com" class="transition-colors hover:text-brand-800" aria-label="Email GuruHub">Email</a>
+                <a href="mailto:{{ \App\Support\AdminContact::email() }}" class="transition-colors hover:text-brand-800" aria-label="Email GuruHub">Email</a>
+                <a href="{{ \App\Support\AdminContact::whatsappUrl('Halo Admin GuruHub, saya ingin bertanya.') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-brand-800" aria-label="WhatsApp Admin GuruHub">WhatsApp {{ \App\Support\AdminContact::phoneDisplay() }}</a>
             </nav>
         </div>
     </footer>

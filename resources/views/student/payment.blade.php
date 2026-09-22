@@ -89,8 +89,8 @@
                     </div>
 
                     <div class="pt-2 space-y-2">
-                        <a href="https://wa.me/6287728893916?text=Halo%20Admin,%20saya%20ingin%20konfirmasi%20pembayaran%20dengan%20Kode%20Invoice:%20{{ $booking->transaction_code }}"
-                            target="_blank"
+                        <a href="{{ \App\Support\AdminContact::paymentConfirmUrl($booking->transaction_code) }}"
+                            target="_blank" rel="noopener noreferrer"
                             class="gh-app-btn gh-app-btn-primary gh-app-btn-block">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -98,6 +98,9 @@
                             </svg>
                             Konfirmasi via WhatsApp
                         </a>
+                        <p class="text-center text-[11px] text-gray-500">
+                            Admin: <a href="{{ \App\Support\AdminContact::whatsappUrl() }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-[#0E7490]">{{ \App\Support\AdminContact::phoneDisplay() }}</a>
+                        </p>
 
                         <a href="/tampil-kursus"
                             class="gh-app-btn gh-app-btn-secondary gh-app-btn-block text-center">

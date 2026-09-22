@@ -440,17 +440,24 @@
                         <span class="gh-ref-display text-[20px] font-semibold">GuruHub</span>
                     </div>
                     <p class="gh-ref-muted mt-4 max-w-xs text-[13px]">Mengajar • Berbagi Ilmu • Membangun Masa Depan.</p>
-                    <div class="mt-5 flex items-center gap-3" aria-label="Media sosial">
+                    <div class="mt-5 flex items-center gap-3" aria-label="Media sosial dan kontak">
                         <a href="https://www.instagram.com/guruhubku" target="_blank" rel="noopener noreferrer" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="Instagram GuruHub">
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
                         </a>
                         <a href="https://www.facebook.com/share/1Crvgnk2Z5/" target="_blank" rel="noopener noreferrer" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="Facebook GuruHub">
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 13.5h2.5l.5-3H14v-1.5c0-.9.3-1.5 1.5-1.5H17V4.5h-2c-2.4 0-3.5 1.4-3.5 3.5V10.5H9v3h2.5V20h2.5v-6.5z"/></svg>
                         </a>
-                        <a href="mailto:guruhubku@gmail.com" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="Email GuruHub">
+                        <a href="mailto:{{ \App\Support\AdminContact::email() }}" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="Email GuruHub">
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
                         </a>
+                        <a href="{{ \App\Support\AdminContact::whatsappUrl('Halo Admin GuruHub, saya ingin bertanya.') }}" target="_blank" rel="noopener noreferrer" class="grid h-9 w-9 place-items-center rounded-lg border border-[#0A1A4F]/10 text-[#0A1A4F]/70 transition hover:border-[#0E7490]/40 hover:text-[#0E7490]" aria-label="WhatsApp Admin GuruHub">
+                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.455L0 24zm6.59-4.846c1.66.986 3.296 1.48 4.905 1.481 5.482 0 9.94-4.461 9.943-9.94 0-2.654-1.033-5.15-2.908-7.028-1.876-1.877-4.374-2.909-7.03-2.91-5.485 0-9.942 4.46-9.944 9.941-.001 1.764.484 3.42 1.4 4.898L1.15 22.882l4.497-1.179z"/></svg>
+                        </a>
                     </div>
+                    <p class="gh-ref-muted mt-3 text-[12px]">
+                        WhatsApp Admin:
+                        <a href="{{ \App\Support\AdminContact::whatsappUrl() }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-[#0E7490] hover:underline">{{ \App\Support\AdminContact::phoneDisplay() }}</a>
+                    </p>
                 </div>
                 <div>
                     <p class="text-[11px] font-semibold tracking-widest text-[#0E7490] uppercase">Produk</p>
@@ -466,7 +473,8 @@
                         <li><a href="{{ url('/') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Tentang</a></li>
                         <li><a href="{{ url('register/teacher') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Karir</a></li>
                         <li><a href="{{ url('/#informasi-resmi') }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Informasi Resmi</a></li>
-                        <li><a href="mailto:guruhubku@gmail.com" class="gh-ref-muted transition hover:text-[#0A1A4F]">Kontak</a></li>
+                        <li><a href="{{ \App\Support\AdminContact::whatsappUrl('Halo Admin GuruHub, saya ingin bertanya.') }}" target="_blank" rel="noopener noreferrer" class="gh-ref-muted transition hover:text-[#0A1A4F]">WhatsApp {{ \App\Support\AdminContact::phoneDisplay() }}</a></li>
+                        <li><a href="mailto:{{ \App\Support\AdminContact::email() }}" class="gh-ref-muted transition hover:text-[#0A1A4F]">Email</a></li>
                     </ul>
                 </div>
                 <div class="col-span-2 md:col-span-1">
